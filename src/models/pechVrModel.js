@@ -11,5 +11,7 @@ const dataSchema = new mongoose.Schema({
 });
 
 const PechVr1Model = mongoose.model('pechVr1Models', dataSchema);
+const PechVr2Model = mongoose.model('pechVr2Models', dataSchema);
 
-export default PechVr1Model;
+// Экспортируем обе модели
+export { PechVr1Model, PechVr2Model };
