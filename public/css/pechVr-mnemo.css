@@ -1,0 +1,2585 @@
+@font-face {
+  font-family: "Bitter";
+  font-display: swap;
+  src: url("../fonts/Bitter-SemiBold.woff2") format("woff2"), url("../fonts/Bitter-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Bitter";
+  font-display: swap;
+  src: url("../fonts/Bitter-Regular.woff2") format("woff2"), url("../fonts/Bitter-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Bitter";
+  font-display: swap;
+  src: url("../fonts/Bitter-Medium.woff2") format("woff2"), url("../fonts/Bitter-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Bold.woff2") format("woff2"), url("../fonts/Gilroy-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Medium.woff2") format("woff2"), url("../fonts/Gilroy-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Regular.woff2") format("woff2"), url("../fonts/Gilroy-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Semibold.woff2") format("woff2"), url("../fonts/Gilroy-Semibold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-display: swap;
+  src: url("../fonts/Oswald-SemiBold.woff2") format("woff2"), url("../fonts/Oswald-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-display: swap;
+  src: url("../fonts/Oswald-Regular.woff2") format("woff2"), url("../fonts/Oswald-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-display: swap;
+  src: url("../fonts/Oswald-Medium.woff2") format("woff2"), url("../fonts/Oswald-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Bitter', sans-serif;
+  margin-left: 0;
+}
+
+body::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+  /* ширина scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background-color: #dfdcdc;
+  /* цвет дорожки */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: green;
+  /* цвет плашки */
+  border-radius: 20px;
+  /* закругления плашки */
+}
+
+.list-reset {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.title-reset {
+  margin: 0;
+}
+
+
+.btn-reset {
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0px;
+  border-width: initial;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+}
+
+.descr-reset {
+  margin: 0;
+}
+
+.content {
+  position: relative;
+  max-width: 1450px;
+  padding-left: 10px;
+}
+
+.mnemo {
+  margin-top: 50px;
+  position: relative;
+  width: 1316px;
+  /* margin: 0 auto; */
+}
+
+.container {
+  max-width: 1230px;
+  margin: 0 auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.mnemo__title-content {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mnemo__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  text-align: center;
+  font-size: 32px;
+  line-height: 32px;
+  font-weight: 600;
+  color: green;
+}
+
+.current-param__title-span {
+  margin: 0;
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 600;
+  color: black;
+}
+
+.current-param__subtitle {
+  /* text-align: center; */
+  margin: 0;
+  font-size: 20px;
+  line-height: 29px;
+  font-weight: 600;
+  color: black;
+}
+
+.current-param__subtitle-span {
+  margin-left: 15px;
+  font-size: 26px;
+  line-height: 35px;
+  font-weight: 600;
+  color: blue;
+}
+
+.mnemo__img {
+  width: 1316px;
+}
+
+.mnemo__param {
+  padding: 2px;
+  margin: 0;
+  position: absolute;
+  background-color: white;
+}
+
+
+.mnemo__param-text {
+  font-size: 18px;
+  line-height: 18px;
+  color: green;
+  font-weight: 600;
+}
+
+.mnemo__param-naimenov {
+  font-size: 18px;
+  line-height: 18px;
+  color: green;
+  font-weight: 600;
+}
+
+.mnemo__param-descr {
+  position: absolute;
+  z-index: 1;
+  font-size: 14px;
+  /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+  line-height: 14px;
+  color: rgb(10, 59, 10);
+  font-weight: 600;
+  text-align: center;
+}
+
+.mnemo__gif {
+  position: absolute;
+  z-index: 1;
+}
+
+.mnemo__gif-1 {
+  top: 63.1%;
+  left: 61%;
+  transform: rotate(180deg);
+}
+
+.mnemo__gif-3 {
+  top: 35.4%;
+  right: -50px;
+}
+
+.mnemo__gif-3 img {
+  width: 50px;
+  transform: rotate(90deg);
+}
+
+/* .mnemo__gif-4 {
+  bottom: 6.4%;
+  right: 5%;
+}
+
+.mnemo__gif-4 img {
+  width: 30px;
+}
+
+.mnemo__gif-5 {
+  bottom: 12.5%;
+  right: 62%;
+}
+
+.mnemo__gif-5 img {
+  width: 20px;
+}
+
+.mnemo__gif-6 {
+  top: 0.6%;
+  right: 48%;
+}
+
+.mnemo__gif-6 img {
+  width: 30px;
+}
+
+.mnemo__gif-7 {
+  top: 0.6%;
+  right: 28%;
+}
+
+.mnemo__gif-7 img {
+  width: 30px;
+}
+
+.mnemo__gif-8 {
+  top: 15%;
+  left: 35.5%;
+}
+
+.mnemo__gif-8 img {
+  width: 30px;
+} */
+
+.mnemo__kran-vert {
+  position: absolute;
+  z-index: 1;
+}
+
+.mnemo__kran-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: white;
+}
+
+.mnemo__triangle1 {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-left: 13px solid green;
+  border-bottom: 10px solid transparent;
+}
+
+.mnemo__triangle1-small {
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-left: 12px solid green;
+  border-bottom: 8px solid transparent;
+}
+
+.mnemo__triangle2 {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-right: 13px solid green;
+  border-bottom: 10px solid transparent;
+}
+
+.mnemo__triangle2-small {
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-right: 12px solid green;
+  border-bottom: 8px solid transparent;
+}
+
+.mnemo__kran-img {
+  position: relative;
+}
+
+.mnemo__kran-img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 5px;
+  left: 5px;
+}
+
+.mnemo__kran2-img {
+  position: relative;
+}
+
+.mnemo__kran2-img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 5px;
+  left: 5px;
+}
+
+.mnemo__kran3-img {
+  position: relative;
+}
+
+.mnemo__kran3-img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 5px;
+  left: 5px;
+}
+
+.mnemo__kran4-img {
+  position: relative;
+}
+
+.mnemo__kran4-img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 5px;
+  left: 5px;
+}
+
+.mnemo__kran5-img {
+  position: relative;
+}
+
+.mnemo__kran5-img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 5px;
+  left: 5px;
+}
+
+
+.kran-1 {
+  bottom: 6.8%;
+  right: 5%;
+}
+
+.kran-2 {
+  bottom: 12.8%;
+  right: 62%;
+}
+
+.kran-3 {
+  top: 0.8%;
+  right: 48%;
+}
+
+.kran-4 {
+  top: 0.8%;
+  right: 28%;
+}
+
+.kran-5 {
+  top: 15%;
+  left: 35.65%;
+}
+
+.kran-6 {
+  top: 15%;
+  left: 35.65%;
+}
+
+.ot-hvo-text {
+  top: 13%;
+  left: 0%;
+}
+
+.avarini-sbros-text {
+  top: 4%;
+  left: 41%;
+}
+
+.par-v-otdelenii-activatsi-text {
+  top: 4%;
+  right: 19%;
+}
+
+.borov-soedinitelni-text {
+  top: 18%;
+  left: 0%;
+  text-align: left;
+  max-width: 140px;
+}
+
+.pech-doziga-gazov-text {
+  top: 19.5%;
+  left: 15%;
+}
+
+.dymosos-text {
+  top: 24%;
+  right: 22%;
+}
+
+.kotel-utilizator-text {
+  top: 37%;
+  right: 31%;
+}
+
+.vyhod-dymovyh-gazov-text {
+  top: 30%;
+  right: -4%;
+  max-width: 103px;
+  text-align: left;
+}
+
+.mokriy-skruber-text {
+  top: 72%;
+  right: 15%;
+}
+
+.topka-text {
+  top: 56%;
+  right: 36%;
+}
+
+.vanna-skrubbera-text {
+  top: 84%;
+  right: 19%;
+  z-index: 1;
+}
+
+.goriz-vibrotransporter-text {
+  max-width: 150px;
+  top: 89%;
+  right: 39%;
+}
+
+.vr-pech-carboniz-text {
+  top: 57%;
+  left: 29%;
+}
+
+.hvo-text {
+  top: 80%;
+  left: 45%;
+}
+
+.holodilnik-text {
+  top: 72%;
+  left: 35%;
+}
+
+.grohot-text {
+  top: 80%;
+  left: 26%;
+}
+
+.elevator-text {
+  top: 76%;
+  left: 17%;
+}
+
+.zagruzka-granul-text {
+  left: 5%;
+  bottom: 20%;
+}
+
+.niz-zagr-kam-text {
+  text-align: left;
+  max-width: 100px;
+  left: 7.5%;
+  bottom: 31.5%;
+}
+
+.v-techke {
+  left: 7.5%;
+  bottom: 28%;
+}
+
+/* .vniz-kamery-zagruzki-text {
+  text-align: left;
+  max-width: 87px;
+  left: 7.5%;
+  bottom: 39%;
+}
+
+.vniz-kamery-zagruzki {
+  left: 7.5%;
+  bottom: 36.5%;
+} */
+
+.vniz-kamery-zagruzki-text {
+  text-align: left;
+  max-width: 87px;
+  left: 7.5%;
+  bottom: 50%;
+}
+
+.vniz-kamery-zagruzki {
+  left: 7.5%;
+  bottom: 46%;
+}
+
+.vverh-kamery-zagruzki-text {
+  text-align: left;
+  max-width: 87px;
+  left: 7.5%;
+  bottom: 40%;
+}
+
+.vverh-kamery-zagruzki {
+  left: 7.5%;
+  bottom: 37%;
+}
+
+.vigruzka-kam-text {
+  bottom: 20%;
+  right: 37%;
+}
+
+.vhod-pechi-doziganiy {
+  left: 7.5%;
+  bottom: 56%;
+}
+
+.vhod-pechi-doziganiy-text {
+  text-align: left;
+  max-width: 87px;
+  left: 7.5%;
+  top: 37%;
+}
+
+.vyhod-pechi-doziganiy-text {
+  text-align: left;
+  max-width: 87px;
+  left: 37%;
+  top: 25%;
+}
+
+.zadanie-temper-na-gorelky-text {
+  font-size: 14px;
+  right: 29.9%;
+  bottom: 31%;
+  color: blue;
+  background-color: white;
+  padding: 2px;
+}
+
+.third-skolz {
+  top: 64%;
+  left: 18.5%;
+}
+
+.second-skolz {
+  top: 64%;
+  left: 36%;
+}
+
+.first-skolz {
+  top: 64%;
+  left: 47.8%;
+}
+
+.first-skolz-text {
+  top: 62.5%;
+  left: 48%;
+}
+
+.second-skolz-text {
+  top: 62.5%;
+  left: 36%;
+}
+
+.third-skolz-text {
+  top: 62.5%;
+  left: 18.5%;
+}
+
+.granul-posle-holodil {
+  bottom: 22%;
+  left: 28%;
+}
+
+.uroven-vody-hvo {
+  display: flex;
+  bottom: 9%;
+  left: 39%;
+}
+
+.uroven-vanne-skrubber {
+  bottom: 11%;
+  right: 21%;
+  z-index: 1;
+}
+
+.column {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.column-hvo {
+  width: 35px;
+  height: 41px;
+  bottom: 14%;
+  left: 40.5%;
+  z-index: 1;
+}
+
+.column-hvo__percent {
+  width: 100%;
+  height: 20px;
+  background-color: rgba(0, 255, 255, 0.7);
+}
+
+.column__box {
+  position: relative;
+}
+
+.column-hvo__span-1,
+.column-hvo__span-2 {
+  position: absolute;
+
+  z-index: 1;
+  color: black;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.column-hvo__span-1 {
+  top: -29px;
+  left: 1px;
+}
+
+.column-hvo__span-2 {
+  top: -29px;
+  left: 21px;
+}
+
+.column-skrubber {
+  width: 292px;
+  height: 139px;
+  bottom: 2.7%;
+  right: 12%;
+  z-index: 1;
+}
+
+.column-skrubber__percent {
+  width: 100%;
+  height: 139px;
+  background-color: #00bfff;
+}
+
+.column-skrubber__span-1,
+.column-skrubber__span-2 {
+  position: absolute;
+  z-index: 1;
+  color: black;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.column-skrubber__span-1 {
+  top: -72px;
+  left: 133px;
+}
+
+.column-skrubber__span-2 {
+  top: -72px;
+  left: 163px;
+}
+
+.column-kotel {
+  width: 57px;
+  height: 85px;
+  bottom: 65.8%;
+  right: 46.4%;
+  z-index: 1;
+}
+
+.column-kotel__percent {
+  width: 100%;
+  height: 85px;
+  max-height: 85px;
+  background-color: #00bfff;
+}
+
+.column-kotel__span-1,
+.column-kotel__span-2 {
+  position: absolute;
+  z-index: 1;
+  color: black;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.column-kotel__span-1 {
+  top: -45px;
+  left: 11px;
+}
+
+.column-kotel__span-2 {
+  top: -45px;
+  left: 35px;
+}
+
+.temper-vody-v-vanne-skrubber {
+  bottom: 11%;
+  right: 13%;
+  z-index: 1;
+}
+
+.p-gazov-posle-skrubber {
+  bottom: 54%;
+  right: -3%;
+}
+
+.temper-v-topke {
+  top: 66%;
+  right: 37.5%;
+}
+
+.p-v-topke {
+  top: 73%;
+  right: 38%;
+}
+
+.zadanie-temper-na-gorelky {
+  top: 69.5%;
+  right: 30%;
+}
+
+.mosh-gorelky {
+  top: 61%;
+  right: 38%;
+}
+
+.temper-gazov-do-skrubber {
+  top: 29%;
+  right: 30%;
+}
+
+.temper-gazov-posle-skrubber {
+  top: 36%;
+  right: 0;
+}
+
+.temper-kamer-vygruz-div {
+  top: 80%;
+  right: 41.8%;
+}
+
+.vyhod-pechi-doziganiy {
+  top: 29%;
+  left: 37%;
+}
+
+.gazy-kotla-utilizazi {
+  top: 34%;
+  left: 54.5%;
+}
+
+.p-v-prostranstve-kotla {
+  top: 31%;
+  left: 54.5%;
+}
+
+.uroven-v-barabane-kotla {
+  top: 22.5%;
+  left: 49%;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.uroven-v-barabane-kotla-mnemo {
+  top: 25.5%;
+  left: 54.5%;
+}
+
+.p-v-barabane-kotla {
+  top: 15%;
+  right: 31%;
+}
+
+/* .im2-percent {
+  bottom: 15%;
+  left: 36%;
+} */
+
+.im5-percent {
+  top: 12%;
+  left: 35.5%;
+}
+
+.krutilka-1 {
+  top: 3.9%;
+  left: 18%;
+  background-color: #0ff;
+  border-radius: 50%;
+  border: 1px solid blue;
+}
+
+.krutilka-2 {
+  top: 13%;
+  left: 18%;
+  background-color: #0ff;
+  border-radius: 50%;
+  border: 1px solid blue;
+}
+
+
+.krutilka-1 img,
+.krutilka-2 img {
+  width: 42px;
+  height: 42px;
+  animation: rotate 1s infinite linear;
+  animation-play-state: paused;
+}
+
+
+.mnemo__gif-2 {
+  top: 28%;
+  left: 74%;
+  background-color: grey;
+  border-radius: 50%;
+  border: 1px solid black;
+}
+
+.mnemo__gif-2 img {
+  width: 49px;
+  height: 49px;
+  animation: rotate 1s infinite linear;
+  animation-play-state: paused;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.temper-topka,
+.temper-vniz-kamer-zagruz,
+.temper-verh-kamer-zagruz,
+.temper-topka,
+.temper-1-skolz,
+.temper-2-skolz,
+.temper-3-skolz,
+.temper-granul-holod,
+.temper-vhod-pech-dozhig,
+.temper-vihod-pech-dozhig,
+.davl-topka,
+.razr-niz-zagr-kam,
+.temper-do-skruber,
+.temper-posle-skruber,
+.temper-vody-vanna-skruber,
+.davl-gaz-posle-skruber,
+.temper-gazov-kotel-utiliz,
+.razr-kotel-utiliz,
+.temper-topka-span,
+.temper-vniz-kamer-zagruz-span,
+.temper-verh-kamer-zagruz-span,
+.temper-topka-span,
+.temper-1-skolz-span,
+.temper-2-skolz-span,
+.temper-3-skolz-span,
+.temper-granul-holod-span,
+.temper-vhod-pech-dozhig-span,
+.temper-vihod-pech-dozhig-span,
+.davl-topka-span,
+.razr-niz-zagr-kam-span,
+.temper-do-skruber-span,
+.temper-posle-skruber-span,
+.temper-vody-vanna-skruber-span,
+.davl-gaz-posle-skruber-span,
+.temper-gazov-kotel-utiliz-span,
+.razr-kotel-utiliz-span,
+.temper-kamer-vygruz,
+.temper-kamer-vygruz-span,
+.uroven-v-barabane-kotla-mnemo-val,
+.uroven-v-barabane-kotla-mnemo-val-span,
+.uroven-vanne-skrubber-value,
+.uroven-vanne-skrubber-value-span,
+.uroven-vody-hvo-value,
+.uroven-vody-hvo-value-span {
+  animation: colorRed 0.5s infinite ease-in-out;
+  animation-play-state: paused;
+}
+
+
+.siren {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  opacity: 0;
+}
+
+/* table-small */
+
+.table {
+  position: absolute;
+  top: 10px;
+  right: -40px;
+  z-index: 1;
+  width: 100%;
+  max-width: 380px;
+  height: fit-content;
+  text-align: left;
+  border-collapse: collapse;
+  border-spacing: 5px;
+  background-color: #e7eef4;
+  box-shadow: 0 0 5px 0 black;
+}
+
+.table__tr {
+  height: 15px;
+  border: 1px solid black;
+}
+
+.table__th {
+  padding: 5px 10px;
+  text-align: center;
+  font-family: 'Bitter', sans-serif;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 800;
+  color: black;
+}
+
+.table__td {
+  text-align: center;
+  font-family: 'Bitter', sans-serif;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 500;
+  color: black;
+  animation: colorRed 0.9s infinite ease-in-out;
+
+}
+
+.table__left {
+  padding: 3px;
+  text-align: left;
+}
+
+.table__right {
+  color: green;
+  font-weight: 600;
+  animation: colorRed 0.9s infinite ease-in-out;
+}
+
+.table__td--descr {
+  animation-play-state: paused;
+  text-align: center;
+  font-size: 14px;
+  line-height: 19px;
+}
+
+.table__th:not(:last-child),
+.table__td:not(:last-child) {
+  border-right: 1px solid black;
+}
+
+.table__tr--incorrect-param {
+  background-color: transparent;
+  transition: background-color .3s ease-in-out;
+  cursor: pointer;
+}
+
+.table__tr--incorrect-param:hover {
+  background-color: white;
+}
+
+.table__tr--incorrect-param:active {
+  background-color: white;
+}
+
+
+
+@keyframes colorRed {
+  0% {
+    color: green;
+  }
+
+  100% {
+    color: red;
+  }
+}
+
+/* light-alarm */
+.light-alarm {
+  position: absolute;
+  top: 420px;
+  left: 530px;
+  z-index: 1;
+}
+
+.light-alarm__content {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-size: 18px;
+  line-height: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  font-weight: 600;
+  color: white;
+  background-color: red;
+  border: none;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out 0s;
+}
+
+.light-alarm__content::before {
+  content: '';
+  border-radius: 10px;
+  min-width: calc(100% + 6px);
+  min-height: calc(45px + 6px);
+  border: 10px solid red;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.3s ease-in-out 0s;
+}
+
+.light-alarm__content::after {
+  content: '';
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  border: 10px solid red;
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ring 3s infinite;
+  pointer-events: none;
+}
+
+.light-alarm__content.siren-off {
+  background-color: green;
+}
+
+.siren-off::after {
+  animation-play-state: paused;
+}
+
+@keyframes ring {
+  0% {
+    width: 30px;
+    height: 30px;
+    opacity: 1;
+  }
+
+  100% {
+    width: 900px;
+    height: 900px;
+    opacity: 0;
+  }
+}
+
+
+/* всплывающие подсказки */
+/* Всплывающие подсказки */
+.mnemo__param-box--btns {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.mnemo__param-box--btn {
+  padding: 5px;
+  font-size: 16px;
+  line-height: 23px;
+  font-weight: 600;
+  color: green;
+  border: 1px solid green;
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.mnemo__param-box--btn:hover {
+  color: white;
+  background-color: green;
+}
+
+.mnemo__param-box--btn:active {
+  color: white;
+  background-color: green;
+}
+
+.mnemo__param-clue {
+  width: 150px;
+  position: absolute !important;
+  z-index: 11111;
+  border-radius: 15px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 5px, rgba(0, 0, 0, 0.12) 0px 0px 3px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.mnemo__param-clue-content {
+  position: relative;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(240, 238, 238);
+  border: 2px solid green;
+  border-radius: 15px;
+}
+
+.mnemo__param-clue-content::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  z-index: -1;
+  width: 25px;
+  height: 25px;
+  background-color: green;
+  transform: rotate(45deg) translateX(-50%);
+}
+
+.mnemo__param-clue-div:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.mnemo__param-clue-div {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 400;
+}
+
+.mnemo__param-clue-span {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.mnemo__tooltip:hover .mnemo__param-clue {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.mnemo__tooltip:active .mnemo__param-clue {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.mnemo__tooltip:focus {
+  outline: none;
+}
+
+.mnemo__tooltip:focus .mnemo__param-clue {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.enabled-hover:hover {
+  box-shadow: 0 0 0 3px white, 0 0 0 6px green;
+  transition: box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.enabled-hover:active {
+  box-shadow: 0 0 0 3px white, 0 0 0 6px green;
+  transition: box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.enabled-hover:hover .mnemo__param-clue {
+  visibility: visible;
+  opacity: 1;
+}
+
+.enabled-hover:hover .mnemo__param-clue {
+  visibility: visible;
+  opacity: 1;
+}
+
+.enabled-hover:focus {
+  outline: none;
+}
+
+.enabled-hover:focus .mnemo__param-clue {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+.v-techke-clue {
+  width: 225px;
+  top: -102px;
+  left: -66px;
+}
+
+.vniz-kamery-zagruzki-clue {
+  width: 225px;
+  top: -102px;
+  left: -85px;
+}
+
+.vverh-kamery-zagruzki-clue {
+  width: 225px;
+  top: -102px;
+  left: -85px;
+}
+
+.vhod-pechi-doziganiy-clue {
+  width: 225px;
+  top: -102px;
+  left: -85px;
+}
+
+.third-skolz-clue {
+  width: 225px;
+  top: -102px;
+  left: -85px;
+}
+
+.second-skolz-clue {
+  width: 225px;
+  top: -102px;
+  left: -85px;
+}
+
+.first-skolz-clue {
+  width: 225px;
+  top: -102px;
+  left: -85px;
+}
+
+.granul-posle-holodil-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.uroven-vody-hvo-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.uroven-vanne-skrubber-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.temper-vody-v-vanne-skrubber-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.p-gazov-posle-skrubber-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.temper-v-topke-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.p-v-topke-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.temper-gazov-do-skrubber-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.temper-gazov-posle-skrubber-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.temper-kamer-vygruz-div-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.vyhod-pechi-doziganiy-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.gazy-kotla-utilizazi-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+.p-v-prostranstve-kotla-clue {
+  width: 225px;
+  top: -102px;
+  left: -75px;
+}
+
+.p-v-barabane-kotla-clue {
+  width: 225px;
+  top: -102px;
+  left: -75px;
+}
+
+.uroven-v-barabane-kotla-mnemo-clue {
+  width: 225px;
+  top: -102px;
+  left: -90px;
+}
+
+/* модальное окно */
+.mnemo__modal-box--btns {
+  position: absolute;
+  top: -45px;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.mnemo__modal-box--btn {
+  padding: 5px;
+  font-size: 16px;
+  line-height: 23px;
+  font-weight: 600;
+  background-color: white;
+  color: green;
+  border: 1px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+.mnemo__modal-box--btn:hover {
+  color: white;
+  background-color: green;
+  cursor: pointer;
+}
+
+.mnemo__modal-box--btn:active {
+  color: white;
+  background-color: green;
+  cursor: pointer;
+}
+
+.modal-btn {
+  border-left: none;
+}
+
+.mnemo__modal-background {
+  position: fixed;
+  top: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  z-index: -3;
+  cursor: default;
+}
+
+.mnemo__modal-background.enabled {
+  cursor: pointer;
+  opacity: 1;
+  z-index: 3;
+  transition: opacity .5s ease-in-out;
+}
+
+/* .mnemo__modal-start {
+  padding: 20px;
+  position: absolute;
+  max-width: 850px;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 3px 6px, rgba(0, 0, 0, 0.7) 0px 3px 6px;
+  cursor: default;
+}
+
+.mnemo__modal-descr-container {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.mnemo__modal-start.enabled {
+  transition: height .4s ease-in-out;
+} */
+
+.mnemo__modal-active {
+  padding: 20px;
+
+  position: absolute;
+  max-width: 780px;
+  width: 100%;
+  /* height: 50px; */
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 3px 6px, rgba(0, 0, 0, 0.7) 0px 3px 6px;
+  cursor: default;
+}
+
+.mnemo__modal-active.enabled {
+  height: 100%;
+  max-height: 600px;
+  transition: height .4s ease-in-out;
+}
+
+.mnemo__modal-title {
+  padding-bottom: 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid gray;
+}
+
+.mnemo__modal-title-text {
+  position: relative;
+  font-size: 28px;
+  font-family: 'Bitter', sans-serif;
+  line-height: 24px;
+  color: black;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mnemo__modal-window {
+  max-height: 600px;
+  padding-top: 20px;
+  overflow-y: auto;
+  height: 80%;
+}
+
+.mnemo__modal-close {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  z-index: 5;
+  width: 20px;
+  height: 20px;
+  transition: opacity .3s ease-in-out;
+  cursor: pointer;
+}
+
+.mnemo__modal-close:hover {
+  opacity: 0.5;
+}
+
+.mnemo__modal-close:active {
+  opacity: 0.5;
+}
+
+/* .krest {
+  position: relative;
+  transform: rotate(45deg);
+}
+
+.line-1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 2px;
+  background-color: green;
+}
+
+.line-2 {
+  transform: translate(-50%, -50%) rotate(90deg);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: 100%;
+  height: 2px;
+  background-color: green;
+} */
+
+.modal-content__box {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-content__link {
+  position: relative;
+  font-size: 16px;
+  line-height: 24px;
+  color: black;
+  font-weight: 500;
+  font-family: 'Bitter', sans-serif;
+}
+
+.modal-content__link-download {
+  padding: 6px 10px;
+  font-size: 15px;
+  line-height: 14px;
+  color: green;
+  font-weight: 500;
+  font-family: 'Bitter', sans-serif;
+  text-decoration: none;
+  border: 2px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+.modal-content__link-download:first-child {
+  border-right: none;
+}
+
+.modal-content__link-download:hover {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download:active {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download:focus {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download--one:first-child {
+  border-right: 2px solid green;
+}
+
+.modal-content__link-download-solo {
+  padding: 6px 10px;
+  font-size: 15px;
+  line-height: 14px;
+  color: green;
+  font-family: 'Bitter', sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  border: 2px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+
+
+.modal-content__link-download-solo:hover {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download-solo:active {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download-solo:focus {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-container {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.modal-content__link-container.active {
+  display: none;
+}
+
+.modal__accordion {
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.modal__accordion-title {
+  display: block;
+  padding: 3px;
+  cursor: pointer;
+  font-family: 'Bitter', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: green;
+  background-color: white;
+
+  border: 1px green solid;
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.modal__accordion-title:hover {
+  color: white;
+  background-color: green;
+}
+
+.modal__accordion-title:active {
+  color: white;
+  background-color: green;
+}
+
+.modal__accordion-title.enabled {
+  color: white;
+  background-color: green;
+}
+
+
+.modal__accordion-content {
+  margin: 0;
+  padding: 0;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-right: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-height: 0px;
+  font-size: 30px;
+  line-height: 36px;
+  list-style-type: none;
+  transition: max-height .3s ease-in-out;
+  overflow: hidden;
+}
+
+.modal__accordion-content-item {
+  margin-bottom: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-content__link {
+  margin-right: 30px;
+}
+
+/* troubleshooting */
+
+.troubleshooting {
+  display: flex;
+  flex-direction: column;
+}
+
+.troubleshooting__title {
+  text-align: center;
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 600;
+  color: green;
+  margin-bottom: 30px;
+}
+
+.troubleshooting__subtitle {
+  padding: 5px 10px;
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
+  margin-bottom: 10px;
+  text-align: left;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 400;
+  color: green;
+  border: 1px solid green;
+  background-color: transparent;
+  transition: background-color .3s ease-in-out, color .3s ease-in-out;
+  cursor: pointer;
+}
+
+.troubleshooting__subtitle:hover,
+.troubleshooting__subtitle.active {
+  color: white;
+  background-color: green;
+}
+
+.troubleshooting__subtitle:active {
+  color: white;
+  background-color: green;
+}
+
+.troubleshooting__subtitle:focus-visible {
+  color: white;
+  background-color: green;
+  outline: none;
+}
+
+.troubleshooting__container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.troubleshooting__descr {
+  margin-bottom: 10px;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 400;
+  color: black;
+}
+
+.troubleshooting__descr--possible-error {
+  font-size: 20px;
+  line-height: 27px;
+  font-weight: 600;
+  color: black;
+}
+
+.troubleshooting__section {
+  margin-bottom: 20px;
+}
+
+.troubleshooting__item {
+  padding: 10px;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: black;
+
+  background-color: #e9f5e9;
+  border-left: 4px solid green;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.troubleshooting__item:hover {
+  background-color: #d4edda;
+  transform: translateX(5px);
+}
+
+.troubleshooting__item--cause--active:hover {
+  background-color: #f8d7da;
+  transform: none;
+  cursor: unset;
+}
+
+.troubleshooting__item--cause {
+  background-color: #f8d7da;
+  border-left-color: #dc3545;
+}
+
+.troubleshooting__item--action {
+  width: 95%;
+  display: none;
+  background-color: #d4edda;
+  border-left-color: green;
+  margin-top: 20px;
+  margin-left: auto;
+  padding: 10px 10px 10px 20px;
+  border: 1px solid green;
+  border-radius: 4px;
+  cursor: default;
+}
+
+.troubleshooting__item--action:hover {
+  transform: none;
+}
+
+.troubleshooting__item--active+.troubleshooting__item--action {
+  display: block;
+}
+
+.troubleshooting__label {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  color: black;
+}
+
+.troubleshooting__item--action-possble-error {
+  display: block;
+}
+
+.troubleshooting__item--cause-possible-error:hover {
+  background-color: #f8d7da;
+  transform: none;
+  cursor: unset;
+}
+
+.troubleshooting__sections {
+  display: none;
+}
+
+.troubleshooting__sections.active {
+  display: block;
+}
+
+/* Password */
+
+.password-window {
+  display: none;
+}
+
+.password-window.active {
+  display: block;
+  z-index: 1;
+}
+
+.password-form {
+  display: flex;
+  padding-right: 5px;
+  opacity: 0;
+}
+
+.password-form.active {
+  opacity: 1;
+}
+
+.password-form__container {
+  display: flex;
+  flex-direction: column;
+}
+
+.password-label {
+  margin-top: 27px;
+  position: absolute;
+  display: none;
+  z-index: 1;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+  font-style: italic;
+  color: red;
+  transition: opacity .3s ease-in-out;
+}
+
+.password-label.active {
+  display: block;
+}
+
+.password-input {
+  padding-left: 15px;
+  margin-right: 10px;
+  height: 26px;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: black;
+  border: 2px solid green;
+  background-color: white;
+  border-radius: 10px;
+  transition: border .3s ease-in-out;
+}
+
+.password-input:hover {
+  border: 2px solid blue;
+}
+
+.password-input:active {
+  border: 2px solid blue;
+}
+
+.password-input:focus {
+  border: 2px solid blue;
+  outline: none;
+}
+
+.password-input::placeholder {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: black;
+}
+
+.password-input.error {
+  border: 2px solid red;
+  transition: border .3s ease-in-out;
+}
+
+.modal-content__link-may {
+  display: none;
+}
+
+.modal-content__link-may.active {
+  padding-right: 5px;
+  display: flex;
+  flex-shrink: 0;
+}
+
+.password-btn--ok {
+  padding: 3px 10px;
+  height: 26px;
+  font-size: 15px;
+  line-height: 14px;
+  color: green;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 10px;
+  border: 2px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+.password-btn--ok:hover {
+  background-color: green;
+  color: white;
+}
+
+
+/* level */
+.column-skrubber__percent,
+.column-kotel__percent,
+.column-hvo__percent {
+  animation: colorRedLevel 0.5s infinite ease-in-out;
+  animation-play-state: paused;
+}
+
+@keyframes colorRedLevel {
+  0% {
+    background-color: #00bfff;
+  }
+
+  100% {
+    background-color: red;
+  }
+}
+
+
+
+
+/* for telegram */
+.object {
+  display: flex;
+  flex-direction: column;
+}
+
+.object__list {
+  margin-top: 10px;
+  display: flex;
+  gap: 30px;
+}
+
+.object__table {
+  position: static;
+}
+
+.table__td--object {
+  animation-play-state: paused;
+}
+
+/* for laboratory */
+.laboratory__btn {
+  border-left: none;
+}
+
+.mnemo__modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.laboratory__table {
+  position: static;
+  max-width: fit-content;
+  min-width: 520px;
+}
+
+.laboratory__table-td {
+  animation-play-state: paused;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.laboratory__table-th {
+  text-align: center;
+  font-size: 18px;
+  line-height: 22px;
+}
+
+.laboratory__table-title {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  color: green;
+}
+
+.laboratory__form {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  max-width: 520px;
+}
+
+.laboratory__form-item {
+  position: relative;
+  width: 100%;
+}
+
+.laboratory__form-item:not(:last-child) {
+  margin-right: 10px;
+}
+
+.laboratory__form-label {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  color: green;
+}
+
+.laboratory__form-input {
+  margin-top: 5px;
+  display: block;
+  width: 100%;
+  height: 25px;
+  padding: 4px 10px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid grey;
+  transition: border .3s ease-in-out, box-shadow .3s ease-in-out;
+}
+
+.laboratory__form-error {
+  display: none;
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  z-index: 1;
+  font-size: 12px;
+  line-height: 12px;
+  font-weight: 600;
+  color: red;
+  font-style: italic;
+}
+
+.laboratory__form-input.error {
+  border: 1px solid red;
+  box-shadow: 0 0 0 0.2rem rgba(255, 69, 58, 0.25);
+}
+
+.laboratory__form-error.active {
+  display: block;
+}
+
+.laboratory__form-input[type="number"]::-webkit-outer-spin-button,
+.laboratory__form-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.laboratory__form-input::placeholder {
+  font-family: 'Bitter', sans-serif;
+  color: grey;
+}
+
+.laboratory__form-input:hover {
+  border: 1px solid green;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(61, 158, 107, 0.25);
+}
+
+.laboratory__form-input:active {
+  border: 1px solid green;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(61, 158, 107, 0.25);
+}
+
+.laboratory__form-input:focus {
+  color: #212529;
+  background-color: #fff;
+  border: 1px solid green;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(61, 158, 107, 0.25);
+}
+
+.laboratory__form-input:disabled {
+  background-color: #f5f5f5;
+  opacity: 1;
+}
+
+.laboratory__form-btn {
+  margin-left: 10px;
+  height: 25px;
+  padding: 2px 10px;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  background-color: white;
+  color: green;
+  border: 1px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+.laboratory__form-btn:hover {
+  color: white;
+  background-color: green;
+}
+
+.laboratory__descr {
+  max-width: 450px;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: black;
+}
+
+.laboratory__table--mnemo {
+  max-width: 333px;
+  position: absolute;
+  top: 25%;
+  left: 7%;
+  z-index: 2;
+}
+
+.laboratory__table-td--mnemo {
+  animation-play-state: paused;
+  font-size: 12px;
+  line-height: 16px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+}
+
+.laboratory__table-th--mnemo {
+  text-align: center;
+  font-size: 15px;
+  line-height: 19px;
+  font-weight: 400;
+}
+
+.laboratory__table-td--mnemo {
+  text-align: center;
+  font-size: 15px;
+  line-height: 19px;
+  font-weight: 600;
+}
+
+@media (max-width: 1280px) {
+  .mnemo {
+    position: relative;
+    width: 976px;
+  }
+
+  .mnemo__img {
+    width: 976px;
+  }
+
+  .mnemo__param-text,
+  .mnemo__param-naimenov {
+    font-size: 12px;
+    line-height: 14px;
+  }
+
+  .mnemo__param-descr {
+    font-size: 10px;
+    line-height: 10px;
+  }
+
+  .krutilka-1 img,
+  .krutilka-2 img {
+    width: 31px;
+    height: 28px;
+
+  }
+
+  .avarini-sbros-text {
+    left: 29%;
+  }
+
+  .par-v-otdelenii-activatsi-text {
+    right: 20%;
+  }
+
+  .borov-soedinitelni-text {
+    top: 19%;
+  }
+
+  .pech-doziga-gazov-text {
+    top: 19%;
+  }
+
+  .zagruzka-granul-text {
+    left: 4%;
+  }
+
+  .vniz-kamery-zagruzki-text,
+  .vverh-kamery-zagruzki-text,
+  .vhod-pechi-doziganiy-text {
+    left: 7%;
+    max-width: 80px;
+  }
+
+  .niz-zagr-kam-text {
+    max-width: 80px;
+    left: 7%;
+  }
+
+  .vyhod-dymovyh-gazov-text {
+    text-align: center;
+    top: 36%;
+    right: 8%;
+  }
+
+  .p-gazov-posle-skrubber {
+    bottom: 53%;
+    right: -3%;
+  }
+
+  .zadanie-temper-na-gorelky-text {
+    font-size: 8px;
+  }
+
+  .mnemo__gif-1 {
+    top: 62.2%;
+    left: 60%;
+  }
+
+  .mnemo__gif-2 {
+    top: 27.8%;
+    left: 73.8%;
+  }
+
+  .mnemo__gif-2 img {
+    width: 40px;
+    height: 37px;
+  }
+
+  .mnemo__gif-3 {
+    top: 33.3%;
+    right: -55px;
+  }
+
+  /* .mnemo__gif-4 {
+    bottom: 6.4%;
+  }
+
+  .mnemo__gif-6,
+  .mnemo__gif-7 {
+    top: 0.3%;
+  }
+
+  .mnemo__gif-8 {
+    top: 14.6%;
+  } */
+
+  .kran-1 {
+    bottom: 6.5%;
+  }
+
+  .kran-2 {
+    bottom: 12.7%;
+  }
+
+  .kran-3 {
+    top: 0.5%;
+  }
+
+  .kran-4 {
+    top: 0.5%;
+  }
+
+  .kran-5 {
+    top: 14.7%;
+    left: 35.4%;
+  }
+
+  .kran-6 {
+    top: 14.7%;
+    left: 35.4%;
+  }
+
+
+  .krutilka-1,
+  .krutilka-2 {
+    left: 18%;
+  }
+
+  .column-kotel {
+    width: 42px;
+    height: 64px;
+  }
+
+  .column-kotel__span-1 {
+    left: 4px;
+  }
+
+  .column-kotel__span-2 {
+    left: 26px;
+  }
+
+  .column-kotel__percent {
+    height: 64px;
+    max-height: 64px;
+  }
+
+  .column-skrubber {
+    width: 217px;
+    height: 105px;
+  }
+
+  .column-skrubber__percent {
+    height: 105px;
+  }
+
+  .column-hvo {
+    width: 25px;
+    height: 32px;
+    bottom: 13.9%;
+  }
+
+  .column-hvo__percent {
+    height: 32px;
+  }
+
+  .uroven-vanne-skrubber {
+    bottom: 9%;
+    right: 25%;
+  }
+
+  .column-skrubber__span-1,
+  .column-skrubber__span-2 {
+    top: -61px;
+  }
+
+  .column-hvo__span-1,
+  .column-hvo__span-2 {
+    font-size: 10px;
+  }
+
+  .column-hvo__span-2 {
+    left: 16px;
+  }
+
+  .mnemo__title {
+    font-size: 24px;
+    line-height: 24px;
+  }
+
+  .current-param__title-span {
+    font-size: 24px;
+    line-height: 24px;
+  }
+
+  .current-param__subtitle {
+    font-size: 18px;
+    line-height: 18px;
+  }
+
+  .current-param__subtitle-span {
+    font-size: 20px;
+    line-height: 20px;
+  }
+
+  .table {
+    max-width: 350px;
+    right: -14px;
+  }
+
+  .mnemo__title-content {
+    max-width: 600px;
+  }
+
+  .table__td {
+    font-size: 12px;
+    line-height: 12px;
+  }
+
+  .light-alarm {
+
+    top: 320px;
+    left: 430px;
+
+  }
+
+  .temper-gazov-posle-skrubber {
+    top: 35%;
+  }
+
+  .vhod-pechi-doziganiy {
+    left: 7%;
+    bottom: 55%;
+  }
+
+  .vniz-kamery-zagruzki {
+    left: 7%;
+    bottom: 47%;
+  }
+
+  .vverh-kamery-zagruzki {
+    left: 7%;
+    bottom: 38%;
+  }
+
+  .v-techke {
+    left: 7%;
+    bottom: 28%;
+  }
+
+  .vhod-pechi-doziganiy-text {
+    top: 38%;
+  }
+
+  .vniz-kamery-zagruzki-text {
+    bottom: 51%;
+  }
+
+  .vverh-kamery-zagruzki-text {
+    bottom: 42%;
+  }
+
+  .niz-zagr-kam-text {
+    bottom: 32%;
+  }
+
+  .mnemo__param-box--btn {
+    font-size: 14px;
+    line-height: 19px;
+  }
+
+  .gazy-kotla-utilizazi {
+    top: 37%;
+    left: 49.5%;
+  }
+
+  .uroven-v-barabane-kotla-mnemo {
+    top: 24.5%;
+    left: 54.2%;
+  }
+
+  .im5-percent {
+    top: 10%;
+    left: 35.5%;
+  }
+
+  .vhod-pechi-doziganiy-clue {
+    left: -75px;
+  }
+
+  .vverh-kamery-zagruzki-clue {
+    left: -75px;
+  }
+
+  .vniz-kamery-zagruzki-clue {
+    left: -75px;
+  }
+
+  @keyframes ring {
+    0% {
+      width: 30px;
+      height: 30px;
+      opacity: 1;
+    }
+
+    100% {
+      width: 600px;
+      height: 600px;
+      opacity: 0;
+    }
+  }
+
+  .mnemo__modal-box--btns {
+    top: -5px;
+  }
+
+  .mnemo__modal-box--btn {
+    font-size: 14px;
+    line-height: 19px;
+  }
+
+  .laboratory__table--mnemo {
+    max-width: 285px;
+  }
+
+  .laboratory__table-th--mnemo {
+    font-size: 14px;
+    line-height: 19px;
+    font-weight: 400;
+  }
+
+  .laboratory__table-td--mnemo {
+    font-size: 14px;
+    line-height: 19px;
+    font-weight: 600;
+  }
+}
