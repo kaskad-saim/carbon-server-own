@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const mongoURI = process.env.MONGO_URI;
+const mongoURI = 'mongodb://127.0.0.1:27017/carbon';
 
 export const connectDB = async () => {
   try {

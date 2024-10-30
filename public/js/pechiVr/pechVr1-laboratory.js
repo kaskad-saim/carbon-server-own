@@ -1,3 +1,5 @@
+// client.js
+
 import { closeModal } from './components/modal.js';
 
 // Элементы формы и таблицы
@@ -74,7 +76,6 @@ const showLoadingMessage = () => {
     return cell;
   };
 
-  // Добавляем 3 ячейки с текстом "Данные загружаются"
   row.appendChild(createLoadingCell());
   row.appendChild(createLoadingCell());
   row.appendChild(createLoadingCell());
@@ -93,7 +94,7 @@ const showLastValueLoading = () => {
 const fetchLastData = async () => {
   try {
     showLastValueLoading(); // Показываем прелоудер для последнего значения
-    const data = await fetchData('http://169.254.0.156:3000/pechVr1/last');
+    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr1/last'); // Новый порт и маршрут
     if (data) {
       setCellData(data.value, data.time, data.date);
     } else {
@@ -135,7 +136,7 @@ const fetchLastDayData = async () => {
     tableBody.innerHTML = '';  // Очищаем таблицу
     tableBody.appendChild(showLoadingMessage()); // Показываем прелоудер
 
-    const data = await fetchData('http://169.254.0.156:3000/pechVr1/last-day');
+    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr1/last-day'); // Новый порт и маршрут
     tableBody.innerHTML = ''; // Очищаем перед добавлением данных
 
     if (data && data.length > 0) {
@@ -194,7 +195,7 @@ form.addEventListener('submit', async (event) => {
 
   // Отправка данных на сервер
   try {
-    const data = await fetchData('http://169.254.0.156:3000/pechVr1/submit', {
+    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr1/submit', { // Новый порт и маршрут
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value: numericValue.toString(), time }),

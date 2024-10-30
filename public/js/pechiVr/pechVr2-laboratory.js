@@ -73,7 +73,6 @@ const showLoadingMessage = () => {
     return cell;
   };
 
-  // Добавляем 3 ячейки с текстом "Данные загружаются"
   row.appendChild(createLoadingCell());
   row.appendChild(createLoadingCell());
   row.appendChild(createLoadingCell());
@@ -91,9 +90,9 @@ const showLastValueLoading = () => {
 // Функция для получения последних данных
 const fetchLastData = async () => {
   try {
-    showLastValueLoading(); // Показываем прелоудер для последнего значения
+    showLastValueLoading();
 
-    const data = await fetchData('http://169.254.0.156:3000/pechVr2/last');
+    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr2/last');
     if (data) {
       setCellData(data.value, data.time, data.date);
     } else {
@@ -132,11 +131,11 @@ const createTableRow = (dateText, timeText, valueText) => {
 // Функция для получения данных за последние 24 часа и обновления таблицы
 const fetchLastDayData = async () => {
   try {
-    tableBody.innerHTML = ''; // Очищаем таблицу
-    tableBody.appendChild(showLoadingMessage()); // Показываем прелоудер
+    tableBody.innerHTML = '';
+    tableBody.appendChild(showLoadingMessage());
 
-    const data = await fetchData('http://169.254.0.156:3000/pechVr2/last-day');
-    tableBody.innerHTML = ''; // Очищаем перед добавлением данных
+    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr2/last-day');
+    tableBody.innerHTML = '';
 
     if (data && data.length > 0) {
       data.forEach((item) => {
@@ -194,7 +193,7 @@ form.addEventListener('submit', async (event) => {
 
   // Отправка данных на сервер
   try {
-    const data = await fetchData('http://169.254.0.156:3000/pechVr2/submit', {
+    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr2/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value: numericValue.toString(), time }),

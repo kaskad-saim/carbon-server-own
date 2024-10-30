@@ -1016,6 +1016,14 @@ body::-webkit-scrollbar-thumb {
 
 }
 
+.table__td-btn {
+  font-family: 'Bitter', sans-serif;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 500;
+  color: blue;
+}
+
 .table__left {
   padding: 3px;
   text-align: left;
@@ -2461,6 +2469,11 @@ body::-webkit-scrollbar-thumb {
   }
 
   .table__td {
+    font-size: 12px;
+    line-height: 12px;
+  }
+
+  .table__td-btn {
     font-size: 12px;
     line-height: 12px;
   }

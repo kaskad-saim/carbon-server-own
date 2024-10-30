@@ -187,7 +187,7 @@ export const checkConditions = () => {
       min: 1000,
       max: 1100,
       description: 'Внизу камеры загрузки, °C',
-      modalId: 'temper-vniz-kamer-zagruz-modal',
+      modalId: 'temper-vniz-kamer-zagruz-high-modal',
     },
     {
       selector: '.temper-vhod-pech-dozhig',
