@@ -1,3 +1,4 @@
+// Функции управления анимацией параметров
 const animationRun = (param) => {
   param.style.animationPlayState = 'running';
 };
@@ -6,22 +7,30 @@ const animationPaused = (param) => {
   param.style.animationPlayState = 'paused';
 };
 
-// Функция для добавления строки в таблицу, если параметр вышел за пределы нормы и отсутствует
-const addRowIfRunning = (param, description, modalId) => {
+// Функция для обновления строки в таблице
+const updateRow = (isError, description, value, modalId) => {
   const tableTbody = document.querySelector('.table__tbody-params');
+
+  if (!description) {
+    console.warn(`Описание параметра отсутствует для значения: "${value}"`);
+    return;
+  }
+
   const existingRow = tableTbody.querySelector(`[data-modal-target="${modalId}"]`);
 
-  if (param.style.animationPlayState === 'running') {
-    if (!existingRow) { // Проверка на отсутствие строки
+  if (isError) {
+    if (!existingRow) { // Добавить строку, если её нет
       const row = document.createElement('tr');
       row.classList.add('table__tr');
-      row.dataset.modalTarget = modalId; // Установка уникального атрибута для идентификации
+      if (modalId) {
+        row.dataset.modalTarget = modalId; // Установка уникального атрибута для идентификации
+      }
 
       row.innerHTML = `
         <td class="table__td table__left">${description}</td>
-        <td class="table__td table__right">${param.innerText}</td>
+        <td class="table__td table__right">${value}</td>
         <td class="table__td table__tr--incorrect-param">
-          <button class="table__td-btn btn-reset" data-modal-target="${modalId}">Подробнее</button>
+          ${modalId ? `<button class="table__td-btn btn-reset" data-modal-target="${modalId}">Подробнее</button>` : ''}
         </td>
       `;
       tableTbody.appendChild(row);
@@ -31,25 +40,53 @@ const addRowIfRunning = (param, description, modalId) => {
       if (noDataRow) {
         noDataRow.remove();
       }
+    } else {
+      // Обновить значение в существующей строке, если нужно
+      const valueCell = existingRow.querySelector('.table__td.table__right');
+      if (valueCell) {
+        valueCell.innerText = value;
+      }
     }
-  } else if (existingRow) { // Удаление строки, если параметр нормализовался
-    existingRow.closest('tr').remove();
+  } else {
+    if (existingRow) { // Удалить строку, если ошибка ушла
+      existingRow.remove();
+    }
+
+    // Если после удаления строки нет ошибок, добавить "нет данных" строку
+    const errorRows = tableTbody.querySelectorAll('tr[data-modal-target]');
+    if (errorRows.length === 0) {
+      let noDataRow = tableTbody.querySelector('.no-data-row');
+      if (!noDataRow) {
+        noDataRow = document.createElement('tr');
+        noDataRow.classList.add('table__tr', 'no-data-row');
+        noDataRow.innerHTML = `
+          <td class="table__td table__left table__td--descr" colspan="3">
+            Тут будут отображаться параметры, которые превышают допустимые значения
+          </td>
+        `;
+        tableTbody.appendChild(noDataRow);
+      }
+    }
   }
+
 };
 
-// Управление сиреной в зависимости от наличия строк с некорректными параметрами
+// Функция управления сиреной
 const toggleSiren = (hasErrors) => {
   const sirenAnimation = document.querySelector('.light-alarm__content');
+
+  if (!sirenAnimation) {
+    console.warn('Элемент сирены не найден.');
+    return;
+  }
 
   if (hasErrors) {
     if (sirenAnimation.classList.contains('siren-off')) {
       sirenAnimation.classList.remove('siren-off');
-      console.log('Сирена включена');
     }
   } else {
     if (!sirenAnimation.classList.contains('siren-off')) {
       sirenAnimation.classList.add('siren-off');
-      console.log('Сирена выключена');
     }
   }
 };
@@ -60,61 +97,89 @@ export const checkConditions = () => {
   const temper3Skolz = document.querySelector('.temper-3-skolz');
   const temper3SkolzSpan = document.querySelector('.temper-3-skolz-span');
 
-  if (temper1Skolz) {
+  // Массив для сбора ошибок
+  const errors = [];
+
+  // Обработка специальных параметров temper1Skolz и temper3Skolz
+  if (temper1Skolz && temper3Skolz && temper3SkolzSpan) {
     const temp1Value = Number(temper1Skolz.innerText);
+    const temp3Value = Number(temper3Skolz.innerText);
+
     if (temp1Value < 550 && temp1Value > 50) {
       modeTitle.innerText = 'Выход на режим';
-      const temp3Value = Number(temper3Skolz.innerText);
-      if (temp3Value > 750) {
+      const isError = temp3Value > 750; // Ошибка, если temp3Value >750
+      if (isError) {
         animationRun(temper3Skolz);
         animationRun(temper3SkolzSpan);
+        errors.push({
+          description: 'На 3-ей скользящей, °C',
+          value: temp3Value,
+          modalId: 'temper-3-skolz-modal',
+        });
       } else {
         animationPaused(temper3Skolz);
         animationPaused(temper3SkolzSpan);
       }
-      addRowIfRunning(temper3Skolz, 'На 3-ей скользящей, °C', 'temper-3-skolz-modal');
+      updateRow(isError, 'На 3-ей скользящей, °C', temp3Value, 'temper-3-skolz-modal');
     } else if (temp1Value > 550) {
       modeTitle.innerText = 'Установившийся режим';
-      const temp3Value = Number(temper3Skolz.innerText);
-      if (temp3Value > 400) {
+      const isError = temp3Value > 400; // Ошибка, если temp3Value >400
+      if (isError) {
         animationRun(temper3Skolz);
         animationRun(temper3SkolzSpan);
+        errors.push({
+          description: 'На 3-ей скользящей, °C',
+          value: temp3Value,
+          modalId: 'temper-3-skolz-modal',
+        });
       } else {
         animationPaused(temper3Skolz);
         animationPaused(temper3SkolzSpan);
       }
-      addRowIfRunning(temper3Skolz, 'На 3-ей скользящей, °C', 'temper-3-skolz-modal');
+      updateRow(isError, 'На 3-ей скользящей, °C', temp3Value, 'temper-3-skolz-modal');
     } else {
       modeTitle.innerText = 'Печь не работает';
+      const isError = false; // Нет ошибки, так как печь не работает
+      animationPaused(temper3Skolz);
+      animationPaused(temper3SkolzSpan);
+      updateRow(isError, 'На 3-ей скользящей, °C', temp3Value, 'temper-3-skolz-modal');
     }
   } else {
     modeTitle.innerText = 'Печь не работает';
+    console.warn('Необходимые элементы для обработки 3-й скользящей отсутствуют.');
   }
 
-  // Другие условия
+  // Обработка остальных параметров
   const params = [
+    // Селекторы параметров температур
     {
       selector: '.temper-1-skolz',
       spanSelector: '.temper-1-skolz-span',
       min: 50,
       max: 800,
       description: 'На 1-ой скользящей, °C',
-      modalId: 'temper-1-skolz-modal'
+      modalId: 'temper-1-skolz-modal',
     },
     {
       selector: '.temper-2-skolz',
       spanSelector: '.temper-2-skolz-span',
       max: 700,
       description: 'На 2-ой скользящей, °C',
-      modalId: 'temper-2-skolz-modal'
+      modalId: 'temper-2-skolz-modal',
     },
     {
-      selector: '.razr-niz-zagr-kam',
-      spanSelector: '.razr-niz-zagr-kam-span',
-      min: -5,
-      max: -1,
-      description: 'Низ загрузочной камеры, кгс/м2',
-      modalId: 'razr-niz-zagr-kam-modal'
+      selector: '.temper-topka',
+      spanSelector: '.temper-topka-span',
+      max: 1000,
+      description: 'В топке, °C',
+      modalId: 'temper-v-topke-modal',
+    },
+    {
+      selector: '.temper-verh-kamer-zagruz',
+      spanSelector: '.temper-verh-kamer-zagruz-span',
+      max: 1000,
+      description: 'Вверху камеры загрузки, °C',
+      modalId: 'temper-verh-kamer-zagruz-modal',
     },
     {
       selector: '.temper-vniz-kamer-zagruz',
@@ -122,57 +187,78 @@ export const checkConditions = () => {
       min: 1000,
       max: 1100,
       description: 'Внизу камеры загрузки, °C',
-      modalId: 'temper-vniz-kamer-zagruz-modal'
-    },
-    {
-      selector: '.temper-verh-kamer-zagruz',
-      spanSelector: '.temper-verh-kamer-zagruz-span',
-      max: 1000,
-      description: 'Вверху камеры загрузки, °C',
-      modalId: 'temper-verh-kamer-zagruz-modal'
+      modalId: 'temper-vniz-kamer-zagruz-modal',
     },
     {
       selector: '.temper-vhod-pech-dozhig',
       spanSelector: '.temper-vhod-pech-dozhig-span',
       max: 1200,
       description: 'На входе печи дожига, °C',
-      modalId: 'temper-vhod-pech-dozhig-modal'
-    },
-
-    {
-      selector: '.temper-granul-holod',
-      spanSelector: '.temper-granul-holod-span',
-      max: 70,
-      description: 'Гранул после холод-ка, °C',
-      modalId: 'temper-posle-holod-modal'
+      modalId: 'temper-vhod-pech-dozhig-modal',
     },
     {
-      selector: '.davl-gaz-posle-skruber',
-      spanSelector: '.davl-gaz-posle-skruber-span',
-      max: 20,
-      description: 'Давление газов после скруббера, кгс/м2',
-      modalId: 'davl-gazov-posle-skrubber-modal'
+      selector: '.temper-vyhod-pech-dozhig',
+      spanSelector: '.temper-vyhod-pech-dozhig-span',
+      max: 1200,
+      description: 'На выходе печи дожига, °C',
+      modalId: 'temper-vyhod-pech-dozhig-modal',
     },
     {
-      selector: '.temper-topka',
-      spanSelector: '.temper-topka-span',
-      max: 1000,
-      description: 'В топке, °C',
-      modalId: 'temper-v-topke-modal'
+      selector: '.temper-kamer-vygruz',
+      spanSelector: '.temper-kamer-vygruz-span',
+      max: 750,
+      description: 'Камера выгрузки, °C',
+      modalId: 'temper-kamer-vygruz-modal',
+    },
+    {
+      selector: '.temper-gazov-kotel-utiliz-span',
+      spanSelector: '.temper-gazov-kotel-utiliz-span',
+      max: 1100,
+      description: 'Дымовых газов котла, °C',
+      modalId: 'temper-gazov-kotel-utiliz-modal',
     },
     {
       selector: '.temper-do-skruber',
       spanSelector: '.temper-do-skruber-span',
       max: 400,
       description: 'Температура газов до скруббера, °C',
-      modalId: 'temper-gazov-do-skrubber-modal'
+      modalId: 'temper-gazov-do-skrubber-modal',
     },
     {
       selector: '.temper-posle-skruber',
       spanSelector: '.temper-posle-skruber-span',
       max: 100,
       description: 'Температура газов после скруббера, °C',
-      modalId: 'temper-gazov-posle-skrubber-modal'
+      modalId: 'temper-gazov-posle-skrubber-modal',
+    },
+    {
+      selector: '.temper-vody-v-vanne-skrubber',
+      spanSelector: '.temper-vody-vanna-skrubber-span',
+      max: 90,
+      description: 'Воды в ванне скруббера, °C',
+      modalId: 'temper-vody-v-vanne-skrubber-modal',
+    },
+    {
+      selector: '.temper-granul-holod',
+      spanSelector: '.temper-granul-holod-span',
+      max: 70,
+      description: 'Гранул после холод-ка, °C',
+      modalId: 'temper-posle-holod-modal',
+    },
+    // Селекторы параметров уровня
+    {
+      selector: '.uroven-vanne-skrubber-value',
+      spanSelector: '.uroven-vanne-skrubber-value-span',
+      min: 250,
+      description: 'Уровень в ванне скруббера, мм',
+      modalId: 'uroven-vanne-skrubber-modal',
+    },
+    {
+      selector: '.uroven-vody-hvo-value',
+      spanSelector: '.uroven-vody-hvo-value-span',
+      min: 1500,
+      description: 'Уровень воды в емкости ХВО, мм',
+      modalId: 'uroven-vody-vho-modal',
     },
     {
       selector: '.uroven-v-barabane-kotla-mnemo-val',
@@ -180,67 +266,112 @@ export const checkConditions = () => {
       min: -70,
       max: 70,
       description: 'Уровень в барабане котла, мм',
-      modalId: 'uroven-v-kotle-modal'
+      modalId: 'uroven-v-kotle-modal',
+    },
+    // Селекторы параметров давления/разрежения
+    {
+      selector: '.davl-gaz-posle-skruber',
+      spanSelector: '.davl-gaz-posle-skruber-span',
+      max: 20,
+      description: 'Газов после скруббера, кгс/м2',
+      modalId: 'davl-gazov-posle-skrubber-modal',
     },
     {
-      selector: '.uroven-vanne-skrubber-value',
-      spanSelector: '.uroven-vanne-skrubber-value-span',
-      min: 250,
-      description: 'Уровень в ванне скруббера, мм',
-      modalId: 'uroven-vanne-skrubber-modal'
+      selector: '.davl-topka',
+      spanSelector: '.davl-topka-span',
+      min: -4,
+      max: -1,
+      description: 'В топке печи, кгс/м2',
+      modalId: 'razrezh-v-topke-modal',
     },
     {
-      selector: '.uroven-vody-hvo-value',
-      spanSelector: '.uroven-vody-hvo-value-span',
-      min: 1500,
-      description: 'Уровень воды в емкости ХВО, мм',
-      modalId: 'uroven-vody-vho-modal'
-    }
+      selector: '.razr-kotel-utiliz',
+      spanSelector: '.razr-kotel-utiliz-span',
+      min: -12,
+      max: -3,
+      description: 'В котле утилизаторе, кгс/м2',
+      modalId: 'razr-kotel-utiliz-modal', // Убедитесь, что modalId не пустой
+    },
+    {
+      selector: '.razr-niz-zagr-kam',
+      spanSelector: '.razr-niz-zagr-kam-span',
+      min: -5,
+      max: -1,
+      description: 'Низ загрузочной камеры, кгс/м2',
+      modalId: 'razr-niz-zagr-kam-modal',
+    },
   ];
 
+  // Обработка параметров
   params.forEach(({ selector, spanSelector, min = -Infinity, max = Infinity, description, modalId }) => {
     const param = document.querySelector(selector);
     const paramSpan = document.querySelector(spanSelector);
 
-    if (param) {
-      const value = Number(param.innerText.replace(',', '.'));
-      if (value > max || value < min) {
+    if (param && paramSpan) {
+      const rawValue = param.innerText.trim();
+      const value = Number(rawValue.replace(',', '.'));
+
+      if (isNaN(value)) {
+        console.warn(`Невозможно преобразовать значение "${rawValue}" для селектора "${selector}" в число.`);
+        return;
+      }
+
+      const isError = (value > max || value < min);
+
+      if (isError) {
         animationRun(param);
         animationRun(paramSpan);
+        errors.push({
+          description,
+          value,
+          modalId,
+        });
       } else {
         animationPaused(param);
         animationPaused(paramSpan);
       }
-      addRowIfRunning(param, description, modalId);
+
+      updateRow(isError, description, value, modalId);
+    } else {
+      // console.warn(`Элемент с селектором "${selector}" или "${spanSelector}" не найден.`);
     }
   });
 
+  // Очистка существующих строк ошибок и добавление новых
   const tableTbody = document.querySelector('.table__tbody-params');
-  const errorRows = tableTbody.querySelectorAll('tr[data-modal-target]');
+  tableTbody.innerHTML = ''; // Очищаем все строки
 
-  if (errorRows.length === 0) {
-    // Проверяем, существует ли уже строка "нет данных", чтобы не добавлять её несколько раз
-    let noDataRow = tableTbody.querySelector('.no-data-row');
-    if (!noDataRow) {
-      noDataRow = document.createElement('tr');
-      noDataRow.classList.add('table__tr', 'no-data-row');
-      noDataRow.innerHTML = `
-        <td class="table__td table__left table__td--descr" colspan="3">
-          Тут будут отображаться параметры, которые превышают допустимые значения
+  if (errors.length > 0) {
+    errors.forEach(({ description, value, modalId }) => {
+      const row = document.createElement('tr');
+      row.classList.add('table__tr');
+      if (modalId) {
+        row.dataset.modalTarget = modalId;
+      }
+
+      row.innerHTML = `
+        <td class="table__td table__left">${description}</td>
+        <td class="table__td table__right">${value}</td>
+        <td class="table__td table__tr--incorrect-param">
+          ${modalId ? `<button class="table__td-btn btn-reset" data-modal-target="${modalId}">Подробнее</button>` : ''}
         </td>
       `;
-      tableTbody.appendChild(noDataRow);
-    }
+      tableTbody.appendChild(row);
+    });
   } else {
-    // Если есть ошибки, удаляем строку "нет данных", если она существует
-    const noDataRow = tableTbody.querySelector('.no-data-row');
-    if (noDataRow) {
-      noDataRow.remove();
-    }
+    // Если нет ошибок, добавить строку "нет данных"
+    const noDataRow = document.createElement('tr');
+    noDataRow.classList.add('table__tr', 'no-data-row');
+    noDataRow.innerHTML = `
+      <td class="table__td table__left table__td--descr" colspan="3">
+        Тут будут отображаться параметры, которые превышают допустимые значения
+      </td>
+    `;
+    tableTbody.appendChild(noDataRow);
   }
 
   // Определяем наличие ошибок на основе количества errorRows
-  const hasErrors = errorRows.length > 0;
+  const hasErrors = errors.length > 0;
 
   // Вызываем toggleSiren с параметром hasErrors
   toggleSiren(hasErrors);

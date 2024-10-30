@@ -20,7 +20,7 @@ export const fetchVr1Data = async () => {
     updateIms(data); //обновление параметров ИМ
     updateVentilator(data); //обновление анимации вентилятора
     initLevelObjects(); // функция закрашивания уровня в шкалах
-    checkConditions();
+    checkConditions(); // функция сигнализаций, таблицы, режима
 
   } catch (error) {
     console.error('Ошибка при получении данных VR1:', error);
