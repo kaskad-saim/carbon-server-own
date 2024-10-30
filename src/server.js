@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 import { connectModbus } from './services/modbusService.js';
 import { startDataRetrieval } from './services/carbonModbusService.js';
 import vr1Routes from './routes/vr1Routes.js';
+import vr2Routes from './routes/vr2Routes.js';
+
 import laboratoryRoutes from './routes/laboratoryRoutes.js'; // Импорт маршрутов данных летучек
 import { connectDB } from './services/dataBaseService.js'; // Основная БД
 
@@ -31,8 +33,16 @@ app.get('/mnemo-pech-vr-1', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'mnemo-pech-vr-1.html'));
 });
 
+app.get('/current-pech-vr-1', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'current-pech-vr-1.html'));
+});
+
 app.get('/mnemo-pech-vr-2', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'mnemo-pech-vr-2.html'));
+});
+
+app.get('/current-pech-vr-2', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'current-pech-vr-2.html'));
 });
 
 connectDB();
@@ -48,6 +58,7 @@ connectModbus()
 
 // Используем маршруты
 app.use('/api', vr1Routes); // Для данных VR1 и VR2
+app.use('/api', vr2Routes); // Для данных VR1 и VR2
 app.use('/api/lab', laboratoryRoutes); // Для данных летучек
 
 // Запуск сервера

@@ -4,9 +4,9 @@ import { updateIms } from './components/im.js';
 import { updateVentilator } from './components/ventilator.js';
 import { checkConditions } from './components/checkConditions.js';
 
-export const fetchVr1Data = async () => {
+export const fetchVr2Data = async () => {
   try {
-    const response = await fetch('/api/vr1-data');
+    const response = await fetch('/api/vr2-data');
     const data = await response.json();
     // console.log('Данные VR1:', data);
 
@@ -23,12 +23,12 @@ export const fetchVr1Data = async () => {
     checkConditions(); // функция сигнализаций, таблицы, режима
 
   } catch (error) {
-    console.error('Ошибка при получении данных VR1:', error);
+    console.error('Ошибка при получении данных VR2:', error);
   }
 };
 
 // Сразу запускаем функции один раз при загрузке страницы
-fetchVr1Data();
+fetchVr2Data();
 
 // Затем запускаем их каждые 10 секунд
-setInterval(fetchVr1Data, 10000);
+setInterval(fetchVr2Data, 10000);

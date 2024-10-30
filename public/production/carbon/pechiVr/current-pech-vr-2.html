@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Current</title>
+	<link rel="stylesheet" href="../../../css/pechVr-currentParam.css">
+</head>
+
+<body>
+	<div class="current-param">
+		<h1 class="current-param__title">
+			<span class="current-param__title-span">Карбон</span>
+			Печь Карбонизации №2
+		</h1>
+		<div class="current-param__box">
+			<span class="current-param__date">
+
+			</span>
+			<span class="current-param__time">
+
+			</span>
+		</div>
+		<h2 class="current-param__subtitle">
+			Режим работы печи:
+			<span class="current-param__subtitle-span"></span>
+		</h2>
+	</div>
+
+	<div class="siren">
+		<audio class="siren__media-vr1-param" controls loop>
+			<source src="http://Techsite6/kaskad/audio/siren.mp3" type="audio/mp3">
+		</audio>
+	</div>
+
+
+
+	<div class="tables">
+		<table class="table">
+			<caption class="table__title">Текущие параметры температуры
+			</caption>
+			<thead class="table__thead">
+				<tr class="table__tr">
+					<th class="table__th table__left">Наименование параметра</th>
+					<th class="table__th ">Значения &#176C</th>
+					<th class="table__th ">Рекомендуемые &#176C</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="table__tr">
+					<td class="table__td table__left">В топке</td>
+					<td class="table__td table__right temper-topka">
+
+					</td>
+					<td class="table__td table__right">
+						не более 1000
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Камера выгрузки</td>
+
+					<td class="table__td table__right temper-kamer-vygruz">
+
+					</td>
+					<td class="table__td table__right">
+						не более 750
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">На 1-ой скользящей</td>
+					<td class="table__td table__right temper-1-skolz">
+
+					</td>
+					<td class="table__td table__right">
+						550-800
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">На 2-ой скользящей</td>
+					<td class="table__td table__right temper-2-skolz">
+
+					</td>
+					<td class="table__td table__right">
+						не более 700
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">На 3-ей скользящей</td>
+					<td class="table__td table__right temper-3-skolz">
+
+					</td>
+					<td class="table__td table__right">
+						не более 400 - установившейся режим
+						не более 750 - выход режим
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Вверху камеры загрузки</td>
+					<td class="table__td table__right temper-verh-kamer-zagruz">
+
+					</td>
+					<td class="table__td table__right">
+						не более 1000
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Внизу камеры загрузки</td>
+					<td class="table__td table__right temper-vniz-kamer-zagruz">
+
+					</td>
+					<td class="table__td table__right">
+						1000-1100
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Гранул после холод-ка</td>
+					<td class="table__td table__right temper-granul-holod">
+
+					</td>
+					<td class="table__td table__right">
+						не более 70
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">На входе печи дожига</td>
+					<td class="table__td table__right temper-vhod-pech-dozhig">
+
+					</td>
+					<td class="table__td table__right">
+						не более 1200
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">На выходе печи дожига</td>
+					<td class="table__td table__right temper-vihod-pech-dozhig">
+
+					</td>
+					<td class="table__td table__right">
+						не более 1200
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="table">
+			<caption class="table__title">Текущие параметры давление/разрежение
+			</caption>
+			<thead class="table__thead">
+				<tr class="table__tr">
+					<th class="table__th table__left">Наименование параметра</th>
+					<th class="table__th ">Значения</th>
+					<th class="table__th ">Рекомендуемые</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="table__tr">
+					<td class="table__td table__left">В топке печи, кгс/м2</td>
+					<td class="table__td table__right davl-topka">
+
+					</td>
+					<td class="table__td table__right">
+						-(1.0-4.0)
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left"> Низ загрузочной камеры, кгс/м2</td>
+					<td class="table__td table__right razr-niz-zagr-kam">
+
+					</td>
+					<td class="table__td table__right">
+						-(1.0-5.0)
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<table class="table">
+			<caption class="table__title">Текущие параметры (горелка)
+			</caption>
+			<thead class="table__thead">
+				<tr class="table__tr">
+					<th class="table__th table__left">Наименование параметра</th>
+					<th class="table__th ">Значения</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="table__tr">
+					<td class="table__td table__left">Тек. мощность горелки, %</td>
+					<td class="table__td table__right mosh-gorelky-span">
+
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Задание температуры регулятора, &#176C</td>
+					<td class="table__td table__right zadanie-temper-na-gorelky-span">
+
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<table class="table">
+			<caption class="table__title">Текущие параметры (Скруббер)
+			</caption>
+			<thead class="table__thead">
+				<tr class="table__tr">
+					<th class="table__th table__left">Наименование параметра</th>
+					<th class="table__th ">Значения</th>
+					<th class="table__th ">Рекомендуемые</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="table__tr">
+					<td class="table__td table__left">Температура газов до скруббера, &#176C</td>
+					<td class="table__td table__right temper-do-skruber">
+
+					</td>
+					<td class="table__td table__right">
+						не более 400
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Температура газов после скруббера, &#176C</td>
+					<td class="table__td table__right temper-posle-skruber">
+
+					</td>
+					<td class="table__td table__right">
+						не более 100
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Температура воды в ванне скруббера, &#176C</td>
+					<td class="table__td table__right temper-vody-vanna-skruber">
+
+					</td>
+					<td class="table__td table__right">
+						не более 90
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Давление газов после скруббера, кгс/м2</td>
+					<td class="table__td table__right davl-gaz-posle-skruber">
+
+					</td>
+					<td class="table__td table__right">
+						не более 20
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Уровень воды в ванне скруббера, мм</td>
+					<td class="table__td table__right uroven-vanne-skrubber-value">
+
+					</td>
+					<td class="table__td table__right">
+						не менее 250
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="table">
+			<caption class="table__title">Текущие параметры (Котел-утилизатор)
+			</caption>
+			<thead class="table__thead">
+				<tr class="table__tr">
+					<th class="table__th table__left">Наименование параметра</th>
+					<th class="table__th ">Значения</th>
+					<th class="table__th ">Рекомендуемые</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="table__tr">
+					<td class="table__td table__left">Температура дымовых газов котла-утилизат., &#176C</td>
+					<td class="table__td table__right temper-gazov-kotel-utiliz">
+
+					</td>
+					<td class="table__td table__right">
+						не более 1100
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Уровень воды в барабане котла, мм</td>
+					<td class="table__td table__right uroven-v-barabane-kotla-mnemo-val">
+
+					</td>
+					<td class="table__td table__right">
+						не менее -100
+					</td>
+				</tr>
+				<!-- <tr class="table__tr">
+					<td class="table__td table__left">Расход пара от котла, т/ч</td>
+					<td class="table__td table__right">
+					</td>
+					<td class="table__td table__right">
+
+					</td>
+				</tr> -->
+				<tr class="table__tr">
+					<td class="table__td table__left">Разрежение в пространстве котла, кгс/м2</td>
+					<td class="table__td table__right razr-kotel-utiliz">
+
+					</td>
+					<td class="table__td table__right">
+						-(3.0-12.0)
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Давление пара в барабане котла, кгс/см2</td>
+					<td class="table__td table__right davl-kotla">
+
+					</td>
+					<td class="table__td table__right">
+
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Уровень воды в емкости ХВО, мм</td>
+					<td class="table__td table__right uroven-vody-hvo-value">
+
+					</td>
+					<td class="table__td table__right">
+						не менее 1500
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<script type="module" src="../../../js/pechiVr/pechvr2-current-params.js"></script>
+</body>
+
+
+</html>
