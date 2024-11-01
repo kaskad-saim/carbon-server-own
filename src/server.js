@@ -63,5 +63,5 @@ app.use('/api/lab', laboratoryRoutes); // Для данных летучек
 
 // Запуск сервера
 app.listen(port, () => {
-  console.log(`Сервер запущен на http://localhost:${port}`);
+  console.log(`Сервер запущен на http://169.254.0.156:${port}`);
 });

@@ -283,3 +283,7 @@ body::-webkit-scrollbar-thumb {
     color: red;
   }
 }
+
+.table__tr--time-date {
+  display: none;
+}

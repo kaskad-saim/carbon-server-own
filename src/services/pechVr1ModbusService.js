@@ -81,7 +81,7 @@ export const readDataVr1 = async () => {
 
     // Сохранение данных в базу данных
     await new PechVr1Model(formattedDataVr1).save();
-    // console.log('Данные для VR1 сохранены:', formattedDataVr1);
+    // console.log('Данные для VR1 сохранены:', formattedDataVr1.temperatures);
   } catch (err) {
     console.error('Ошибка при чтении данных VR1:', err);
   }

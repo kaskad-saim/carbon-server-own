@@ -1,4 +1,11 @@
-import { updateTemperatures, updatePressures, updateVacuums, updateLevels, updateGorelkaParams } from './components/updateParams.js';
+import {
+  updateTemperatures,
+  updatePressures,
+  updateVacuums,
+  updateLevels,
+  updateGorelkaParams,
+  updateImpulseSignals
+} from './components/updateParams.js';
 
 // Определите функцию updateAnimations
 const updateAnimations = () => {
@@ -63,14 +70,10 @@ const updateAnimations = () => {
 
     // Температуры
     const temperTopka = document.querySelector('.temper-topka');
-    Number(temperTopka.innerHTML) > 1000
-      ? animationRun(temperTopka)
-      : animationPaused(temperTopka);
+    Number(temperTopka.innerHTML) > 1000 ? animationRun(temperTopka) : animationPaused(temperTopka);
 
     const temper2Skolz = document.querySelector('.temper-2-skolz');
-    Number(temper2Skolz.innerHTML) > 700
-      ? animationRun(temper2Skolz)
-      : animationPaused(temper2Skolz);
+    Number(temper2Skolz.innerHTML) > 700 ? animationRun(temper2Skolz) : animationPaused(temper2Skolz);
 
     const temperVnizKamerZagruz = document.querySelector('.temper-vniz-kamer-zagruz');
     const temperVnizValue = Number(temperVnizKamerZagruz.innerHTML);
@@ -86,9 +89,7 @@ const updateAnimations = () => {
       : animationPaused(temperVerhKamerZagruz);
 
     const temperGranulHolod = document.querySelector('.temper-granul-holod');
-    Number(temperGranulHolod.innerHTML) > 70
-      ? animationRun(temperGranulHolod)
-      : animationPaused(temperGranulHolod);
+    Number(temperGranulHolod.innerHTML) > 70 ? animationRun(temperGranulHolod) : animationPaused(temperGranulHolod);
 
     const temperVhodPechDozhig = document.querySelector('.temper-vhod-pech-dozhig');
     Number(temperVhodPechDozhig.innerHTML) > 1200
@@ -118,14 +119,10 @@ const updateAnimations = () => {
     }
 
     const temperDoSkruber = document.querySelector('.temper-do-skruber');
-    Number(temperDoSkruber.innerHTML) > 400
-      ? animationRun(temperDoSkruber)
-      : animationPaused(temperDoSkruber);
+    Number(temperDoSkruber.innerHTML) > 400 ? animationRun(temperDoSkruber) : animationPaused(temperDoSkruber);
 
     const temperPosleSkruber = document.querySelector('.temper-posle-skruber');
-    Number(temperPosleSkruber.innerHTML) > 100
-      ? animationRun(temperPosleSkruber)
-      : animationPaused(temperPosleSkruber);
+    Number(temperPosleSkruber.innerHTML) > 100 ? animationRun(temperPosleSkruber) : animationPaused(temperPosleSkruber);
 
     const temperVodyVannaSkruber = document.querySelector('.temper-vody-vanna-skruber');
     Number(temperVodyVannaSkruber.innerHTML) > 90
@@ -152,15 +149,11 @@ const updateAnimations = () => {
     }
 
     const temperKamerVygruz = document.querySelector('.temper-kamer-vygruz');
-    Number(temperKamerVygruz.innerHTML) > 750
-      ? animationRun(temperKamerVygruz)
-      : animationPaused(temperKamerVygruz);
+    Number(temperKamerVygruz.innerHTML) > 750 ? animationRun(temperKamerVygruz) : animationPaused(temperKamerVygruz);
 
     // Уровни
     const urovenVodyHvo = document.querySelector('.uroven-vody-hvo-value');
-    Number(urovenVodyHvo.innerHTML) <= 1500
-      ? animationRun(urovenVodyHvo)
-      : animationPaused(urovenVodyHvo);
+    Number(urovenVodyHvo.innerHTML) <= 1500 ? animationRun(urovenVodyHvo) : animationPaused(urovenVodyHvo);
 
     const urovenVannaSkrubber = document.querySelector('.uroven-vanne-skrubber-value');
     Number(urovenVannaSkrubber.innerHTML) <= 250
@@ -178,6 +171,7 @@ const updateAnimations = () => {
 const updateDateTime = () => {
   const dateElement = document.querySelector('.current-param__date');
   const timeElement = document.querySelector('.current-param__time');
+  const timeDateTogether = document.querySelector('#server-time');
   const now = new Date();
 
   const optionsDate = { year: 'numeric', month: 'numeric', day: 'numeric' };
@@ -193,6 +187,10 @@ const updateDateTime = () => {
   if (timeElement) {
     timeElement.textContent = formattedTime;
   }
+
+  if (timeDateTogether) {
+    timeDateTogether.textContent = formattedDate + formattedTime;
+  }
 };
 
 export const fetchVr1Data = async () => {
@@ -207,8 +205,8 @@ export const fetchVr1Data = async () => {
     updateVacuums(data); // параметры разрежения
     updateLevels(data); // параметры уровня
     updateGorelkaParams(data); // параметры горелки
+    updateImpulseSignals(data);
     updateAnimations();
-
   } catch (error) {
     console.error('Ошибка при получении данных VR1:', error);
   }

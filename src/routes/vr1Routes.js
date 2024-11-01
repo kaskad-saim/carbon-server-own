@@ -26,9 +26,26 @@ router.get('/vr1-data', async (req, res) => {
           vacuums: mapValuesToDash(data[0].vacuums),
           im: mapValuesToDash(data[0].im),
           gorelka: mapValuesToDash(data[0].gorelka),
-          lastUpdated: data[0].lastUpdated,
+          lastUpdated: new Date(data[0].lastUpdated).toLocaleString('ru-RU', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          }),
         }
-      : data[0];
+      : {
+          ...data[0]._doc,
+          lastUpdated: new Date(data[0].lastUpdated).toLocaleString('ru-RU', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          }),
+        };
 
     res.json(responseData);
   } catch (err) {
