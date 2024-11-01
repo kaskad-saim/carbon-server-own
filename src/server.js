@@ -62,6 +62,10 @@ app.get('/graphic-temper-vr-2', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-temper.html'));
 });
 
+app.get('/graphic-davlenie-vr', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr-davl.html'));
+});
+
 app.get('/graphic-davlenie-vr-1', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-davl.html'));
 });
