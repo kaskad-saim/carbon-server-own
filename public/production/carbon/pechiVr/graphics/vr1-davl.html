@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>График давления/разрежения ПК1</title>
+  <link rel="stylesheet" href="../../../../css/graphics.css">
+</head>
+
+<body>
+  <div class="dynamic-graph">
+
+    <!-- Прелоудер -->
+    <div id="loadingWrapper">
+      <div id="loadingText">Загрузка данных, пожалуйста подождите...</div>
+      <div id="loadingBar"></div>
+    </div>
+
+    <!-- Секция для выбора даты (для архивного графика) -->
+    <div class="dynamic-graph__date-range">
+      <div class="dynamic-graph__date-label">Выберите дату для просмотра архива:</div>
+      <div class="dynamic-graph__date-div">
+        <input class="dynamic-graph__date-input" type="date" id="singleDate">
+        <button class="dynamic-graph__btn" id="confirmDateBtn">Принять</button>
+      </div>
+    </div>
+
+    <div class="dynamic-graph__content">
+      <!-- Блок для сообщения о том, что данных нет -->
+      <div class="dynvamic-graph__data-error" id="noDataMessage">
+        Данные за выбранную дату отсутствуют.
+      </div>
+      <!-- График -->
+      <canvas class="dynamic-graph__graph" id="chartCanvas"></canvas>
+    </div>
+
+    <div class="dynamic-graph__btns">
+      <button class="dynamic-graph__btn" id="resetBtn">Вернутся к текущим значениям</button>
+      <button class="dynamic-graph__btn" id="toggleDataBtn">Скрыть данные</button>
+    </div>
+  </div>
+
+  <!-- Подключаем библиотеки -->
+  <script src="../../../../js/graphics/library/chart.js"></script>
+  <script src="../../../../js/graphics/library/chart-zoom.js"></script>
+  <script src="../../../../js/graphics/library/moment.js"></script>
+  <script src="../../../../js/graphics/library/chart-moment.js"></script>
+
+  <!-- Подключаем основной скрипт -->
+  <script type="module" src="../../../../js/graphics/pechiVr/davlVr1.js"></script>
+</body>
+
+</html>

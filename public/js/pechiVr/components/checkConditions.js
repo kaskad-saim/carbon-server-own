@@ -1,10 +1,17 @@
 // Функции управления анимацией параметров
 const animationRun = (param) => {
-  param.style.animationPlayState = 'running';
+  // Сброс анимации для её перезапуска
+  param.style.animation = 'none';
+  // Используем setTimeout, чтобы подождать, прежде чем применить анимацию снова
+  setTimeout(() => {
+    param.style.animation = ''; // Вернуть исходное значение, чтобы анимация снова запустилась
+    param.style.animationPlayState = 'running';
+  }, 0);
 };
 
 const animationPaused = (param) => {
-  param.style.animationPlayState = 'paused';
+  // Просто удаляем анимацию, чтобы сбросить её
+  param.style.animation = 'none';
 };
 
 // Функция для обновления строки в таблице
@@ -81,15 +88,20 @@ const toggleSiren = (hasErrors) => {
   }
 
   if (hasErrors) {
-    if (sirenAnimation.classList.contains('siren-off')) {
-      sirenAnimation.classList.remove('siren-off');
-    }
+    // Убираем класс `siren-off` и добавляем `siren-active` для включения анимации
+    sirenAnimation.classList.remove('siren-off');
+
+    // Перезапуск анимации: временно удаляем и добавляем `siren-active` для сброса `::after`
+    sirenAnimation.classList.remove('siren-active');
+    void sirenAnimation.offsetWidth; // Принудительная перерисовка DOM
+    sirenAnimation.classList.add('siren-active');
   } else {
-    if (!sirenAnimation.classList.contains('siren-off')) {
-      sirenAnimation.classList.add('siren-off');
-    }
+    // Останавливаем анимацию, добавив класс `siren-off`
+    sirenAnimation.classList.add('siren-off');
+    sirenAnimation.classList.remove('siren-active'); // Убираем активную анимацию
   }
 };
+
 
 export const checkConditions = () => {
   const modeTitle = document.querySelector('.current-param__subtitle-span');

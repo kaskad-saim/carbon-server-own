@@ -1136,6 +1136,17 @@ body::-webkit-scrollbar-thumb {
   animation-play-state: paused;
 }
 
+.light-alarm__content.siren-active::after {
+  /* Анимация активна только при наличии класса siren-active */
+  animation: ring 3s infinite;
+}
+
+.light-alarm__content.siren-off::after {
+  /* Сброс анимации и скрытие кольца */
+  animation-play-state: paused;
+  opacity: 0;
+}
+
 @keyframes ring {
   0% {
     width: 30px;

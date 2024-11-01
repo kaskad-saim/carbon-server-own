@@ -159,9 +159,16 @@ const fetchLastDayData = async () => {
   }
 };
 
+const submitButton = document.querySelector('.laboratory__form-btn');
+
+
 // Обработчик отправки формы
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
+
+    // Отключаем кнопку и показываем индикатор загрузки
+  submitButton.disabled = true;
+  submitButton.classList.add('loading'); // Опционально, для визуального эффекта
 
   // Получаем значения из полей ввода
   let value = volatileInput.value.trim();
@@ -174,20 +181,28 @@ form.addEventListener('submit', async (event) => {
   // Валидация данных
   if (!value) {
     showError(volatileInput, errorSpans.value, 'Введите значение');
+        submitButton.disabled = false; // Включаем кнопку при ошибке
+    submitButton.classList.remove('loading');
     return;
   }
   if (!time) {
     showError(timeInput, errorSpans.time, 'Введите время');
+        submitButton.disabled = false; // Включаем кнопку при ошибке
+    submitButton.classList.remove('loading');
     return;
   }
   value = value.replace(',', '.');
   const numericValue = parseFloat(value);
   if (isNaN(numericValue) || numericValue < 0 || numericValue > 16) {
     showError(volatileInput, errorSpans.value, 'Введите число от 0 до 16');
+        submitButton.disabled = false; // Включаем кнопку при ошибке
+    submitButton.classList.remove('loading');
     return;
   }
   if (password !== '123') {
     showError(passwordInput, errorSpans.password, 'Неверный пароль');
+        submitButton.disabled = false; // Включаем кнопку при ошибке
+    submitButton.classList.remove('loading');
     return;
   }
 
@@ -216,6 +231,10 @@ form.addEventListener('submit', async (event) => {
     } else {
       showError(volatileInput, errorSpans.value, 'Ошибка при отправке данных');
     }
+     } finally {
+    // Включаем кнопку обратно и убираем индикатор загрузки после завершения запроса
+    submitButton.disabled = false;
+    submitButton.classList.remove('loading');
   }
 });
 
@@ -223,3 +242,9 @@ form.addEventListener('submit', async (event) => {
 const tableBody = document.querySelector('.laboratory__table-tbody');
 fetchLastData();
 fetchLastDayData();
+
+
+// Установка интервала для обновления данных каждые 30 секунд
+setInterval(() => {
+  fetchLastData();
+}, 30000);

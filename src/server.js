@@ -27,6 +27,7 @@ app.use(express.json());
 
 // Настройка статической папки для обслуживания CSS, JS и других статических файлов
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public/production/carbon/')));
 
 // Маршруты для страниц
 app.get('/mnemo-pech-vr-1', (req, res) => {
@@ -43,6 +44,38 @@ app.get('/mnemo-pech-vr-2', (req, res) => {
 
 app.get('/current-pech-vr-2', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'current-pech-vr-2.html'));
+});
+
+app.get('/graphic-temper-vr-1', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-temper.html'));
+});
+
+app.get('/graphic-temper-vr-2', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-temper.html'));
+});
+
+app.get('/general-temper-vr', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'generalVr-temper.html'));
+});
+
+app.get('/graphic-temper-vr-2', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-temper.html'));
+});
+
+app.get('/graphic-davlenie-vr-1', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-davl.html'));
+});
+
+app.get('/graphic-davlenie-vr-2', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-davl.html'));
+});
+
+app.get('/graphic-level-vr-1', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-level.html'));
+});
+
+app.get('/graphic-level-vr-2', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-level.html'));
 });
 
 connectDB();
