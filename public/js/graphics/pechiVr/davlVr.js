@@ -2,7 +2,7 @@
 import { renderChart, toggleChartData, resetChart } from '../components/chartRenderer.js';
 import { getLast24HoursRange, getSingleDateRange, isToday } from '../components/dataUtils.js';
 import { dataLabels } from '../components/data.js';
-import { elements } from '../components/chartUtils.js';
+import { elements1 } from '../components/chartUtils.js';
 import { setupInactivityTimer } from '../components/timer.js';
 
 // Состояния
@@ -37,14 +37,14 @@ function renderGraphic(start, end, isArchive = false, isAutoUpdate = false) {
       isArchive,
       isAutoUpdate,
     },
-    elements,
+    elements1,
     isDataVisible
   );
 }
 
 // Обработчики событий
-elements.confirmDateBtn.addEventListener('click', () => {
-  const { start, end } = getSingleDateRange(elements.singleDate.value);
+elements1.confirmDateBtn.addEventListener('click', () => {
+  const { start, end } = getSingleDateRange(elements1.singleDate.value);
   if (start && end) {
     if (isToday(start)) {
       isArchiveMode = false;
@@ -59,13 +59,13 @@ elements.confirmDateBtn.addEventListener('click', () => {
   }
 });
 
-elements.toggleDataBtn.addEventListener('click', () => {
+elements1.toggleDataBtn.addEventListener('click', () => {
   isDataVisible = !isDataVisible; // Сначала изменяем состояние
   toggleChartData(isDataVisible); // Затем вызываем функцию для изменения видимости данных
-  elements.toggleDataBtn.textContent = isDataVisible ? 'Скрыть данные' : 'Показать данные'; // Обновляем текст кнопки
+  elements1.toggleDataBtn.textContent = isDataVisible ? 'Скрыть данные' : 'Показать данные'; // Обновляем текст кнопки
 });
 
-elements.resetBtn.addEventListener('click', () => {
+elements1.resetBtn.addEventListener('click', () => {
   resetChart();
   location.reload();
 });
@@ -73,7 +73,7 @@ elements.resetBtn.addEventListener('click', () => {
 // Инициализация при загрузке документа
 document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
-  elements.singleDate.value = today;
+  elements1.singleDate.value = today;
 
   const { start, end } = getLast24HoursRange();
   renderGraphic(start, end, false);

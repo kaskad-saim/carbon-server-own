@@ -214,4 +214,4 @@ setInterval(updateDateTime, 1000);
 // Сразу запускаем функции один раз при загрузке страницы
 fetchVr2Data();
 // Затем запускаем их каждые 10 секунд
-setInterval(fetchVr2Data, 10000);
+setInterval(fetchVr2Data, 15000);

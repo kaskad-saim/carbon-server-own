@@ -4,11 +4,21 @@ export async function fetchData(parameterType, start = null, end = null) {
     if (start) params.append('start', start.toISOString());
     if (end) params.append('end', end.toISOString());
 
-    const response = await fetch(`http://169.254.0.155:3000/api/parameters/${parameterType}?${params.toString()}`);
+    // Определяем URL на основе типа параметра
+    const port = 3002; // Укажите ваш порт
+    let url = '';
+    if (parameterType === 'vr1') {
+      url = `http://169.254.0.156:${port}/api/vr1/data`;
+    } else if (parameterType === 'vr2') {
+      url = `http://169.254.0.156:${port}/api/vr2/data`;
+    } else {
+      throw new Error('Неверный тип параметра');
+    }
+
+    const response = await fetch(`${url}?${params.toString()}`);
     const data = await response.json();
 
-    // Поскольку сервер возвращает { vr1: data } или { vr2: data }, мы можем получить данные так:
-    return data[parameterType];
+    return data;
   } catch (error) {
     console.error('Ошибка получения данных:', error);
     throw error;

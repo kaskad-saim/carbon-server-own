@@ -14,7 +14,7 @@ function renderGraphic(start, end, isArchive = false, isAutoUpdate = false) {
     {
       parameterType: 'vr1',
       labels: dataLabels.temperatures,
-      units: dataLabels.temperatures.map(() => '°C'), // Все метки имеют единицу °C
+      units: dataLabels.temperatures.map(() => '°C'),
       yAxisConfig: {
         min: 0,
         max: 1500,
@@ -81,5 +81,5 @@ document.addEventListener('DOMContentLoaded', () => {
       const { start, end } = getLast24HoursRange();
       renderGraphic(start, end, false, true);
     }
-  }, 10000);
+  }, 15000);
 });

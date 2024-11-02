@@ -4,6 +4,12 @@ export function getLast24HoursRange() {
   return { start, end };
 }
 
+export function getLastHoursRange() {
+  const end = new Date();
+  const start = new Date(end.getTime() - 0.5 * 60 * 60 * 1000);
+  return { start, end };
+}
+
 export function getSingleDateRange(singleDateValue) {
   if (!singleDateValue) return { start: null, end: null };
 

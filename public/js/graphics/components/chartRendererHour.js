@@ -5,8 +5,8 @@ import { fetchData } from './fetchData.js';
 
 let chartInstance = null;
 
-// Функция для рендеринга графика
-export async function renderChart(options, elements, isDataVisible) {
+// Функция для рендеринга графика (часовой)
+export async function renderChartHour(options, elements, isDataVisible) {
   const {
     parameterType,
     labels,
@@ -126,18 +126,27 @@ export async function renderChart(options, elements, isDataVisible) {
             x: {
               type: 'time',
               time: {
-                unit: 'hour',
+                unit: 'minute', // Изменено с 'hour' на 'minute'
+                stepSize: 5, // Устанавливаем шаг в 5 минут
                 tooltipFormat: 'HH:mm',
                 displayFormats: {
-                  hour: 'HH:mm',
+                  minute: 'HH:mm', // Формат отображения для минут
                 },
               },
               afterDataLimits: (scale) => {
                 if (!isArchive) {
                   // Добавляем отступ только для текущих данных
-                  const rightPadding = 30 * 60 * 1000; // 30 минут в миллисекундах
+                  const rightPadding = 5 * 60 * 1000; // 5 минут в миллисекундах
                   scale.max += rightPadding;
                 }
+              },
+              ticks: {
+                // Настройка интервала отображения меток
+                source: 'auto',
+                maxRotation: 0,
+                minRotation: 0,
+                autoSkip: false, // Отключаем авто-пропуск меток
+                // Удаляем maxTicksLimit, так как stepSize контролирует интервалы
               },
             },
             y: {
@@ -193,10 +202,19 @@ export async function renderChart(options, elements, isDataVisible) {
       chartInstance.options.scales.x.afterDataLimits = (scale) => {
         if (!isArchive) {
           // Добавляем отступ только для текущих данных
-          const rightPadding = 30 * 60 * 1000; // 30 минут в миллисекундах
+          const rightPadding = 5 * 60 * 1000; // 5 минут в миллисекундах
           scale.max += rightPadding;
         }
       };
+
+      // Обновляем параметры времени для оси X
+      chartInstance.options.scales.x.time.unit = 'minute';
+      chartInstance.options.scales.x.time.stepSize = 5;
+      chartInstance.options.scales.x.time.displayFormats.minute = 'HH:mm';
+
+      // Обновляем метки оси X
+      // Поскольку мы отключили autoSkip и установили stepSize, метки будут каждые 5 минут
+      // Устанавливаем maxTicksLimit не требуется, так как stepSize контролирует интервалы
 
       chartInstance.update();
     }
@@ -224,11 +242,11 @@ function getValueByLabel(item, label) {
   if (item.temperatures && item.temperatures[label] !== undefined) {
     return item.temperatures[label];
   }
-  if (item.levels && item.levels[label]) {
-    return item.levels[label].value;
-  }
   if (item.pressures && item.pressures[label] !== undefined) {
     return parseFloat(item.pressures[label]);
+  }
+  if (item.levels && item.levels[label]) {
+    return item.levels[label].value;
   }
   if (item.vacuums && item.vacuums[label] !== undefined) {
     return parseFloat(item.vacuums[label]);
@@ -238,6 +256,7 @@ function getValueByLabel(item, label) {
   }
   return null;
 }
+
 
 // Функция для переключения видимости данных на графике
 export function toggleChartData(isDataVisible) {

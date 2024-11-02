@@ -1,5 +1,6 @@
-import { renderChart, toggleChartData, resetChart } from '../components/chartRenderer.js';
-import { getLast24HoursRange, getSingleDateRange, isToday } from '../components/dataUtils.js';
+// temperatureVr1.js
+import { renderChartHour, toggleChartData, resetChart } from '../components/chartRendererHour.js';
+import { getLastHoursRange, getSingleDateRange, isToday } from '../components/dataUtils.js';
 import { dataLabels } from '../components/data.js';
 import { elements } from '../components/chartUtils.js';
 import { setupInactivityTimer } from '../components/timer.js';
@@ -10,18 +11,18 @@ let isArchiveMode = false;
 
 // Функция для отображения графика
 function renderGraphic(start, end, isArchive = false, isAutoUpdate = false) {
-  renderChart(
+  renderChartHour(
     {
       parameterType: 'vr2',
-      labels: dataLabels.temperatures,
-      units: dataLabels.temperatures.map(() => '°C'), // Все метки имеют единицу °C
+      labels: dataLabels.pressures,
+      units: ['кгс/см2', 'кгс/см2', 'кгс/м2', 'кгс/м2', 'кгс/м2'],
       yAxisConfig: {
-        min: 0,
-        max: 1500,
-        stepSize: 100,
-        title: 'Температура (°C)',
+        min: -20,
+        max: 30,
+        stepSize: 5,
+        title: 'Давления/разрежения',
       },
-      chartTitle: 'График температур печи карбонизации №2',
+      chartTitle: 'График давления/разрежения печи карбонизации №2',
       start,
       end,
       isArchive,
@@ -38,7 +39,7 @@ elements.confirmDateBtn.addEventListener('click', () => {
   if (start && end) {
     if (isToday(start)) {
       isArchiveMode = false;
-      const { start: last24Start, end: last24End } = getLast24HoursRange();
+      const { start: last24Start, end: last24End } = getLastHoursRange();
       renderGraphic(last24Start, last24End, false);
     } else {
       isArchiveMode = true;
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   elements.singleDate.value = today;
 
-  const { start, end } = getLast24HoursRange();
+  const { start, end } = getLastHoursRange();
   renderGraphic(start, end, false);
 
   // Настройка таймера неактивности
@@ -78,8 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Автообновление графика каждые 60 секунд
   setInterval(() => {
     if (!isArchiveMode) {
-      const { start, end } = getLast24HoursRange();
+      const { start, end } = getLastHoursRange();
       renderGraphic(start, end, false, true);
     }
-  }, 15000);
+  }, 60000);
 });

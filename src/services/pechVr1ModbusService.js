@@ -1,12 +1,32 @@
-// services/pechVr1ModbusService.js
 import modbusClient, { readFloat } from './modbusService.js';
 import { PechVr1Model } from '../models/pechVrModel.js';
+
+let previousTemperatures = {}; // Объект для хранения предыдущих значений температур
+
+// Функция проверки допустимого изменения температуры
+const isTemperatureValid = (label, newTemp) => {
+  const previousTemp = previousTemperatures[label];
+  if (previousTemp === undefined) {
+    // Если это первое значение, принимаем его как валидное
+    previousTemperatures[label] = newTemp;
+    return true;
+  }
+  // Проверяем, не слишком ли велико изменение температуры
+  const tempDifference = Math.abs(newTemp - previousTemp);
+  if (tempDifference > 100) {
+    console.warn(`Слишком большое изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}`);
+    return false;
+  }
+  // Обновляем предыдущее значение, если новое значение допустимо
+  previousTemperatures[label] = newTemp;
+  return true;
+};
 
 export const readDataVr1 = async () => {
   try {
     modbusClient.setID(3); // Устанавливаем ID для VR1
 
-    // Чтение температур
+    // Чтение температур с проверкой валидности
     const temperaturesVr1 = {
       '1-СК': Math.round(await readFloat(0x0002)),
       '2-СК': Math.round(await readFloat(0x0004)),
@@ -23,6 +43,14 @@ export const readDataVr1 = async () => {
       'Воды в ванне скруббера': Math.round(await readFloat(0x0014)),
       'Гранул после холод-ка': Math.round(await readFloat(0x0016)),
     };
+
+    // Проверка всех значений температуры
+    for (const [label, value] of Object.entries(temperaturesVr1)) {
+      if (!isTemperatureValid(label, value)) {
+        console.warn(`Пропускаем запись для ${label} из-за подозрительного значения: ${value}`);
+        delete temperaturesVr1[label]; // Удаляем подозрительное значение
+      }
+    }
 
     // Чтение уровней
     const levelsVr1 = {
@@ -42,7 +70,7 @@ export const readDataVr1 = async () => {
 
     // Чтение давлений
     const pressuresVr1 = {
-      'Газов после скруббера': ((await readFloat(0x0028)) * 0.25).toFixed(1),
+      'Давление газов после скруббера': ((await readFloat(0x0028)) * 0.25).toFixed(1),
       'Пара в барабане котла': ((await readFloat(0x0026)) * 0.16).toFixed(1),
     };
 
@@ -81,7 +109,7 @@ export const readDataVr1 = async () => {
 
     // Сохранение данных в базу данных
     await new PechVr1Model(formattedDataVr1).save();
-    // console.log('Данные для VR1 сохранены:', formattedDataVr1.temperatures);
+    // console.log('Данные для VR1 успешно сохранены:', formattedDataVr1);
   } catch (err) {
     console.error('Ошибка при чтении данных VR1:', err);
   }

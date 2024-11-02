@@ -31,4 +31,4 @@ export const fetchVr1Data = async () => {
 fetchVr1Data();
 
 // Затем запускаем их каждые 10 секунд
-setInterval(fetchVr1Data, 10000);
+setInterval(fetchVr1Data, 15000);

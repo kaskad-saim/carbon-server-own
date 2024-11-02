@@ -32,7 +32,7 @@ export const updateTemperatures = (data) => {
 
 // Функция для обновления давления
 export const updatePressures = (data) => {
-  const davlGazPosleSkruber = data.pressures && data.pressures['Газов после скруббера'];
+  const davlGazPosleSkruber = data.pressures && data.pressures['Давление газов после скруббера'];
   const davlKotla = data.pressures && data.pressures['Пара в барабане котла'];
 
   if (davlGazPosleSkruber !== undefined) document.querySelector('.davl-gaz-posle-skruber').innerText = davlGazPosleSkruber;
