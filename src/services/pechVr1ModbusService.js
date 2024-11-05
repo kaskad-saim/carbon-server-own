@@ -1,4 +1,4 @@
-import modbusClient, { readFloat } from './modbusService.js';
+import { readFloat } from './modbusService.js';
 import { PechVr1Model } from '../models/pechVrModel.js';
 
 let previousTemperatures = {}; // Объект для хранения предыдущих значений температур
@@ -14,7 +14,7 @@ const isTemperatureValid = (label, newTemp) => {
 
   // Проверка разницы температур
   const tempDifference = Math.abs(newTemp - previousTemp);
-  if (tempDifference > 100) {
+  if (tempDifference > 150) {
     console.warn(`[VR1] Слишком большое изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}`);
     return false;
   }
@@ -25,7 +25,7 @@ const isTemperatureValid = (label, newTemp) => {
 
 export const readDataVr1 = async () => {
   try {
-    modbusClient.setID(3); // Устанавливаем ID для VR1
+    const deviceID = 3; // ID для VR1
 
     // Адреса температур для VR1
     const temperatureAddresses = {
@@ -49,7 +49,7 @@ export const readDataVr1 = async () => {
 
     for (const [label, address] of Object.entries(temperatureAddresses)) {
       try {
-        const value = Math.round(await readFloat(address, 'VR1'));
+        const value = Math.round(await readFloat(address, 'VR1', deviceID));
         if (isTemperatureValid(label, value)) {
           temperaturesVr1[label] = value;
         } else {
@@ -63,45 +63,45 @@ export const readDataVr1 = async () => {
     // Чтение уровней
     const levelsVr1 = {
       'В ванне скруббера': {
-        value: Math.round((await readFloat(0x002a, 'VR1')) * 10),
-        percent: Math.round(await readFloat(0x002a, 'VR1')),
+        value: Math.round((await readFloat(0x002a, 'VR1', deviceID)) * 10),
+        percent: Math.round(await readFloat(0x002a, 'VR1', deviceID)),
       },
       'В емкости ХВО': {
-        value: Math.round((await readFloat(0x003e, 'VR1')) * 60),
-        percent: Math.round(await readFloat(0x003e, 'VR1')),
+        value: Math.round((await readFloat(0x003e, 'VR1', deviceID)) * 60),
+        percent: Math.round(await readFloat(0x003e, 'VR1', deviceID)),
       },
       'В барабане котла': {
-        value: Math.round((await readFloat(0x0018, 'VR1')) * 4 - 200),
-        percent: Math.round(await readFloat(0x0018, 'VR1')),
+        value: Math.round((await readFloat(0x0018, 'VR1', deviceID)) * 4 - 200),
+        percent: Math.round(await readFloat(0x0018, 'VR1', deviceID)),
       },
     };
 
     // Чтение давлений
     const pressuresVr1 = {
-      'Давление газов после скруббера': ((await readFloat(0x0028, 'VR1')) * 0.25).toFixed(1),
-      'Пара в барабане котла': ((await readFloat(0x0026, 'VR1')) * 0.16).toFixed(1),
+      'Давление газов после скруббера': ((await readFloat(0x0028, 'VR1', deviceID)) * 0.25).toFixed(1),
+      'Пара в барабане котла': ((await readFloat(0x0026, 'VR1', deviceID)) * 0.16).toFixed(1),
     };
 
     // Чтение разрежений
     const vacuumsVr1 = {
-      'В топке печи': ((await readFloat(0x0020, 'VR1')) * 0.25 - 12.5).toFixed(1),
-      'В котле утилизаторе': ((await readFloat(0x0024, 'VR1')) * -0.25).toFixed(1),
-      'Низ загрузочной камеры': ((await readFloat(0x0022, 'VR1')) * -0.25).toFixed(1),
+      'В топке печи': ((await readFloat(0x0020, 'VR1', deviceID)) * 0.25 - 12.5).toFixed(1),
+      'В котле утилизаторе': ((await readFloat(0x0024, 'VR1', deviceID)) * -0.25).toFixed(1),
+      'Низ загрузочной камеры': ((await readFloat(0x0022, 'VR1', deviceID)) * -0.25).toFixed(1),
     };
 
     // Чтение импульсных сигналов
     const imVr1 = {
-      'ИМ1 скруббер': (await readFloat(0x0044, 'VR1')) > 1,
-      'ИМ2 ХВО': (await readFloat(0x0046, 'VR1')) > 1,
-      'ИМ3 аварийный сброс': (await readFloat(0x0048, 'VR1')) > 1,
-      'ИМ4 пар в отделение активации': (await readFloat(0x004a, 'VR1')) > 1,
-      'ИМ5 котел-утилизатор': Math.round(await readFloat(0x001c, 'VR1')),
+      'ИМ1 скруббер': (await readFloat(0x0044, 'VR1', deviceID)) > 1,
+      'ИМ2 ХВО': (await readFloat(0x0046, 'VR1', deviceID)) > 1,
+      'ИМ3 аварийный сброс': (await readFloat(0x0048, 'VR1', deviceID)) > 1,
+      'ИМ4 пар в отделение активации': (await readFloat(0x004a, 'VR1', deviceID)) > 1,
+      'ИМ5 котел-утилизатор': Math.round(await readFloat(0x001c, 'VR1', deviceID)),
     };
 
     // Чтение данных горелки
     const gorelkaVr1 = {
-      'Текущая мощность горелки': Math.max(0, Math.round(await readFloat(0x001a, 'VR1'))),
-      'Задание температуры на горелку': Math.round(await readFloat(0x002e, 'VR1')),
+      'Текущая мощность горелки': Math.max(0, Math.round(await readFloat(0x001a, 'VR1', deviceID))),
+      'Задание температуры на горелку': Math.round(await readFloat(0x002e, 'VR1', deviceID)),
     };
 
     // Формирование объекта данных
@@ -117,7 +117,7 @@ export const readDataVr1 = async () => {
 
     // Сохранение данных в базу данных
     await new PechVr1Model(formattedDataVr1).save();
-    // console.log('Данные для vr1:', formattedDataVr1);
+    // console.log('Данные для VR1:', formattedDataVr1);
 
   } catch (err) {
     console.error('[VR1] Ошибка при чтении данных VR1:', err);

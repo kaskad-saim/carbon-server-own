@@ -1,4 +1,5 @@
 import ModbusRTU from 'modbus-serial';
+import { Mutex } from 'async-mutex'; // Импортируем Mutex
 
 const modbusClient = new ModbusRTU();
 const port = 'COM8';
@@ -8,6 +9,9 @@ const retryInterval = 15000;
 const maxRetries = 20;
 
 let isConnected = false;
+
+// Создаем экземпляр мьютекса
+const mutex = new Mutex();
 
 export const connectModbus = async () => {
   if (isConnected) return;
@@ -24,36 +28,40 @@ export const connectModbus = async () => {
   }
 };
 
-export const readFloat = async (address, deviceLabel = '') => {
-  if (!modbusClient.isOpen || !isConnected) {
-    console.warn(`[${deviceLabel}] Modbus не подключен. Попытка повторного подключения...`);
-    await connectModbus();
-    await new Promise((resolve) => setTimeout(resolve, retryInterval));
-  }
+export const readFloat = async (address, deviceLabel = '', deviceID) => {
+  return await mutex.runExclusive(async () => {
+    modbusClient.setID(deviceID); // Устанавливаем ID устройства
 
-  let attempts = 0;
-
-  while (attempts < maxRetries) {
-    try {
-      const data = await modbusClient.readHoldingRegisters(address, 2);
-      const buffer = Buffer.alloc(4);
-      buffer.writeUInt16BE(data.data[0], 2);
-      buffer.writeUInt16BE(data.data[1], 0);
-      return buffer.readFloatBE(0);
-    } catch (err) {
-      attempts++;
-      console.error(`[${deviceLabel}] Ошибка при чтении данных с адреса ${address}, попытка ${attempts}/${maxRetries}:`, err);
-
-      if (attempts >= maxRetries) {
-        console.warn(`[${deviceLabel}] Превышено максимальное количество попыток чтения. Попытка переподключения...`);
-        isConnected = false;
-        await connectModbus();
-        attempts = 0;
-      }
-
+    if (!modbusClient.isOpen || !isConnected) {
+      console.warn(`[${deviceLabel}] Modbus не подключен. Попытка переподключения...`);
+      await connectModbus();
       await new Promise((resolve) => setTimeout(resolve, retryInterval));
     }
-  }
+
+    let attempts = 0;
+
+    while (attempts < maxRetries) {
+      try {
+        const data = await modbusClient.readHoldingRegisters(address, 2);
+        const buffer = Buffer.alloc(4);
+        buffer.writeUInt16BE(data.data[0], 2);
+        buffer.writeUInt16BE(data.data[1], 0);
+        return buffer.readFloatBE(0);
+      } catch (err) {
+        attempts++;
+        console.error(`[${deviceLabel}] Ошибка при чтении данных с адреса ${address}, попытка ${attempts}/${maxRetries}:`, err);
+
+        if (attempts >= maxRetries) {
+          console.warn(`[${deviceLabel}] Превышено максимальное количество попыток чтения. Попытка переподключения...`);
+          isConnected = false;
+          await connectModbus();
+          attempts = 0;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, retryInterval));
+      }
+    }
+  });
 };
 
 export default modbusClient;
