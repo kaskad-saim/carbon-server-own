@@ -1,22 +1,23 @@
 import { readDataVr1 } from './pechVr1ModbusService.js';
 import { readDataVr2 } from './pechVr2ModbusService.js';
+import { readDataSushilka1 } from './sishilka1ModbusService.js';
+import { readDataSushilka2 } from './sishilka2ModbusService.js';
 
-// Функция с добавленной задержкой между опросами VR1 и VR2
 export const readDataSequentially = async () => {
   try {
     await readDataVr1();
-    // await new Promise((resolve) => setTimeout(resolve, 100)); // Задержка в 100 мс
+    await new Promise((resolve) => setTimeout(resolve, 500));
     await readDataVr2();
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await readDataSushilka1();
+    // await new Promise((resolve) => setTimeout(resolve, 500));
+    // await readDataSushilka2();
   } catch (err) {
     console.error('Ошибка при чтении данных:', err);
   }
 };
 
-// Запускаем функцию каждые 10 секунд
 export const startDataRetrieval = () => {
-  // Вызываем сразу при старте
   readDataSequentially();
-
-  // Затем запускаем интервал
   setInterval(readDataSequentially, 10000);
 };

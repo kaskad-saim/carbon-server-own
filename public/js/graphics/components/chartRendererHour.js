@@ -10,7 +10,7 @@ export async function renderChartHour(options, elements, isDataVisible) {
   const {
     parameterType,
     labels,
-    units, // Добавляем units в деструктуризацию options
+    units,
     yAxisConfig,
     chartTitle,
     start,
@@ -79,8 +79,8 @@ export async function renderChartHour(options, elements, isDataVisible) {
         },
         options: {
           animation: false,
-          responsive: true, // Поддержка изменения размера
-          maintainAspectRatio: false, // Изменение графика по ширине и высоте
+          responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             tooltip: {
               mode: 'index',
@@ -101,52 +101,73 @@ export async function renderChartHour(options, elements, isDataVisible) {
                   const datasetLabel = tooltipItem.dataset.label || '';
                   const value = tooltipItem.parsed.y;
                   const datasetIndex = tooltipItem.datasetIndex;
-                  const unit = units[datasetIndex] || ''; // Получаем соответствующую единицу
+                  const unit = units[datasetIndex] || '';
                   return `${datasetLabel}: ${value} ${unit}`;
                 },
               },
             },
             title: {
-              // Добавляем плагин заголовка
               display: true,
               text: fullChartTitle,
-              color: 'green', // Устанавливаем зеленый цвет заголовка
+              color: 'green',
               font: {
                 size: 24,
-                weight: 'bold', // Дополнительно: делаем шрифт жирным
+                weight: 'bold',
               },
               padding: {
                 top: 10,
-                bottom: 10, // Уменьшаем нижний отступ для сокращения пространства между заголовком и легендой
+                bottom: 10,
               },
-              align: 'center', // Выравнивание заголовка
+              align: 'center',
+            },
+            legend: {
+              position: 'right', // Размещаем легенду справа
+              labels: {
+                generateLabels: function (chart) {
+                  return chart.data.datasets.map((dataset, i) => {
+                    const lastVisiblePoint = dataset.data.filter((d) => d.y !== null).slice(-1)[0];
+                    const lastValue = lastVisiblePoint ? lastVisiblePoint.y : '-';
+
+                    return {
+                      text: `${dataset.label}: ${lastValue}`, // Добавляем последнее значение к метке
+                      fillStyle: dataset.borderColor,
+                      hidden: !chart.isDatasetVisible(i),
+                      lineCap: dataset.borderCapStyle,
+                      lineDash: dataset.borderDash,
+                      lineDashOffset: dataset.borderDashOffset,
+                      lineJoin: dataset.borderJoinStyle,
+                      lineWidth: dataset.borderWidth,
+                      strokeStyle: dataset.borderColor,
+                      pointStyle: dataset.pointStyle,
+                      datasetIndex: i,
+                    };
+                  });
+                },
+              },
             },
           },
           scales: {
             x: {
               type: 'time',
               time: {
-                unit: 'minute', // Изменено с 'hour' на 'minute'
-                stepSize: 5, // Устанавливаем шаг в 5 минут
+                unit: 'minute',
+                stepSize: 5,
                 tooltipFormat: 'HH:mm',
                 displayFormats: {
-                  minute: 'HH:mm', // Формат отображения для минут
+                  minute: 'HH:mm',
                 },
               },
               afterDataLimits: (scale) => {
                 if (!isArchive) {
-                  // Добавляем отступ только для текущих данных
-                  const rightPadding = 5 * 60 * 1000; // 5 минут в миллисекундах
+                  const rightPadding = 5 * 60 * 1000;
                   scale.max += rightPadding;
                 }
               },
               ticks: {
-                // Настройка интервала отображения меток
                 source: 'auto',
                 maxRotation: 0,
                 minRotation: 0,
-                autoSkip: false, // Отключаем авто-пропуск меток
-                // Удаляем maxTicksLimit, так как stepSize контролирует интервалы
+                autoSkip: false,
               },
             },
             y: {
@@ -162,7 +183,6 @@ export async function renderChartHour(options, elements, isDataVisible) {
             },
           },
           layout: {
-            // Настройка макета для дополнительного контроля над отступами (опционально)
             padding: {
               top: 0,
               bottom: 0,
@@ -174,7 +194,6 @@ export async function renderChartHour(options, elements, isDataVisible) {
         plugins: [createCrosshairPlugin(), chartAreaBorderPlugin()],
       });
 
-      // Устанавливаем начальное состояние видимости данных
       toggleChartData(isDataVisible);
     } else {
       Object.keys(chartData).forEach((key) => {
@@ -189,32 +208,20 @@ export async function renderChartHour(options, elements, isDataVisible) {
       chartInstance.options.scales.y.ticks.stepSize = yAxisConfig.stepSize;
       chartInstance.options.scales.y.title.text = yAxisConfig.title;
 
-      // Обновляем заголовок графика
       chartInstance.options.plugins.title.text = fullChartTitle;
-
-      // Обновляем цвет заголовка на зеленый
       chartInstance.options.plugins.title.color = 'green';
+      chartInstance.options.plugins.title.padding.bottom = 10;
 
-      // Обновляем отступы заголовка
-      chartInstance.options.plugins.title.padding.bottom = 10; // Уменьшаем отступ
-
-      // Обновляем отступ по оси X при обновлении графика
       chartInstance.options.scales.x.afterDataLimits = (scale) => {
         if (!isArchive) {
-          // Добавляем отступ только для текущих данных
-          const rightPadding = 5 * 60 * 1000; // 5 минут в миллисекундах
+          const rightPadding = 5 * 60 * 1000;
           scale.max += rightPadding;
         }
       };
 
-      // Обновляем параметры времени для оси X
       chartInstance.options.scales.x.time.unit = 'minute';
       chartInstance.options.scales.x.time.stepSize = 5;
       chartInstance.options.scales.x.time.displayFormats.minute = 'HH:mm';
-
-      // Обновляем метки оси X
-      // Поскольку мы отключили autoSkip и установили stepSize, метки будут каждые 5 минут
-      // Устанавливаем maxTicksLimit не требуется, так как stepSize контролирует интервалы
 
       chartInstance.update();
     }
@@ -238,7 +245,6 @@ function destroyChart() {
 
 // Функция для получения значения по метке
 function getValueByLabel(item, label) {
-  // Ищем значение в различных категориях
   if (item.temperatures && item.temperatures[label] !== undefined) {
     return item.temperatures[label];
   }
@@ -257,7 +263,6 @@ function getValueByLabel(item, label) {
   return null;
 }
 
-
 // Функция для переключения видимости данных на графике
 export function toggleChartData(isDataVisible) {
   if (!chartInstance) return;
@@ -269,7 +274,7 @@ export function toggleChartData(isDataVisible) {
   chartInstance.update();
 }
 
-// Дополнительно: функция для сброса графика (например, при перезагрузке)
+// Функция для сброса графика
 export function resetChart() {
   destroyChart();
 }

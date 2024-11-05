@@ -82,5 +82,5 @@ document.addEventListener('DOMContentLoaded', () => {
       const { start, end } = getLastHoursRange();
       renderGraphic(start, end, false, true);
     }
-  }, 60000);
+  }, 2000);
 });

@@ -3,14 +3,14 @@ import ModbusRTU from 'modbus-serial';
 const modbusClient = new ModbusRTU();
 const port = 'COM8';
 const baudRate = 57600;
-const timeout = 8000; // Таймаут ожидания ответа
-const retryInterval = 10000; // Увеличенный интервал повторного подключения
-const maxRetries = 20; // Максимальное количество повторных попыток
+const timeout = 12000;
+const retryInterval = 15000;
+const maxRetries = 20;
 
 let isConnected = false;
 
 export const connectModbus = async () => {
-  if (isConnected) return; // Предотвращаем повторное подключение, если уже подключено
+  if (isConnected) return;
 
   try {
     modbusClient.setTimeout(timeout);
@@ -20,15 +20,15 @@ export const connectModbus = async () => {
   } catch (err) {
     console.error('Ошибка при подключении к Modbus:', err);
     isConnected = false;
-    setTimeout(connectModbus, retryInterval); // Повторное подключение через увеличенный интервал
+    setTimeout(connectModbus, retryInterval);
   }
 };
 
-export const readFloat = async (address) => {
+export const readFloat = async (address, deviceLabel = '') => {
   if (!modbusClient.isOpen || !isConnected) {
-    console.warn('Modbus не подключен. Попытка повторного подключения...');
+    console.warn(`[${deviceLabel}] Modbus не подключен. Попытка повторного подключения...`);
     await connectModbus();
-    await new Promise((resolve) => setTimeout(resolve, retryInterval)); // Ожидание перед новой попыткой подключения
+    await new Promise((resolve) => setTimeout(resolve, retryInterval));
   }
 
   let attempts = 0;
@@ -42,16 +42,15 @@ export const readFloat = async (address) => {
       return buffer.readFloatBE(0);
     } catch (err) {
       attempts++;
-      console.error(`Ошибка при чтении данных с адреса ${address}, попытка ${attempts}/${maxRetries}:`, err);
+      console.error(`[${deviceLabel}] Ошибка при чтении данных с адреса ${address}, попытка ${attempts}/${maxRetries}:`, err);
 
       if (attempts >= maxRetries) {
-        console.warn('Превышено максимальное количество попыток чтения. Попытка переподключения...');
-        isConnected = false; // Сбрасываем состояние подключения
+        console.warn(`[${deviceLabel}] Превышено максимальное количество попыток чтения. Попытка переподключения...`);
+        isConnected = false;
         await connectModbus();
-        attempts = 0; // Сброс счетчика попыток после переподключения
+        attempts = 0;
       }
 
-      // Задержка между попытками чтения данных
       await new Promise((resolve) => setTimeout(resolve, retryInterval));
     }
   }

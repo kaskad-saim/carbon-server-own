@@ -6,19 +6,20 @@ let previousTemperatures = {}; // Объект для хранения пред�
 // Функция проверки допустимого изменения температуры
 const isTemperatureValid = (label, newTemp) => {
   const previousTemp = previousTemperatures[label];
+
   if (previousTemp === undefined) {
-    // Если это первое значение, принимаем его как валидное
-    previousTemperatures[label] = newTemp;
+    previousTemperatures[label] = newTemp; // Первое значение, принимаем его
     return true;
   }
-  // Проверяем, не слишком ли велико изменение температуры
+
+  // Проверка разницы температур
   const tempDifference = Math.abs(newTemp - previousTemp);
   if (tempDifference > 100) {
-    console.warn(`Слишком большое изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}`);
+    console.warn(`[VR1] Слишком большое изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}`);
     return false;
   }
-  // Обновляем предыдущее значение, если новое значение допустимо
-  previousTemperatures[label] = newTemp;
+
+  previousTemperatures[label] = newTemp; // Обновляем предыдущее значение
   return true;
 };
 
@@ -26,74 +27,81 @@ export const readDataVr1 = async () => {
   try {
     modbusClient.setID(3); // Устанавливаем ID для VR1
 
-    // Чтение температур с проверкой валидности
-    const temperaturesVr1 = {
-      '1-СК': Math.round(await readFloat(0x0002)),
-      '2-СК': Math.round(await readFloat(0x0004)),
-      '3-СК': Math.round(await readFloat(0x0006)),
-      'В топке': Math.round(await readFloat(0x0000)),
-      'Вверху камеры загрузки': Math.round(await readFloat(0x0012)),
-      'Внизу камеры загрузки': Math.round(await readFloat(0x0008)),
-      'На входе печи дожига': Math.round(await readFloat(0x000a)),
-      'На выходе печи дожига': Math.round(await readFloat(0x000c)),
-      'Камеры выгрузки': Math.round(await readFloat(0x004e)),
-      'Дымовых газов котла': Math.round(await readFloat(0x000e)),
-      'Газов до скруббера': Math.round(await readFloat(0x0010)),
-      'Газов после скруббера': Math.round(await readFloat(0x004c)),
-      'Воды в ванне скруббера': Math.round(await readFloat(0x0014)),
-      'Гранул после холод-ка': Math.round(await readFloat(0x0016)),
+    // Адреса температур для VR1
+    const temperatureAddresses = {
+      '1-СК': 0x0002,
+      '2-СК': 0x0004,
+      '3-СК': 0x0006,
+      'В топке': 0x0000,
+      'Вверху камеры загрузки': 0x0012,
+      'Внизу камеры загрузки': 0x0008,
+      'На входе печи дожига': 0x000a,
+      'На выходе печи дожига': 0x000c,
+      'Камеры выгрузки': 0x004e,
+      'Дымовых газов котла': 0x000e,
+      'Газов до скруббера': 0x0010,
+      'Газов после скруббера': 0x004c,
+      'Воды в ванне скруббера': 0x0014,
+      'Гранул после холод-ка': 0x0016,
     };
 
-    // Проверка всех значений температуры
-    for (const [label, value] of Object.entries(temperaturesVr1)) {
-      if (!isTemperatureValid(label, value)) {
-        console.warn(`Пропускаем запись для ${label} из-за подозрительного значения: ${value}`);
-        delete temperaturesVr1[label]; // Удаляем подозрительное значение
+    const temperaturesVr1 = {};
+
+    for (const [label, address] of Object.entries(temperatureAddresses)) {
+      try {
+        const value = Math.round(await readFloat(address, 'VR1'));
+        if (isTemperatureValid(label, value)) {
+          temperaturesVr1[label] = value;
+        } else {
+          console.warn(`[VR1] Пропускаем запись для ${label} из-за подозрительного значения: ${value}`);
+        }
+      } catch (error) {
+        console.error(`[VR1] Ошибка при чтении данных с адреса ${address} (${label}):`, error);
       }
     }
 
     // Чтение уровней
     const levelsVr1 = {
       'В ванне скруббера': {
-        value: Math.round((await readFloat(0x002a)) * 10),
-        percent: Math.round(await readFloat(0x002a)),
+        value: Math.round((await readFloat(0x002a, 'VR1')) * 10),
+        percent: Math.round(await readFloat(0x002a, 'VR1')),
       },
       'В емкости ХВО': {
-        value: Math.round((await readFloat(0x003e)) * 60),
-        percent: Math.round(await readFloat(0x003e)),
+        value: Math.round((await readFloat(0x003e, 'VR1')) * 60),
+        percent: Math.round(await readFloat(0x003e, 'VR1')),
       },
       'В барабане котла': {
-        value: Math.round((await readFloat(0x0018)) * 4 - 200),
-        percent: Math.round(await readFloat(0x0018)),
+        value: Math.round((await readFloat(0x0018, 'VR1')) * 4 - 200),
+        percent: Math.round(await readFloat(0x0018, 'VR1')),
       },
     };
 
     // Чтение давлений
     const pressuresVr1 = {
-      'Давление газов после скруббера': ((await readFloat(0x0028)) * 0.25).toFixed(1),
-      'Пара в барабане котла': ((await readFloat(0x0026)) * 0.16).toFixed(1),
+      'Давление газов после скруббера': ((await readFloat(0x0028, 'VR1')) * 0.25).toFixed(1),
+      'Пара в барабане котла': ((await readFloat(0x0026, 'VR1')) * 0.16).toFixed(1),
     };
 
     // Чтение разрежений
     const vacuumsVr1 = {
-      'В топке печи': ((await readFloat(0x0020)) * 0.25 - 12.5).toFixed(1),
-      'В котле утилизаторе': ((await readFloat(0x0024)) * -0.25).toFixed(1),
-      'Низ загрузочной камеры': ((await readFloat(0x0022)) * -0.25).toFixed(1),
+      'В топке печи': ((await readFloat(0x0020, 'VR1')) * 0.25 - 12.5).toFixed(1),
+      'В котле утилизаторе': ((await readFloat(0x0024, 'VR1')) * -0.25).toFixed(1),
+      'Низ загрузочной камеры': ((await readFloat(0x0022, 'VR1')) * -0.25).toFixed(1),
     };
 
     // Чтение импульсных сигналов
     const imVr1 = {
-      'ИМ1 скруббер': (await readFloat(0x0044)) > 1,
-      'ИМ2 ХВО': (await readFloat(0x0046)) > 1,
-      'ИМ3 аварийный сброс': (await readFloat(0x0048)) > 1,
-      'ИМ4 пар в отделение активации': (await readFloat(0x004a)) > 1,
-      'ИМ5 котел-утилизатор': Math.round(await readFloat(0x001c)),
+      'ИМ1 скруббер': (await readFloat(0x0044, 'VR1')) > 1,
+      'ИМ2 ХВО': (await readFloat(0x0046, 'VR1')) > 1,
+      'ИМ3 аварийный сброс': (await readFloat(0x0048, 'VR1')) > 1,
+      'ИМ4 пар в отделение активации': (await readFloat(0x004a, 'VR1')) > 1,
+      'ИМ5 котел-утилизатор': Math.round(await readFloat(0x001c, 'VR1')),
     };
 
     // Чтение данных горелки
     const gorelkaVr1 = {
-      'Текущая мощность горелки': Math.max(0, Math.round(await readFloat(0x001a))),
-      'Задание температуры на горелку': Math.round(await readFloat(0x002e)),
+      'Текущая мощность горелки': Math.max(0, Math.round(await readFloat(0x001a, 'VR1'))),
+      'Задание температуры на горелку': Math.round(await readFloat(0x002e, 'VR1')),
     };
 
     // Формирование объекта данных
@@ -109,8 +117,9 @@ export const readDataVr1 = async () => {
 
     // Сохранение данных в базу данных
     await new PechVr1Model(formattedDataVr1).save();
-    // console.log('Данные для VR1 успешно сохранены:', formattedDataVr1);
+    // console.log('Данные для vr1:', formattedDataVr1);
+
   } catch (err) {
-    console.error('Ошибка при чтении данных VR1:', err);
+    console.error('[VR1] Ошибка при чтении данных VR1:', err);
   }
 };
