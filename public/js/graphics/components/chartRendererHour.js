@@ -206,6 +206,7 @@ export function createChart({
     if (item.pressures && item.pressures[label] !== undefined) return parseFloat(item.pressures[label]);
     if (item.levels && item.levels[label]) return item.levels[label].value;
     if (item.vacuums && item.vacuums[label] !== undefined) return parseFloat(item.vacuums[label]);
+    if (item.im && item.im[label] !== undefined) return item.im[label]; // Добавляем проверку для поля im
     if (item.gorelka && item.gorelka[label] !== undefined) return item.gorelka[label];
     return null;
   }

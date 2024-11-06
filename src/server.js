@@ -8,11 +8,8 @@ import { startDataRetrieval } from './services/carbonModbusService.js';
 import vr1Routes from './routes/vr1Routes.js';
 import vr2Routes from './routes/vr2Routes.js';
 import sushilka1Routes from './routes/sushilka1Routes.js';
-
-
 import laboratoryRoutes from './routes/laboratoryRoutes.js'; // Импорт маршрутов данных летучек
 import { connectDB } from './services/dataBaseService.js'; // Основная БД
-
 import { PechVr1Model } from './models/pechVrModel.js';
 import { PechVr2Model } from './models/pechVrModel.js';
 
@@ -54,7 +51,6 @@ app.get('/web-vizual-vr', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/', 'web-vizual-vr.html'));
 });
 
-// Маршруты для страниц
 app.get('/graph-vr-general-tempers', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vrGeneralTemper.html'));
 });
@@ -66,67 +62,6 @@ app.get('/graph-vr-general-pressure', (req, res) => {
 app.get('/graph-vr-general-level', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vrGeneralLevel.html'));
 });
-
-app.get('/graphic-hour-temper-vr-1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-hour-temp.html'));
-});
-
-app.get('/graphic-hour-temper-vr-2', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-hour-temp.html'));
-});
-
-app.get('/graphic-hour-davlenie-vr-1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-hour-davl.html'));
-});
-
-app.get('/graphic-hour-davlenie-vr-2', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-hour-davl.html'));
-});
-
-app.get('/graphic-hour-level-vr-1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-hour-level.html'));
-});
-
-app.get('/graphic-hour-level-vr-2', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-hour-level.html'));
-});
-
-app.get('/graphic-temper-vr-1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-temper.html'));
-});
-
-app.get('/graphic-temper-vr-2', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-temper.html'));
-});
-
-app.get('/general-temper-vr', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'generalVr-temper.html'));
-});
-
-app.get('/graphic-temper-vr-2', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-temper.html'));
-});
-
-app.get('/graphic-davlenie-vr', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr-davl.html'));
-});
-
-app.get('/graphic-davlenie-vr-1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-davl.html'));
-});
-
-app.get('/graphic-davlenie-vr-2', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-davl.html'));
-});
-
-app.get('/graphic-level-vr-1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-level.html'));
-});
-
-app.get('/graphic-level-vr-2', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-level.html'));
-});
-
 
 app.get('/mnemo-sushilka1', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/sushilki/', 'mnemo-sushilka1.html'));

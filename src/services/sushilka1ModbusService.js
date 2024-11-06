@@ -101,7 +101,7 @@ export const readDataSushilka1 = async () => {
 
     // Сохранение данных в базу данных
     await new Sushilka1Model(formattedData).save();
-    // console.log('Данные для Sushilka1:', formattedData);
+    // console.log('Данные для Sushilka1:', formattedData.im);
   } catch (err) {
     console.error('Ошибка при чтении данных Sushilka1:', err);
   }

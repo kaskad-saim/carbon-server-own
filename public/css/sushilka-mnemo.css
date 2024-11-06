@@ -248,6 +248,10 @@ body::-webkit-scrollbar-thumb {
 	/* background-color: #bfbcbc; */
 }
 
+.mnemo__invisible {
+	display: none;
+}
+
 .mnemo__param-text {
 	font-size: 16px;
 	line-height: 16px;

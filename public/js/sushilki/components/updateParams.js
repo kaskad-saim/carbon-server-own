@@ -33,13 +33,3 @@ export const updateSushilka1GorelkaParams = (data) => {
   if (zadanieTemper !== undefined) document.querySelector('.zadanie-temper-param').innerText = zadanieTemper;
   if (signalRegulyator !== undefined) document.querySelector('.signal-regulyator').innerText = signalRegulyator;
 };
-
-// Функция для обновления импульсных сигналов
-export const updateSushilka1ImpulseSignals = (data) => {
-  // const imParotushenie = data.im && data.im['Индикация паротушения'];
-  // const imSbrasivatel = data.im && data.im['Индикация сбрасыватель'];
-
-  // if (imParotushenie !== undefined) document.querySelector('.im-parotushenie').innerText = imParotushenie ? 'Активен' : 'Не активен';
-  // if (imSbrasivatel !== undefined) document.querySelector('.im-sbrasivatel').innerText = imSbrasivatel ? 'Активен' : 'Не активен';
-  console.log('тут доделать надо');
-};

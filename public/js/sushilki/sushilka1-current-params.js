@@ -1,4 +1,4 @@
-import { updateSushilka1GorelkaParams, updateSushilka1ImpulseSignals, updateSushilka1Temperatures, updateSushilka1Vacuums } from "./components/updateParams.js";
+import { updateSushilka1GorelkaParams, updateSushilka1Temperatures, updateSushilka1Vacuums } from "./components/updateParams.js";
 
 // Определяем функцию для обновления даты и времени
 const updateDateTime = () => {
@@ -36,7 +36,6 @@ export const fetchSushilka1Data = async () => {
     updateSushilka1Temperatures(data); // параметры температур
     updateSushilka1Vacuums(data); // параметры разрежения
     updateSushilka1GorelkaParams(data); // параметры горелки
-    updateSushilka1ImpulseSignals(data); // импульсные сигналы
   } catch (error) {
     console.error('Ошибка при получении данных Sushilka1:', error);
   }
