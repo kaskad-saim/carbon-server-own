@@ -15,38 +15,6 @@ export const colors = [
   'rgba(0, 0, 255, 1)',
 ];
 
-export const elements = {
-  noDataMessage: document.getElementById('noDataMessage'),
-  chartCanvas: document.getElementById('chartCanvas'),
-  loadingWrapper: document.getElementById('loadingWrapper'),
-  singleDate: document.getElementById('singleDate'),
-  toggleDataBtn: document.getElementById('toggleDataBtn'),
-  resetBtn: document.getElementById('resetBtn'),
-  confirmDateBtn: document.getElementById('confirmDateBtn'),
-};
-
-// Элементы управления для графика ПК1
-export const elements1 = {
-  noDataMessage: document.getElementById('noDataMessage1'),
-  chartCanvas: document.getElementById('chartCanvas1'),
-  loadingWrapper: document.getElementById('loadingWrapper1'),
-  singleDate: document.getElementById('singleDate1'),
-  toggleDataBtn: document.getElementById('toggleDataBtn1'),
-  resetBtn: document.getElementById('resetBtn1'),
-  confirmDateBtn: document.getElementById('confirmDateBtn1'),
-};
-
-// Элементы управления для графика ПК2
-export const elements2 = {
-  noDataMessage: document.getElementById('noDataMessage2'),
-  chartCanvas: document.getElementById('chartCanvas2'),
-  loadingWrapper: document.getElementById('loadingWrapper2'),
-  singleDate: document.getElementById('singleDate2'),
-  toggleDataBtn: document.getElementById('toggleDataBtn2'),
-  resetBtn: document.getElementById('resetBtn2'),
-  confirmDateBtn: document.getElementById('confirmDateBtn2'),
-};
-
 export function createCrosshairPlugin() {
   return {
     id: 'crosshair',

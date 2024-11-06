@@ -54,6 +54,19 @@ app.get('/web-vizual-vr', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/', 'web-vizual-vr.html'));
 });
 
+// Маршруты для страниц
+app.get('/graph-vr-general-tempers', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vrGeneralTemper.html'));
+});
+
+app.get('/graph-vr-general-pressure', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vrGeneralPressure.html'));
+});
+
+app.get('/graph-vr-general-level', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vrGeneralLevel.html'));
+});
+
 app.get('/graphic-hour-temper-vr-1', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-hour-temp.html'));
 });

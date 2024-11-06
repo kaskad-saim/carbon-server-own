@@ -1,4 +1,4 @@
-const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 минут
+const INACTIVITY_LIMIT = 30 * 1000; // 30 секунд
 
 export function setupInactivityTimer(callback) {
   let inactivityTimer;
@@ -8,8 +8,6 @@ export function setupInactivityTimer(callback) {
     inactivityTimer = setTimeout(callback, INACTIVITY_LIMIT);
   };
 
-  // Сброс таймера при любых действиях пользователя
-  window.addEventListener('mousemove', resetTimer);
   window.addEventListener('keydown', resetTimer);
   window.addEventListener('click', resetTimer);
 
