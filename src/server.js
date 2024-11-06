@@ -47,8 +47,8 @@ app.get('/current-pech-vr-2', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'current-pech-vr-2.html'));
 });
 
-app.get('/web-vizual-vr', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/', 'web-vizual-vr.html'));
+app.get('/web-vizual', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/', 'web-vizual.html'));
 });
 
 app.get('/graph-vr-general-tempers', (req, res) => {
