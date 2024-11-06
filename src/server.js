@@ -32,7 +32,6 @@ app.use(express.json());
 
 // Настройка статической папки для обслуживания CSS, JS и других статических файлов
 app.use(express.static(path.join(__dirname, '../public')));
-app.use(express.static(path.join(__dirname, '../public/production/carbon/')));
 
 // Маршруты для страниц
 app.get('/mnemo-pech-vr-1', (req, res) => {
@@ -52,7 +51,7 @@ app.get('/current-pech-vr-2', (req, res) => {
 });
 
 app.get('/web-vizual-vr', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'web-vizual-vr.html'));
+  res.sendFile(path.join(__dirname, '../public/production/carbon/', 'web-vizual-vr.html'));
 });
 
 app.get('/graphic-hour-temper-vr-1', (req, res) => {
@@ -113,6 +112,15 @@ app.get('/graphic-level-vr-1', (req, res) => {
 
 app.get('/graphic-level-vr-2', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-level.html'));
+});
+
+
+app.get('/mnemo-sushilka1', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/sushilki/', 'mnemo-sushilka1.html'));
+});
+
+app.get('/currentParam-sushilka1', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/production/carbon/sushilki/', 'currentParam-sushilka1.html'));
 });
 
 connectDB();

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" class="page-content">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Current</title>
+	<link rel="stylesheet" href="http://Techsite4/kaskad/css/sushilka-currentParam.css">
+</head>
+<#Refresh Content=60>
+
+	<body>
+		<div class="current-param">
+			<h1 class="current-param__title">
+				<span class="current-param__title-span">Карбон</span>
+				Вращающаяся сушилка №2
+			</h1>
+			<div class="current-param__box">
+				<span class="current-param__date">
+					<#Date>
+				</span>
+				<span class="current-param__time">
+					<#Time>
+				</span>
+			</div>
+		</div>
+
+		<div class="tables">
+			<table class="table">
+				<caption class="table__title">Текущие параметры (температура)
+				</caption>
+				<thead class="table__thead">
+					<tr class="table__tr">
+						<th class="table__th table__left">Наименование параметра</th>
+						<th class="table__th ">Значение &#176C</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="table__tr">
+						<td class="table__td table__left">В топке</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=12 Precision=0>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left"> В камера смешения</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=13 Precision=0>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left">Уходящих газов</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=15 Precision=0>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="table">
+				<caption class="table__title">Текущие параметры (разрежения/давления)
+				</caption>
+				<thead class="table__thead">
+					<tr class="table__tr">
+						<th class="table__th table__left">Наименование параметра</th>
+						<th class="table__th ">Значение кгс/м2</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="table__tr">
+						<td class="table__td table__left">В топке</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=17 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left">В камере выгрузки</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=18 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left">Воздуха на разбавление</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=19 Precision=1>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="table">
+				<caption class="table__title">Текущие параметры (горелка)
+				</caption>
+				<thead class="table__thead">
+					<tr class="table__tr">
+						<th class="table__th table__left">Наименование параметра</th>
+						<th class="table__th ">Значение</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="table__tr">
+						<td class="table__td table__left">Мощность горелки, %</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=11 PasspID=4 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left">Сигнал от регулятора, %</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=21 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left">Задание температуры регулятора, &#176C</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=22 Precision=0>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</body>
+
+</html>
