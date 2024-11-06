@@ -1,16 +1,74 @@
 import { readFloat } from './modbusService.js';
 import { Sushilka1Model } from '../models/sushilkaModel.js';
 
+let previousTemperatures = {}; // Хранит предыдущие значения температур
+let temperatureChangeCounters = {}; // Хранит количество последовательных значительных изменений
+
+// Функция проверки допустимого изменения температуры
+const isTemperatureValid = (label, newTemp) => {
+  const previousTemp = previousTemperatures[label];
+  const threshold = 150; // Допустимое разовое изменение температуры
+  const maxConsecutiveChanges = 3; // Количество последовательных изменений для принятия нового значения
+
+  if (previousTemp === undefined) {
+    // Первое значение, принимаем его
+    previousTemperatures[label] = newTemp;
+    temperatureChangeCounters[label] = 0;
+    return true;
+  }
+
+  const tempDifference = Math.abs(newTemp - previousTemp);
+
+  if (tempDifference > threshold) {
+    // Значительное изменение температуры
+    if (!temperatureChangeCounters[label]) {
+      temperatureChangeCounters[label] = 1;
+    } else {
+      temperatureChangeCounters[label]++;
+    }
+
+    if (temperatureChangeCounters[label] >= maxConsecutiveChanges) {
+      console.warn(`[Sushilka1] Температура для ${label} продолжает значительно изменяться. Принимаем новое значение.`);
+      previousTemperatures[label] = newTemp;
+      temperatureChangeCounters[label] = 0; // Сбрасываем счетчик
+      return true;
+    } else {
+      console.warn(`[Sushilka1] Значительное изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}. Последовательных изменений: ${temperatureChangeCounters[label]}`);
+      return false;
+    }
+  } else {
+    // Изменение температуры в пределах допустимого
+    temperatureChangeCounters[label] = 0; // Сбрасываем счетчик
+    previousTemperatures[label] = newTemp;
+    return true;
+  }
+};
+
 export const readDataSushilka1 = async () => {
   try {
     const deviceID = 1; // Установите правильный ID для Sushilka1
 
     // Чтение температур
-    const temperatures = {
-      'Температура в топке': Math.round(await readFloat(0x0000, 'Sushilka1', deviceID)),
-      'Температура в камере смешения': Math.round(await readFloat(0x0002, 'Sushilka1', deviceID)),
-      'Температура уходящих газов': Math.round(await readFloat(0x0004, 'Sushilka1', deviceID)),
+    const temperatureAddresses = {
+      'Температура в топке': 0x0000,
+      'Температура в камере смешения': 0x0002,
+      'Температура уходящих газов': 0x0004,
     };
+
+    const temperatures = {};
+
+    for (const [label, address] of Object.entries(temperatureAddresses)) {
+      try {
+        const value = Math.round(await readFloat(address, 'Sushilka1', deviceID));
+        if (isTemperatureValid(label, value)) {
+          temperatures[label] = value;
+        } else {
+          console.warn(`[Sushilka1] Пропускаем запись для ${label} из-за подозрительного значения: ${value}`);
+        }
+      } catch (error) {
+        console.error(`[Sushilka1] Ошибка при чтении данных с адреса ${address} (${label}):`, error);
+      }
+    }
 
     // Чтение разрежений
     const vacuums = {

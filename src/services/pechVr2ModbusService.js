@@ -1,26 +1,47 @@
 import { readFloat } from './modbusService.js';
 import { PechVr2Model } from '../models/pechVrModel.js';
 
-let previousTemperatures = {}; // Объект для хранения предыдущих значений температур
+let previousTemperatures = {}; // Хранит предыдущие значения температур
+let temperatureChangeCounters = {}; // Хранит количество последовательных значительных изменений
 
 // Функция проверки допустимого изменения температуры
 const isTemperatureValid = (label, newTemp) => {
   const previousTemp = previousTemperatures[label];
+  const threshold = 100; // Допустимое разовое изменение температуры
+  const maxConsecutiveChanges = 3; // Количество последовательных изменений для принятия нового значения
 
   if (previousTemp === undefined) {
-    previousTemperatures[label] = newTemp; // Первое значение, принимаем его
+    // Первое значение, принимаем его
+    previousTemperatures[label] = newTemp;
+    temperatureChangeCounters[label] = 0;
     return true;
   }
 
-  // Проверка разницы температур
   const tempDifference = Math.abs(newTemp - previousTemp);
-  if (tempDifference > 150) {
-    console.warn(`[VR2] Слишком большое изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}`);
-    return false;
-  }
 
-  previousTemperatures[label] = newTemp; // Обновляем предыдущее значение
-  return true;
+  if (tempDifference > threshold) {
+    // Значительное изменение температуры
+    if (!temperatureChangeCounters[label]) {
+      temperatureChangeCounters[label] = 1;
+    } else {
+      temperatureChangeCounters[label]++;
+    }
+
+    if (temperatureChangeCounters[label] >= maxConsecutiveChanges) {
+      console.warn(`[VR2] Температура для ${label} продолжает значительно изменяться. Принимаем новое значение.`);
+      previousTemperatures[label] = newTemp;
+      temperatureChangeCounters[label] = 0; // Сбрасываем счетчик
+      return true;
+    } else {
+      console.warn(`[VR2] Значительное изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}. Последовательных изменений: ${temperatureChangeCounters[label]}`);
+      return false;
+    }
+  } else {
+    // Изменение температуры в пределах допустимого
+    temperatureChangeCounters[label] = 0; // Сбрасываем счетчик
+    previousTemperatures[label] = newTemp;
+    return true;
+  }
 };
 
 export const readDataVr2 = async () => {

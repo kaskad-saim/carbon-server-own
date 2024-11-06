@@ -7,6 +7,8 @@ import { connectModbus } from './services/modbusService.js';
 import { startDataRetrieval } from './services/carbonModbusService.js';
 import vr1Routes from './routes/vr1Routes.js';
 import vr2Routes from './routes/vr2Routes.js';
+import sushilka1Routes from './routes/sushilka1Routes.js';
+
 
 import laboratoryRoutes from './routes/laboratoryRoutes.js'; // Импорт маршрутов данных летучек
 import { connectDB } from './services/dataBaseService.js'; // Основная БД
@@ -77,8 +79,6 @@ app.get('/graphic-hour-level-vr-2', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr2-hour-level.html'));
 });
 
-
-
 app.get('/graphic-temper-vr-1', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vr1-temper.html'));
 });
@@ -129,6 +129,7 @@ connectModbus()
 // Используем маршруты
 app.use('/api', vr1Routes); // Для данных VR1 и VR2
 app.use('/api', vr2Routes); // Для данных VR1 и VR2
+app.use('/api', sushilka1Routes);
 app.use('/api/lab', laboratoryRoutes); // Для данных летучек
 
 // Маршрут для получения данных VR1
