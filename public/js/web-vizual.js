@@ -25,7 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Устанавливаем начальный URL во фрейм при переключении основной вкладки
       const iframe = document.querySelector(`#${tabId} iframe`);
-      const defaultUrl = tabId === 'carbonization-1' ? '/mnemo-pech-vr-1' : '/mnemo-pech-vr-2';
+      let defaultUrl = '/mnemo-pech-vr-1';
+      if (tabId === 'carbonization-2') {
+        defaultUrl = '/mnemo-pech-vr-2';
+      } else if (tabId === 'sushilka-1') {
+        defaultUrl = '/mnemo-sushilka1';
+      }
       iframe.src = `http://169.254.0.156:3002${defaultUrl}`;
 
       // Обновляем состояние активной под-вкладки
