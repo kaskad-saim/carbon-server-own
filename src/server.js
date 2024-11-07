@@ -5,9 +5,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectModbus } from './services/modbusService.js';
 import { startDataRetrieval } from './services/carbonModbusService.js';
+import pageRoutes from './routes/pageRoutes.js';
 import vr1Routes from './routes/vr1Routes.js';
 import vr2Routes from './routes/vr2Routes.js';
 import sushilka1Routes from './routes/sushilka1Routes.js';
+import sushilka2Routes from './routes/sushilka2Routes.js';
 import laboratoryRoutes from './routes/laboratoryRoutes.js'; // Импорт маршрутов данных летучек
 import { connectDB } from './services/dataBaseService.js'; // Основная БД
 import { PechVr1Model } from './models/pechVrModel.js';
@@ -32,45 +34,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
 // Маршруты для страниц
-app.get('/mnemo-pech-vr-1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'mnemo-pech-vr-1.html'));
-});
-
-app.get('/current-pech-vr-1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'current-pech-vr-1.html'));
-});
-
-app.get('/mnemo-pech-vr-2', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'mnemo-pech-vr-2.html'));
-});
-
-app.get('/current-pech-vr-2', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr', 'current-pech-vr-2.html'));
-});
-
-app.get('/web-vizual', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/', 'web-vizual.html'));
-});
-
-app.get('/graph-vr-general-tempers', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vrGeneralTemper.html'));
-});
-
-app.get('/graph-vr-general-pressure', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vrGeneralPressure.html'));
-});
-
-app.get('/graph-vr-general-level', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/pechiVr/graphics', 'vrGeneralLevel.html'));
-});
-
-app.get('/mnemo-sushilka1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/sushilki/', 'mnemo-sushilka1.html'));
-});
-
-app.get('/currentParam-sushilka1', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/production/carbon/sushilki/', 'currentParam-sushilka1.html'));
-});
+app.use('/', pageRoutes);
 
 connectDB();
 
@@ -95,6 +59,7 @@ connectModbusSushilka2()
 app.use('/api', vr1Routes); // Для данных VR1 и VR2
 app.use('/api', vr2Routes); // Для данных VR1 и VR2
 app.use('/api', sushilka1Routes);
+app.use('/api', sushilka2Routes);
 app.use('/api/lab', laboratoryRoutes); // Для данных летучек
 
 // Маршрут для получения данных VR1

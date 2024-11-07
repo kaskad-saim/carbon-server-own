@@ -52,7 +52,7 @@ export const readDataSushilka1 = async () => {
     const temperatureAddresses = {
       'Температура в топке': 0x0000,
       'Температура в камере смешения': 0x0002,
-      'Температура уходящих газов': 0x0004,
+      'Температура уходящих газов': 0x0006,
     };
 
     const temperatures = {};
@@ -72,22 +72,22 @@ export const readDataSushilka1 = async () => {
 
     // Чтение разрежений
     const vacuums = {
-      'Разрежение в топке': ((await readFloat(0x0006, 'Sushilka1', deviceID)) * 0.25 - 12.5).toFixed(1),
-      'Разрежение в камере выгрузки': ((await readFloat(0x0008, 'Sushilka1', deviceID)) * 0.25).toFixed(1),
-      'Разрежение воздуха на разбавление': ((await readFloat(0x000A, 'Sushilka1', deviceID)) * 5).toFixed(1),
+      'Разрежение в топке': ((await readFloat(0x000A, 'Sushilka1', deviceID)) * 0.25 - 12.5).toFixed(1),
+      'Разрежение в камере выгрузки': ((await readFloat(0x000C, 'Sushilka1', deviceID)) * 0.25).toFixed(1),
+      'Разрежение воздуха на разбавление': ((await readFloat(0x000E, 'Sushilka1', deviceID)) * 5).toFixed(1),
     };
 
     // Чтение данных горелки
     const gorelka = {
-      'Мощность горелки': Math.round(await readFloat(0x000C, 'Sushilka1', deviceID)),
-      'Сигнал от регулятора': Math.round(await readFloat(0x000E, 'Sushilka1', deviceID)),
-      'Задание температуры': Math.round(await readFloat(0x0010, 'Sushilka1', deviceID)),
+      'Мощность горелки': Math.round(await readFloat(0x0010, 'Sushilka1', deviceID)),
+      'Сигнал от регулятора': Math.round(await readFloat(0x0012, 'Sushilka1', deviceID)),
+      'Задание температуры': Math.round(await readFloat(0x0014, 'Sushilka1', deviceID)),
     };
 
     // Чтение импульсных сигналов
     const im = {
-      'Индикация паротушения': (await readFloat(0x0012, 'Sushilka1', deviceID)) > 1,
-      'Индикация сбрасыватель': (await readFloat(0x0014, 'Sushilka1', deviceID)) > 1,
+      'Индикация паротушения': (await readFloat(0x001E, 'Sushilka1', deviceID)) > 1,
+      'Индикация сбрасыватель': (await readFloat(0x0020, 'Sushilka1', deviceID)) > 1,
     };
 
     // Формирование объекта данных
