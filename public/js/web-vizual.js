@@ -25,13 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Устанавливаем начальный URL во фрейм при переключении основной вкладки
       const iframe = document.querySelector(`#${tabId} iframe`);
-      let defaultUrl = '/mnemo-pech-vr-1';
-      if (tabId === 'carbonization-2') {
-        defaultUrl = '/mnemo-pech-vr-2';
+      let defaultUrl;
+
+      if (tabId === 'carbonization-1') {
+        defaultUrl = 'http://169.254.0.156:3002/mnemo-pech-vr-1';
+      } else if (tabId === 'carbonization-2') {
+        defaultUrl = 'http://169.254.0.156:3002/mnemo-pech-vr-2';
       } else if (tabId === 'sushilka-1') {
-        defaultUrl = '/mnemo-sushilka1';
+        defaultUrl = 'http://169.254.0.156:3002/mnemo-sushilka1';
+      } else if (tabId === 'sushilka-2') {
+        defaultUrl = 'http://169.254.0.156:3002/mnemo-sushilka2';
       }
-      iframe.src = `http://169.254.0.156:3002${defaultUrl}`;
+      iframe.src = defaultUrl;
 
       // Обновляем состояние активной под-вкладки
       const activeTab = document.getElementById(tabId);
@@ -47,7 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const iframe = activeTab.querySelector('iframe');
       const url = button.getAttribute('data-url');
 
-      iframe.src = `http://169.254.0.156:3002${url}`;
+      // Проверяем, если это одна из сушилок, путь оставляем как есть
+      const tabId = activeTab.id;
+      if (tabId.startsWith('sushilka')) {
+        iframe.src = url;
+      } else {
+        // Для остальных добавляем префикс
+        iframe.src = `http://169.254.0.156:3002${url}`;
+      }
 
       activeTab.querySelectorAll('.sub-tab-button').forEach((btn) => btn.classList.remove('sub-tab-button--active'));
       button.classList.add('sub-tab-button--active');

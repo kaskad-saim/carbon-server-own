@@ -15,6 +15,8 @@
       <button class="tab-container__button" data-tab="carbonization-1">Печь карбонизации-1</button>
       <button class="tab-container__button" data-tab="carbonization-2">Печь карбонизации-2</button>
       <button class="tab-container__button" data-tab="sushilka-1">Сушилка-1</button>
+      <button class="tab-container__button" data-tab="sushilka-2">Сушилка-2</button>
+
     </div>
 
     <div id="carbonization-1" class="tab-content">
@@ -66,17 +68,26 @@
         <div class="tab-content__sub-tab-container">
           <button class="sub-tab-button" data-url="/currentParam-sushilka1">Текущие параметры</button>
           <button class="sub-tab-button" data-url="/mnemo-sushilka1">Мнемосхема</button>
-          <!-- <button class="sub-tab-button" data-url="/graphic-temper-vr-2">Графики температур за сутки</button>
-          <button class="sub-tab-button" data-url="/graphic-davlenie-vr-2">Графики давл./разр. за сутки</button>
-          <button class="sub-tab-button" data-url="/graphic-level-vr-2">График уровней за
-            сутки</button> -->
-          <!-- <button class="sub-tab-button" data-url="/graph-vr-general-tempers">Графики температур за час</button>
-          <button class="sub-tab-button" data-url="/graph-vr-general-pressure">Графики давл./разр. за час</button>
-          <button class="sub-tab-button" data-url="/graph-vr-general-levell">График уровней за час</button> -->
+          <button class="sub-tab-button" data-url="http://169.254.0.155/Kaskad/production/carbon/sushilki/sushilka1-temp.htm">Графики температур</button>
+          <button class="sub-tab-button" data-url="http://169.254.0.155/Kaskad/production/carbon/sushilki/sushilka1-davl.htm">Графики давл./разр. </button>
         </div>
       </div>
       <div class="iframe-container">
         <iframe id="sushilka-1-frame" src="" width="100%" height="100%"></iframe>
+      </div>
+    </div>
+    <div id="sushilka-2" class="tab-content">
+      <div class="tab-container-box">
+        <h2 class="tab-content__title title-reset">Сушилка-2</h2>
+        <div class="tab-content__sub-tab-container">
+          <button class="sub-tab-button" data-url="/currentParam-sushilka2">Текущие параметры</button>
+          <button class="sub-tab-button" data-url="/mnemo-sushilka2">Мнемосхема</button>
+          <button class="sub-tab-button" data-url="http://169.254.0.155/Kaskad/production/carbon/sushilki/sushilka2-temp.htm">Графики температур</button>
+          <button class="sub-tab-button" data-url="http://169.254.0.155/Kaskad/production/carbon/sushilki/sushilka2-davl.htm">Графики давл./разр. </button>
+        </div>
+      </div>
+      <div class="iframe-container">
+        <iframe id="sushilka-2-frame" src="" width="100%" height="100%"></iframe>
       </div>
     </div>
   </div>
