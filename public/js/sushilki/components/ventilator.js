@@ -27,7 +27,7 @@ export const updatePics = (data) => {
   const picGif7 = document.querySelector('.mnemo__gif-7 img');
   const picGif8 = document.querySelector('.mnemo__gif-8 img');
 
-  const picAnimate = data.gorelka && data.gorelka['Мощность горелки'];
+  const picAnimate = data.gorelka?.['Мощность горелки №1'] ?? data.gorelka?.['Мощность горелки №2'];
 
   if (picAnimate !== undefined) {
     const displayState = picAnimate > 5 ? 'block' : 'none';

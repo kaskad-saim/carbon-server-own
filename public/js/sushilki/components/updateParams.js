@@ -49,8 +49,8 @@ export const updateSushilka2Vacuums = (data) => {
 // Функция для обновления параметров горелки
 export const updateSushilka1GorelkaParams = (data) => {
   const moshnostGorelka = data.gorelka && data.gorelka['Мощность горелки №1'];
-  const signalRegulyator = data.gorelka && data.gorelka['Сигнал от регулятора'];
-  const zadanieTemper = data.gorelka && data.gorelka['Задание температуры'];
+  const signalRegulyator = data.gorelka && data.gorelka['Сигнал от регулятора №1'];
+  const zadanieTemper = data.gorelka && data.gorelka['Задание температуры №1'];
 
   if (moshnostGorelka !== undefined) document.querySelector('.mosh-gorelki-param').innerText = moshnostGorelka;
   if (zadanieTemper !== undefined) document.querySelector('.zadanie-temper-param').innerText = zadanieTemper;
@@ -59,8 +59,8 @@ export const updateSushilka1GorelkaParams = (data) => {
 
 export const updateSushilka2GorelkaParams = (data) => {
   const moshnostGorelka = data.gorelka && data.gorelka['Мощность горелки №2'];
-  const signalRegulyator = data.gorelka && data.gorelka['Сигнал от регулятора'];
-  const zadanieTemper = data.gorelka && data.gorelka['Задание температуры'];
+  const signalRegulyator = data.gorelka && data.gorelka['Сигнал от регулятора №2'];
+  const zadanieTemper = data.gorelka && data.gorelka['Задание температуры №2'];
 
   if (moshnostGorelka !== undefined) document.querySelector('.mosh-gorelki-param').innerText = moshnostGorelka;
   if (zadanieTemper !== undefined) document.querySelector('.zadanie-temper-param').innerText = zadanieTemper;

@@ -324,7 +324,7 @@ export const checkConditions = () => {
       const value = Number(rawValue.replace(',', '.'));
 
       if (isNaN(value)) {
-        console.warn(`Невозможно преобразовать значение "${rawValue}" для селектора "${selector}" в число.`);
+        // console.warn(`Невозможно преобразовать значение "${rawValue}" для селектора "${selector}" в число.`);
         return;
       }
 

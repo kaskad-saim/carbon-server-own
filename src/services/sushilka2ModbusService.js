@@ -137,8 +137,8 @@ export const readDataSushilka2 = async () => {
     // Чтение данных горелки
     const gorelka = {
       'Мощность горелки №2': Math.max(0, Math.round(await readFloat(0x0010, 'Sushilka2', deviceID))),
-      'Сигнал от регулятора': Math.round(await readFloat(0x0012, 'Sushilka2', deviceID)),
-      'Задание температуры': Math.round(await readFloat(0x0014, 'Sushilka2', deviceID)),
+      'Сигнал от регулятора №2': Math.round(await readFloat(0x0012, 'Sushilka2', deviceID)),
+      'Задание температуры №2': Math.round(await readFloat(0x0014, 'Sushilka2', deviceID)),
     };
 
     // Чтение импульсных сигналов

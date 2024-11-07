@@ -121,8 +121,8 @@ export const readDataVr2 = async () => {
 
     // Чтение данных горелки
     const gorelkaVr2 = {
-      'Текущая мощность горелки': Math.max(0, Math.round(await readFloat(0x001a, 'VR2', deviceID))),
-      'Задание температуры на горелку': Math.round(await readFloat(0x002e, 'VR2', deviceID)),
+      'Мощность горелки №2': Math.max(0, Math.round(await readFloat(0x001a, 'VR2', deviceID))),
+      'Задание температуры на горелку №2': Math.round(await readFloat(0x002e, 'VR2', deviceID)),
     };
 
     // Формирование объекта данных

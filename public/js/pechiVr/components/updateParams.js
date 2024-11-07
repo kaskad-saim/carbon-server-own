@@ -71,9 +71,29 @@ export const updateImpulseSignals = (data) => {
 
 // Функция для обновления параметров горелки
 export const updateGorelkaParams = (data) => {
-  const zadanieTemperNaGorelky = data.gorelka && data.gorelka['Задание температуры на горелку'];
-  const moshGorelky = data.gorelka && data.gorelka['Текущая мощность горелки'];
+  const zadanieTemperNaGorelky = data.gorelka?.['Задание температуры на горелку №1'];
+  const zadanieTemperNaGorelkyVr2 = data.gorelka?.['Задание температуры на горелку №2'];
+  const moshGorelky = data.gorelka?.['Мощность горелки №1'];
+  const moshGorelkyVr2 = data.gorelka?.['Мощность горелки №2'];
 
-  if (zadanieTemperNaGorelky !== undefined) document.querySelector('.zadanie-temper-na-gorelky-span').innerText = zadanieTemperNaGorelky;
-  if (moshGorelky !== undefined) document.querySelector('.mosh-gorelky-span').innerText = moshGorelky;
+  const zadanieTemperNaGorelkySpan = document.querySelector('.zadanie-temper-na-gorelky-span');
+  const zadanieTemperNaGorelkyVr2Span = document.querySelector('.zadanie-temper-na-gorelky-vr2-span');
+
+  if (zadanieTemperNaGorelkySpan && zadanieTemperNaGorelky !== undefined) {
+    zadanieTemperNaGorelkySpan.innerText = zadanieTemperNaGorelky;
+  } else if (zadanieTemperNaGorelkyVr2Span && zadanieTemperNaGorelkyVr2 !== undefined) {
+    zadanieTemperNaGorelkyVr2Span.innerText = zadanieTemperNaGorelkyVr2;
+  }
+
+  // Обновляем значение для 'Мощность горелки' в зависимости от наличия элементов
+  const moshGorelkySpan = document.querySelector('.mosh-gorelky-span');
+  const moshGorelkyVrSpan = document.querySelector('.mosh-gorelky-vr2-span');
+
+  if (moshGorelkySpan && moshGorelky !== undefined) {
+    // Если .mosh-gorelky-span существует, обновляем его значением moshGorelky
+    moshGorelkySpan.innerText = moshGorelky;
+  } else if (moshGorelkyVrSpan && moshGorelkyVr2 !== undefined) {
+    // Если .mosh-gorelky-span отсутствует, но есть .mosh-gorelky-vr-span, обновляем его значением moshGorelkyVr2
+    moshGorelkyVrSpan.innerText = moshGorelkyVr2;
+  }
 };

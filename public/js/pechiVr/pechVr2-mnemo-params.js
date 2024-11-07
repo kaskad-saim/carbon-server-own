@@ -1,7 +1,7 @@
 import { updateTemperatures, updatePressures, updateVacuums, updateLevels, updateImpulseSignals, updateGorelkaParams } from './components/updateParams.js';
 import { initLevelObjects } from './components/levels.js';
 import { updateIms } from './components/im.js';
-import { updateVentilator } from './components/ventilator.js';
+import { updateVentilator, updateFire } from './components/ventilator.js';
 import { checkConditions } from './components/checkConditions.js';
 
 export const fetchVr2Data = async () => {
@@ -18,7 +18,8 @@ export const fetchVr2Data = async () => {
     updateImpulseSignals(data); // параметры ИМ5 на котле-утилизаторе
     updateGorelkaParams(data); // параметры горелки
     updateIms(data); //обновление параметров ИМ
-    updateVentilator(data); //обновление анимации вентилятора
+    updateVentilator(data); //обновление анимации вентилятора и дымососа
+    updateFire(data); // обновление анимации горелки
     initLevelObjects(); // функция закрашивания уровня в шкалах
     checkConditions(); // функция сигнализаций, таблицы, режима
 

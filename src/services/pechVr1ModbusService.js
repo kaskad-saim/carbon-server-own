@@ -121,8 +121,8 @@ export const readDataVr1 = async () => {
 
     // Чтение данных горелки
     const gorelkaVr1 = {
-      'Текущая мощность горелки': Math.max(0, Math.round(await readFloat(0x001a, 'VR1', deviceID))),
-      'Задание температуры на горелку': Math.round(await readFloat(0x002e, 'VR1', deviceID)),
+      'Мощность горелки №1': Math.max(0, Math.round(await readFloat(0x001a, 'VR1', deviceID))),
+      'Задание температуры на горелку №1': Math.round(await readFloat(0x002e, 'VR1', deviceID)),
     };
 
     // Формирование объекта данных
@@ -138,7 +138,7 @@ export const readDataVr1 = async () => {
 
     // Сохранение данных в базу данных
     await new PechVr1Model(formattedDataVr1).save();
-    // console.log('Данные для VR1:', formattedDataVr1);
+    // console.log('Данные для VR1:', formattedDataVr1.gorelka);
 
   } catch (err) {
     console.error('[VR1] Ошибка при чтении данных VR1:', err);

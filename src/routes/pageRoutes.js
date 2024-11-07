@@ -57,4 +57,9 @@ router.get('/currentParam-sushilka2', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/sushilki/', 'currentParam-sushilka2.html'));
 });
 
+
+router.get('/currentParam-gorelki', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/gorelki/', 'currentParam-gorelki.html'));
+});
+
 export default router;
