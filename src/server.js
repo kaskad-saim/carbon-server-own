@@ -12,6 +12,7 @@ import laboratoryRoutes from './routes/laboratoryRoutes.js'; // Импорт м�
 import { connectDB } from './services/dataBaseService.js'; // Основная БД
 import { PechVr1Model } from './models/pechVrModel.js';
 import { PechVr2Model } from './models/pechVrModel.js';
+import { connectModbusSushilka2, readDataSushilka2 } from './services/sushilka2ModbusService.js';
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -80,6 +81,14 @@ connectModbus()
   })
   .catch((err) => {
     console.error('Ошибка при запуске опроса данных:', err);
+  });
+
+connectModbusSushilka2()
+  .then(() => {
+    setInterval(readDataSushilka2, 10000); // Интервал опроса в миллисекундах
+  })
+  .catch((err) => {
+    console.error('Ошибка при запуске опроса данных для Sushilka 2:', err);
   });
 
 // Используем маршруты

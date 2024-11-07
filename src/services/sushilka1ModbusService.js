@@ -73,8 +73,8 @@ export const readDataSushilka1 = async () => {
     // Чтение разрежений
     const vacuums = {
       'Разрежение в топке': ((await readFloat(0x0006, 'Sushilka1', deviceID)) * 0.25 - 12.5).toFixed(1),
-      'Разрежение в камере выгрузки': ((await readFloat(0x0008, 'Sushilka1', deviceID)) * 0.25 - 12.5).toFixed(1),
-      'Разрежение воздуха на разбавление': ((await readFloat(0x000A, 'Sushilka1', deviceID)) * 0.25 - 12.5).toFixed(1),
+      'Разрежение в камере выгрузки': ((await readFloat(0x0008, 'Sushilka1', deviceID)) * 0.25).toFixed(1),
+      'Разрежение воздуха на разбавление': ((await readFloat(0x000A, 'Sushilka1', deviceID)) * 5).toFixed(1),
     };
 
     // Чтение данных горелки
@@ -101,7 +101,7 @@ export const readDataSushilka1 = async () => {
 
     // Сохранение данных в базу данных
     await new Sushilka1Model(formattedData).save();
-    // console.log('Данные для Sushilka1:', formattedData.im);
+    // console.log('Данные для Sushilka1:', formattedData);
   } catch (err) {
     console.error('Ошибка при чтении данных Sushilka1:', err);
   }
