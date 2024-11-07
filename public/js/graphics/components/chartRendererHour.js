@@ -65,6 +65,9 @@ export function createChart({
               tooltip: {
                 mode: 'index',
                 intersect: false,
+                position: 'nearest', // Позиционирует тултип рядом с точкой
+                xAlign: 'left', // Расположение тултипа справа
+                yAlign: 'center', // Центрирование по вертикали
                 callbacks: {
                   label: function (tooltipItem) {
                     const datasetLabel = tooltipItem.dataset.label || '';
@@ -76,11 +79,11 @@ export function createChart({
                 },
                 // Увеличение шрифта тултипа
                 titleFont: {
-                  size: 14, // Размер шрифта заголовка тултипа
+                  size: 13, // Размер шрифта заголовка тултипа
                   weight: 'bold'
                 },
                 bodyFont: {
-                  size: 14, // Размер шрифта для тела тултипа
+                  size: 12, // Размер шрифта для тела тултипа
                 }
               },
               title: {
