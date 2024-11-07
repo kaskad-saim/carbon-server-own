@@ -45,8 +45,16 @@ router.get('/mnemo-sushilka1', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/sushilki/', 'mnemo-sushilka1.html'));
 });
 
+router.get('/mnemo-sushilka2', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/sushilki/', 'mnemo-sushilka2.html'));
+});
+
 router.get('/currentParam-sushilka1', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/sushilki/', 'currentParam-sushilka1.html'));
+});
+
+router.get('/currentParam-sushilka2', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/sushilki/', 'currentParam-sushilka2.html'));
 });
 
 export default router;

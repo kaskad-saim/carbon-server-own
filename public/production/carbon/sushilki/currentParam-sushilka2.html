@@ -6,10 +6,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Current</title>
-	<link rel="stylesheet" href="http://Techsite4/kaskad/css/sushilka-currentParam.css">
+	<link rel="stylesheet" href="../../../css/sushilka-currentParam.css">
 </head>
-<#Refresh Content=60>
-
 	<body>
 		<div class="current-param">
 			<h1 class="current-param__title">
@@ -18,10 +16,10 @@
 			</h1>
 			<div class="current-param__box">
 				<span class="current-param__date">
-					<#Date>
+
 				</span>
 				<span class="current-param__time">
-					<#Time>
+
 				</span>
 			</div>
 		</div>
@@ -39,26 +37,26 @@
 				<tbody>
 					<tr class="table__tr">
 						<td class="table__td table__left">В топке</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=12 Precision=0>
+						<td class="table__td table__right topka-temper-param">
+
 						</td>
 					</tr>
 					<tr class="table__tr">
 						<td class="table__td table__left"> В камера смешения</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=13 Precision=0>
+						<td class="table__td table__right temper-kamera-smeshenia-param">
+
 						</td>
 					</tr>
 					<tr class="table__tr">
 						<td class="table__td table__left">Уходящих газов</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=15 Precision=0>
+						<td class="table__td table__right temper-uhodyashih-gazov-param">
+
 						</td>
 					</tr>
 				</tbody>
 			</table>
 			<table class="table">
-				<caption class="table__title">Текущие параметры (разрежения/давления)
+				<caption class="table__title">Текущие параметры (разрежения)
 				</caption>
 				<thead class="table__thead">
 					<tr class="table__tr">
@@ -69,20 +67,20 @@
 				<tbody>
 					<tr class="table__tr">
 						<td class="table__td table__left">В топке</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=17 Precision=1>
+						<td class="table__td table__right topka-razr-param">
+
 						</td>
 					</tr>
 					<tr class="table__tr">
 						<td class="table__td table__left">В камере выгрузки</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=18 Precision=1>
+						<td class="table__td table__right razr-kamera-vigruzki-param">
+
 						</td>
 					</tr>
 					<tr class="table__tr">
 						<td class="table__td table__left">Воздуха на разбавление</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=19 Precision=1>
+						<td class="table__td table__right razr-vosduh-na-razbavl-param">
+
 						</td>
 					</tr>
 				</tbody>
@@ -99,26 +97,29 @@
 				<tbody>
 					<tr class="table__tr">
 						<td class="table__td table__left">Мощность горелки, %</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=11 PasspID=4 Precision=1>
+						<td class="table__td table__right mosh-gorelki-param">
+
 						</td>
 					</tr>
 					<tr class="table__tr">
 						<td class="table__td table__left">Сигнал от регулятора, %</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=21 Precision=1>
+						<td class="table__td table__right signal-regulyator">
+
 						</td>
 					</tr>
 					<tr class="table__tr">
 						<td class="table__td table__left">Задание температуры регулятора, &#176C</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=22 Precision=0>
+						<td class="table__td table__right zadanie-temper-param">
+
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 
+
+
+		<script type="module" src="../../../js/sushilki/sushilka2-current-params.js"></script>
 	</body>
 
 </html>

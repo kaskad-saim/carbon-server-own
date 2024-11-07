@@ -34,7 +34,7 @@ const readFloat = async (address) => {
   return await mutex.runExclusive(async () => {
     modbusClient.setID(deviceID);
     if (!isConnected) {
-      console.log("Modbus не подключен. Попытка переподключения...");
+      console.log('Modbus не подключен. Попытка переподключения...');
       await connectModbusSushilka2();
     }
 
@@ -96,7 +96,9 @@ const isTemperatureValid = (label, newTemp) => {
       temperatureChangeCounters[label] = 0; // Сбрасываем счетчик
       return true;
     } else {
-      console.warn(`[Sushilka2] Значительное изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}. Последовательных изменений: ${temperatureChangeCounters[label]}`);
+      console.warn(
+        `[Sushilka2] Значительное изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}. Последовательных изменений: ${temperatureChangeCounters[label]}`
+      );
       return false;
     }
   } else {
@@ -127,21 +129,21 @@ export const readDataSushilka2 = async () => {
 
     // Чтение разрежений
     const vacuums = {
-      'Разрежение в топке': Math.round(((await readFloat(0x000A, 'Sushilka2', deviceID)) * 0.25 - 12.5) * 10) / 10,
-      'Разрежение в камере выгрузки': Math.round(((await readFloat(0x000C, 'Sushilka2', deviceID)) * 0.25) * 10) / 10,
-      'Разрежение воздуха на разбавление': Math.round(((await readFloat(0x000E, 'Sushilka2', deviceID)) * 5) * 10) / 10,
+      'Разрежение в топке': Math.round(((await readFloat(0x000a, 'Sushilka2', deviceID)) * 0.25 - 12.5) * 10) / 10,
+      'Разрежение в камере выгрузки': Math.round((await readFloat(0x000c, 'Sushilka2', deviceID)) * 0.25 * 10) / 10,
+      'Разрежение воздуха на разбавление': Math.round((await readFloat(0x000e, 'Sushilka2', deviceID)) * 5 * 10) / 10,
     };
 
     // Чтение данных горелки
     const gorelka = {
-      'Мощность горелки': Math.round(await readFloat(0x0010, 'Sushilka2', deviceID)),
+      'Мощность горелки №2': Math.max(0, Math.round(await readFloat(0x0010, 'Sushilka2', deviceID))),
       'Сигнал от регулятора': Math.round(await readFloat(0x0012, 'Sushilka2', deviceID)),
       'Задание температуры': Math.round(await readFloat(0x0014, 'Sushilka2', deviceID)),
     };
 
     // Чтение импульсных сигналов
     const im = {
-      'Индикация паротушения': (await readFloat(0x001E, 'Sushilka2', deviceID)) > 1,
+      'Индикация паротушения': (await readFloat(0x001e, 'Sushilka2', deviceID)) > 1,
       'Индикация сбрасыватель': (await readFloat(0x0020, 'Sushilka2', deviceID)) > 1,
     };
 

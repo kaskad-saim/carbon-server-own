@@ -6,11 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mnemo</title>
-    <link rel="stylesheet" href="http://Techsite4/kaskad/css/sushilka-mnemo.css">
+    <link rel="stylesheet" href="../../../css/sushilka-mnemo.css">
 </head>
-<#Refresh Content=60>
 
     <body>
+
+
         <h2 class="mnemo__title">
             <span class="current-param__title-span">Карбон</span>
             Сушилка №2
@@ -268,60 +269,49 @@
                 </button>
             </div>
 
-            <img class="mnemo__img" src="http://Techsite4/kaskad/pic/Backgrounds/sushilka.jpg">
-
+            <img class="mnemo__img" src="../../../img/sushilka.jpg">
 
 
             <div class="mnemo__gif mnemo__gif-1">
-                <#PasspValue PasspType=9 PasspID=3 Type="Pictures" [true]="pic\images\fire-gif.gif"
-                    [false]="pic\images\none.gif">
+                <img src="../../../img/fire-gif.gif" alt="img">
             </div>
 
             <div class="mnemo__gif mnemo__gif-2">
-                <#PasspValue PasspType=9 PasspID=4 Type="Pictures" [true]="pic\images\par.gif"
-                    [false]="pic\images\none.gif">
+                <img src="../../../img/par.gif" alt="img">
             </div>
 
             <div class="mnemo__gif mnemo__gif-3">
-                <#PasspValue PasspType=9 PasspID=4 Type="Pictures" [true]="pic\images\ventilator.png"
-                    [false]="pic\images\ventilator-none.png">
+                <img src="../../../img/ventilator.png" alt="img">
             </div>
 
             <div class="mnemo__gif mnemo__gif-4">
-                <#PasspValue PasspType=9 PasspID=3 Type="Pictures" [true]="pic\images\ventilator.png"
-                    [false]="pic\images\ventilator-none.png">
+                <img src="../../../img/ventilator.png" alt="img">
             </div>
 
             <div class="mnemo__gif mnemo__gif-5">
-                <#PasspValue PasspType=9 PasspID=3 Type="Pictures" [true]="pic\images\pipeline_top_coal.gif"
-                    [false]="pic\images\none.gif">
+                <img src="../../../img/pipeline_top_coal.gif" alt="img">
             </div>
 
             <div class="mnemo__gif mnemo__gif-6">
-                <#PasspValue PasspType=9 PasspID=3 Type="Pictures" [true]="pic\images\pipeline_middle_coal.gif"
-                    [false]="pic\images\none.gif">
+                <img src="../../../img/pipeline_middle_coal.gif" alt="img">
             </div>
 
             <div class="mnemo__gif mnemo__gif-7">
-                <#PasspValue PasspType=9 PasspID=3 Type="Pictures" [true]="pic\images\pipeline_flow_coal.gif"
-                    [false]="pic\images\none.gif">
+                <img src="../../../img/pipeline_flow_coal.gif" alt="img">
             </div>
 
             <div class="mnemo__gif mnemo__gif-8">
-                <#PasspValue PasspType=9 PasspID=3 Type="Pictures" [true]="pic\images\pipeline_middle_coal.gif"
-                    [false]="pic\images\none.gif">
+                <img src="../../../img/pipeline_middle_coal.gif" alt="img">
             </div>
 
             <div class="mnemo__kran-vert kran">
-                <div class="mnemo__kran-box">
-                    <div class="mnemo__triangle1 mnemo__kran-img mnemo__kran-left">
-                        <#PasspValue PasspType=2 PasspID=1 Type="Pictures" [true]="pic\images\true.gif"
-                            [false]="pic\images\false.gif">
+                <div class="mnemo__kran-box ">
+                    <div class="mnemo__triangle1 mnemo__kran-left">
+
                     </div>
                     <div class="mnemo__triangle2 mnemo__kran-right"></div>
                 </div>
             </div>
-
 
             <div class="mnemo__param-descr kamera-smeshenia-text">Камера <br> смешения</div>
             <div class="mnemo__param-descr gaz-text">Газ природный</div>
@@ -338,8 +328,8 @@
 
 
             <div class="mnemo__param mnemo__tooltip kamera-smeshenia">
-                <span class="mnemo__param-text">
-                    <#PasspValue PasspType=1 PasspID=13 Precision=0>
+                <span class="mnemo__param-text temper-kamera-smeshenia-param">
+
                 </span>
                 <span class="mnemo__param-naimenov">&#176C</span>
                 <div class="mnemo__param-clue kamera-smeshenia-clue">
@@ -362,8 +352,8 @@
                 </div>
             </div>
             <div class="mnemo__param mnemo__tooltip topka-temper">
-                <span class="mnemo__param-text">
-                    <#PasspValue PasspType=1 PasspID=12 Precision=0>
+                <span class="mnemo__param-text topka-temper-param">
+
                 </span>
                 <span class="mnemo__param-naimenov">&#176C</span>
                 <div class="mnemo__param-clue topka-temper-clue">
@@ -384,8 +374,8 @@
                 </div>
             </div>
             <div class="mnemo__param mnemo__tooltip topka-davl">
-                <span class="mnemo__param-text">
-                    <#PasspValue PasspType=1 PasspID=17 Precision=1>
+                <span class="mnemo__param-text topka-razr-param">
+
                 </span>
                 <span class="mnemo__param-naimenov">кг/см2</span>
                 <div class="mnemo__param-clue topka-davl-clue">
@@ -409,20 +399,25 @@
                 </div>
             </div>
             <div class="mnemo__param mosh-gorelki">
-                <span class="mnemo__param-text">
-                    <#PasspValue PasspType=11 PasspID=4 Precision=1>
+                <span class="mnemo__param-text mosh-gorelki-param">
+
                 </span>
                 <span class="mnemo__param-naimenov">%</span>
             </div>
+
+            <div class="mnemo__invisible signal-regulyator">
+
+            </div>
+
             <div class="mnemo__param zadanie-temper">
-                <span class="mnemo__param-text">
-                    <#PasspValue PasspType=1 PasspID=22 Precision=0>
+                <span class="mnemo__param-text zadanie-temper-param">
+
                 </span>
                 <span class="mnemo__param-naimenov">&#176C</span>
             </div>
             <div class="mnemo__param mnemo__tooltip vosduh-na-razbavl">
-                <span class="mnemo__param-text">
-                    <#PasspValue PasspType=1 PasspID=19 Precision=1>
+                <span class="mnemo__param-text razr-vosduh-na-razbavl-param">
+
                 </span>
                 <span class="mnemo__param-naimenov">кг/см2</span>
                 <div class="mnemo__param-clue vosduh-na-razbavl-clue">
@@ -446,8 +441,8 @@
                 </div>
             </div>
             <div class="mnemo__param mnemo__tooltip kamera-vigruzki">
-                <span class="mnemo__param-text">
-                    <#PasspValue PasspType=1 PasspID=18 Precision=1>
+                <span class="mnemo__param-text razr-kamera-vigruzki-param">
+
                 </span>
                 <span class="mnemo__param-naimenov">кг/см2</span>
                 <div class="mnemo__param-clue kamera-vigruzki-clue">
@@ -471,8 +466,8 @@
                 </div>
             </div>
             <div class="mnemo__param mnemo__tooltip temper-uhodyashih-gazov">
-                <span class="mnemo__param-text">
-                    <#PasspValue PasspType=1 PasspID=15 Precision=0>
+                <span class="mnemo__param-text temper-uhodyashih-gazov-param">
+
                 </span>
                 <span class="mnemo__param-naimenov">&#176C</span>
                 <div class="mnemo__param-clue temper-uhodyashih-gazov-clue">
@@ -495,7 +490,8 @@
                 </div>
             </div>
         </div>
-        <script src="http://Techsite4/kaskad/js/sushilka.js"></script>
+        <script type="module" src="../../../js/sushilki/sushilka2-mnemo.js"></script>
     </body>
 
 </html>
+
