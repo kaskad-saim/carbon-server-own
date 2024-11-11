@@ -1,17 +1,16 @@
-import { readFloat } from './modbusService.js';
+// services/pechVr2ModbusService.js
 import { PechVr2Model } from '../models/pechVrModel.js';
 
-let previousTemperatures = {}; // Хранит предыдущие значения температур
-let temperatureChangeCounters = {}; // Хранит количество последовательных значительных изменений
+let previousTemperatures = {};
+let temperatureChangeCounters = {};
 
 // Функция проверки допустимого изменения температуры
 const isTemperatureValid = (label, newTemp) => {
   const previousTemp = previousTemperatures[label];
-  const threshold = 100; // Допустимое разовое изменение температуры
-  const maxConsecutiveChanges = 3; // Количество последовательных изменений для принятия нового значения
+  const threshold = 100;
+  const maxConsecutiveChanges = 3;
 
   if (previousTemp === undefined) {
-    // Первое значение, принимаем его
     previousTemperatures[label] = newTemp;
     temperatureChangeCounters[label] = 0;
     return true;
@@ -20,33 +19,27 @@ const isTemperatureValid = (label, newTemp) => {
   const tempDifference = Math.abs(newTemp - previousTemp);
 
   if (tempDifference > threshold) {
-    // Значительное изменение температуры
-    if (!temperatureChangeCounters[label]) {
-      temperatureChangeCounters[label] = 1;
-    } else {
-      temperatureChangeCounters[label]++;
-    }
+    temperatureChangeCounters[label] = (temperatureChangeCounters[label] || 0) + 1;
 
     if (temperatureChangeCounters[label] >= maxConsecutiveChanges) {
       console.warn(`[VR2] Температура для ${label} продолжает значительно изменяться. Принимаем новое значение.`);
       previousTemperatures[label] = newTemp;
-      temperatureChangeCounters[label] = 0; // Сбрасываем счетчик
+      temperatureChangeCounters[label] = 0;
       return true;
     } else {
       console.warn(`[VR2] Значительное изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}. Последовательных изменений: ${temperatureChangeCounters[label]}`);
       return false;
     }
   } else {
-    // Изменение температуры в пределах допустимого
-    temperatureChangeCounters[label] = 0; // Сбрасываем счетчик
+    temperatureChangeCounters[label] = 0;
     previousTemperatures[label] = newTemp;
     return true;
   }
 };
 
-export const readDataVr2 = async () => {
+export const readDataVr2 = async (modbusClient, deviceID, deviceLabel) => {
   try {
-    const deviceID = 4; // ID для VR2
+    // НЕ вызываем modbusClient.connect();
 
     // Адреса температур для VR2
     const temperatureAddresses = {
@@ -70,59 +63,59 @@ export const readDataVr2 = async () => {
 
     for (const [label, address] of Object.entries(temperatureAddresses)) {
       try {
-        const value = Math.round(await readFloat(address, 'VR2', deviceID));
+        const value = Math.round(await modbusClient.readFloat(deviceID, address, deviceLabel));
         if (isTemperatureValid(label, value)) {
           temperaturesVr2[label] = value;
         } else {
-          console.warn(`[VR2] Пропускаем запись для ${label} из-за подозрительного значения: ${value}`);
+          console.warn(`[${deviceLabel}] Пропускаем запись для ${label} из-за подозрительного значения: ${value}`);
         }
       } catch (error) {
-        console.error(`[VR2] Ошибка при чтении данных с адреса ${address} (${label}):`, error);
+        console.error(`[${deviceLabel}] Ошибка при чтении данных с адреса ${address} (${label}):`, error);
       }
     }
 
     // Чтение уровней
     const levelsVr2 = {
       'В ванне скруббера': {
-        value: Math.round((await readFloat(0x002a, 'VR2', deviceID)) * 10),
-        percent: Math.round(await readFloat(0x002a, 'VR2', deviceID)),
+        value: Math.round((await modbusClient.readFloat(deviceID, 0x002a, deviceLabel)) * 10),
+        percent: Math.round(await modbusClient.readFloat(deviceID, 0x002a, deviceLabel)),
       },
       'В емкости ХВО': {
-        value: Math.round((await readFloat(0x003e, 'VR2', deviceID)) * 60),
-        percent: Math.round(await readFloat(0x003e, 'VR2', deviceID)),
+        value: Math.round((await modbusClient.readFloat(deviceID, 0x003e, deviceLabel)) * 60),
+        percent: Math.round(await modbusClient.readFloat(deviceID, 0x003e, deviceLabel)),
       },
       'В барабане котла': {
-        value: Math.round((await readFloat(0x0018, 'VR2', deviceID)) * 4 - 200),
-        percent: Math.round(await readFloat(0x0018, 'VR2', deviceID)),
+        value: Math.round((await modbusClient.readFloat(deviceID, 0x0018, deviceLabel)) * 4 - 200),
+        percent: Math.round(await modbusClient.readFloat(deviceID, 0x0018, deviceLabel)),
       },
     };
 
     // Чтение давлений
     const pressuresVr2 = {
-      'Давление газов после скруббера': ((await readFloat(0x0028, 'VR2', deviceID)) * 0.25).toFixed(1),
-      'Пара в барабане котла': ((await readFloat(0x0026, 'VR2', deviceID)) * 0.16).toFixed(1),
+      'Давление газов после скруббера': ((await modbusClient.readFloat(deviceID, 0x0028, deviceLabel)) * 0.25).toFixed(1),
+      'Пара в барабане котла': ((await modbusClient.readFloat(deviceID, 0x0026, deviceLabel)) * 0.16).toFixed(1),
     };
 
     // Чтение разрежений
     const vacuumsVr2 = {
-      'В топке печи': ((await readFloat(0x0020, 'VR2', deviceID)) * 0.25 - 12.5).toFixed(1),
-      'В котле утилизаторе': ((await readFloat(0x0024, 'VR2', deviceID)) * -0.25).toFixed(1),
-      'Низ загрузочной камеры': ((await readFloat(0x0022, 'VR2', deviceID)) * -0.25).toFixed(1),
+      'В топке печи': ((await modbusClient.readFloat(deviceID, 0x0020, deviceLabel)) * 0.25 - 12.5).toFixed(1),
+      'В котле утилизаторе': ((await modbusClient.readFloat(deviceID, 0x0024, deviceLabel)) * -0.25).toFixed(1),
+      'Низ загрузочной камеры': ((await modbusClient.readFloat(deviceID, 0x0022, deviceLabel)) * -0.25).toFixed(1),
     };
 
     // Чтение импульсных сигналов
     const imVr2 = {
-      'ИМ1 скруббер': (await readFloat(0x0044, 'VR2', deviceID)) > 1,
-      'ИМ2 ХВО': (await readFloat(0x0046, 'VR2', deviceID)) > 1,
-      'ИМ3 аварийный сброс': (await readFloat(0x0048, 'VR2', deviceID)) > 1,
-      'ИМ4 пар в отделение активации': (await readFloat(0x004a, 'VR2', deviceID)) > 1,
-      'ИМ5 котел-утилизатор': Math.round(await readFloat(0x001c, 'VR2', deviceID)),
+      'ИМ1 скруббер': (await modbusClient.readFloat(deviceID, 0x0044, deviceLabel)) > 1,
+      'ИМ2 ХВО': (await modbusClient.readFloat(deviceID, 0x0046, deviceLabel)) > 1,
+      'ИМ3 аварийный сброс': (await modbusClient.readFloat(deviceID, 0x0048, deviceLabel)) > 1,
+      'ИМ4 пар в отделение активации': (await modbusClient.readFloat(deviceID, 0x004a, deviceLabel)) > 1,
+      'ИМ5 котел-утилизатор': Math.round(await modbusClient.readFloat(deviceID, 0x001c, deviceLabel)),
     };
 
     // Чтение данных горелки
     const gorelkaVr2 = {
-      'Мощность горелки №2': Math.max(0, Math.round(await readFloat(0x001a, 'VR2', deviceID))),
-      'Задание температуры на горелку №2': Math.round(await readFloat(0x002e, 'VR2', deviceID)),
+      'Мощность горелки №2': Math.max(0, Math.round(await modbusClient.readFloat(deviceID, 0x001a, deviceLabel))),
+      'Задание температуры на горелку №2': Math.round(await modbusClient.readFloat(deviceID, 0x002e, deviceLabel)),
     };
 
     // Формирование объекта данных
@@ -138,9 +131,7 @@ export const readDataVr2 = async () => {
 
     // Сохранение данных в базу данных
     await new PechVr2Model(formattedDataVr2).save();
-    // console.log('Данные для VR2:', formattedDataVr2);
-
   } catch (err) {
-    console.error('[VR2] Ошибка при чтении данных VR2:', err);
+    console.error(`[${deviceLabel}] Ошибка при чтении данных:`, err);
   }
 };

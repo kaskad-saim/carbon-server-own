@@ -1,17 +1,16 @@
-import { readFloat } from './modbusService.js';
+// services/sushilka1ModbusService.js
 import { Sushilka1Model } from '../models/sushilkaModel.js';
 
-let previousTemperatures = {}; // Хранит предыдущие значения температур
-let temperatureChangeCounters = {}; // Хранит количество последовательных значительных изменений
+let previousTemperatures = {};
+let temperatureChangeCounters = {};
 
 // Функция проверки допустимого изменения температуры
 const isTemperatureValid = (label, newTemp) => {
   const previousTemp = previousTemperatures[label];
   const threshold = 150; // Допустимое разовое изменение температуры
-  const maxConsecutiveChanges = 3; // Количество последовательных изменений для принятия нового значения
+  const maxConsecutiveChanges = 3;
 
   if (previousTemp === undefined) {
-    // Первое значение, принимаем его
     previousTemperatures[label] = newTemp;
     temperatureChangeCounters[label] = 0;
     return true;
@@ -20,33 +19,27 @@ const isTemperatureValid = (label, newTemp) => {
   const tempDifference = Math.abs(newTemp - previousTemp);
 
   if (tempDifference > threshold) {
-    // Значительное изменение температуры
-    if (!temperatureChangeCounters[label]) {
-      temperatureChangeCounters[label] = 1;
-    } else {
-      temperatureChangeCounters[label]++;
-    }
+    temperatureChangeCounters[label] = (temperatureChangeCounters[label] || 0) + 1;
 
     if (temperatureChangeCounters[label] >= maxConsecutiveChanges) {
       console.warn(`[Sushilka1] Температура для ${label} продолжает значительно изменяться. Принимаем новое значение.`);
       previousTemperatures[label] = newTemp;
-      temperatureChangeCounters[label] = 0; // Сбрасываем счетчик
+      temperatureChangeCounters[label] = 0;
       return true;
     } else {
       console.warn(`[Sushilka1] Значительное изменение температуры для ${label}: предыдущее=${previousTemp}, новое=${newTemp}. Последовательных изменений: ${temperatureChangeCounters[label]}`);
       return false;
     }
   } else {
-    // Изменение температуры в пределах допустимого
-    temperatureChangeCounters[label] = 0; // Сбрасываем счетчик
+    temperatureChangeCounters[label] = 0;
     previousTemperatures[label] = newTemp;
     return true;
   }
 };
 
-export const readDataSushilka1 = async () => {
+export const readDataSushilka1 = async (modbusClient, deviceID, deviceLabel) => {
   try {
-    const deviceID = 1; // Установите правильный ID для Sushilka1
+    // НЕ вызываем modbusClient.connect();
 
     // Чтение температур
     const temperatureAddresses = {
@@ -59,38 +52,37 @@ export const readDataSushilka1 = async () => {
 
     for (const [label, address] of Object.entries(temperatureAddresses)) {
       try {
-        const value = Math.round(await readFloat(address, 'Sushilka1', deviceID));
+        const value = Math.round(await modbusClient.readFloat(deviceID, address, deviceLabel));
         if (isTemperatureValid(label, value)) {
           temperatures[label] = value;
         } else {
-          console.warn(`[Sushilka1] Пропускаем запись для ${label} из-за подозрительного значения: ${value}`);
+          console.warn(`[${deviceLabel}] Пропускаем запись для ${label} из-за подозрительного значения: ${value}`);
         }
       } catch (error) {
-        console.error(`[Sushilka1] Ошибка при чтении данных с адреса ${address} (${label}):`, error);
+        console.error(`[${deviceLabel}] Ошибка при чтении данных с адреса ${address} (${label}):`, error);
       }
     }
 
     // Чтение разрежений
     const vacuums = {
-      'Разрежение в топке': ((await readFloat(0x000A, 'Sushilka1', deviceID)) * 0.25 - 12.5).toFixed(1),
-      'Разрежение в камере выгрузки': ((await readFloat(0x000C, 'Sushilka1', deviceID)) * 0.25).toFixed(1),
-      'Разрежение воздуха на разбавление': ((await readFloat(0x000E, 'Sushilka1', deviceID)) * 5).toFixed(1),
+      'Разрежение в топке': ((await modbusClient.readFloat(deviceID, 0x000A, deviceLabel)) * 0.25 - 12.5).toFixed(1),
+      'Разрежение в камере выгрузки': ((await modbusClient.readFloat(deviceID, 0x000C, deviceLabel)) * 0.25).toFixed(1),
+      'Разрежение воздуха на разбавление': ((await modbusClient.readFloat(deviceID, 0x000E, deviceLabel)) * 5).toFixed(1),
     };
 
     // Чтение данных горелки
     const gorelka = {
-      'Мощность горелки №1': Math.max(0, Math.round(await readFloat(0x0010, 'Sushilka1', deviceID))) ,
-      'Сигнал от регулятора №1': Math.round(await readFloat(0x0012, 'Sushilka1', deviceID)),
-      'Задание температуры №1': Math.round(await readFloat(0x0014, 'Sushilka1', deviceID)),
+      'Мощность горелки №1': Math.max(0, Math.round(await modbusClient.readFloat(deviceID, 0x0010, deviceLabel))),
+      'Сигнал от регулятора №1': Math.round(await modbusClient.readFloat(deviceID, 0x0012, deviceLabel)),
+      'Задание температуры №1': Math.round(await modbusClient.readFloat(deviceID, 0x0014, deviceLabel)),
     };
 
     // Чтение импульсных сигналов
     const im = {
-      'Индикация паротушения': (await readFloat(0x001E, 'Sushilka1', deviceID)) > 1,
-      'Индикация сбрасыватель': (await readFloat(0x0020, 'Sushilka1', deviceID)) > 1,
+      'Индикация паротушения': (await modbusClient.readFloat(deviceID, 0x001E, deviceLabel)) > 1,
+      'Индикация сбрасыватель': (await modbusClient.readFloat(deviceID, 0x0020, deviceLabel)) > 1,
     };
 
-    // Формирование объекта данных
     const formattedData = {
       temperatures,
       vacuums,
@@ -101,8 +93,8 @@ export const readDataSushilka1 = async () => {
 
     // Сохранение данных в базу данных
     await new Sushilka1Model(formattedData).save();
-    // console.log('Данные для Sushilka1:', formattedData);
+    console.log(formattedData);
   } catch (err) {
-    console.error('Ошибка при чтении данных Sushilka1:', err);
+    console.error(`[${deviceLabel}] Ошибка при чтении данных:`, err);
   }
 };

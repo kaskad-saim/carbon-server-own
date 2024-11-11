@@ -17,8 +17,8 @@ timeout /t 2 /nobreak >nul
 :: Запуск сервера Node.js в скрытом режиме
 start /min "" "C:\Program Files\nodejs\node.exe" src/server.js
 
-:: Ждем 30 минут перед перезапуском
-timeout /t 3600 /nobreak >nul
+:: Ждем ?? минут перед перезапуском
+timeout /t 300 /nobreak >nul
 
 :: Перезапуск сервера, возвращаемся к началу цикла
 goto loop
