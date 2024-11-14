@@ -1077,7 +1077,7 @@ body::-webkit-scrollbar-thumb {
 .light-alarm {
   position: absolute;
   top: 420px;
-  left: 530px;
+  left: 620px;
   z-index: 1;
 }
 
@@ -1142,9 +1142,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 .light-alarm__content.siren-off::after {
-  /* Сброс анимации и скрытие кольца */
-  animation-play-state: paused;
-  opacity: 0;
+  display: none;
 }
 
 @keyframes ring {
@@ -1161,8 +1159,6 @@ body::-webkit-scrollbar-thumb {
   }
 }
 
-
-/* всплывающие подсказки */
 /* Всплывающие подсказки */
 .mnemo__param-box--btns {
   position: absolute;
@@ -2226,8 +2222,8 @@ body::-webkit-scrollbar-thumb {
 .laboratory__table--mnemo {
   max-width: 333px;
   position: absolute;
-  top: 25%;
-  left: 7%;
+  top: 37.8%;
+  left: 16.3%;
   z-index: 2;
 }
 

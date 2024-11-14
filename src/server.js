@@ -1,4 +1,3 @@
-// app.js
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -65,7 +64,7 @@ const startDataRetrieval = async () => {
 
       try {
         await readDataFunction(modbusClientCOM8, deviceID, deviceLabel);
-        // Задержка между запросами к устройствам на COM8 (например, 500 мс)
+        // Задержка между запросами к устройствам на COM8
         await new Promise(resolve => setTimeout(resolve, 500));
       } catch (err) {
         console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
@@ -77,21 +76,53 @@ const startDataRetrieval = async () => {
   readDevicesOnCOM8();
   setInterval(readDevicesOnCOM8, 10000);
 
-  // Устройство на COM3 (Sushilka2)
-  const deviceSushilka2 = devicesConfig.find(device => device.name === 'Sushilka2');
+  // Устройства на COM3 (Сушилка2)
+  const devicesOnCOM3 = devicesConfig.filter(device => device.port === 'COM3');
   const modbusClientCOM3 = modbusClients['COM3'];
-  const moduleSushilka2 = await import(deviceSushilka2.serviceModule);
-  const readDataFunctionSushilka2 = moduleSushilka2[deviceSushilka2.readDataFunction];
-  const { deviceID: deviceIDSushilka2, name: deviceLabelSushilka2 } = deviceSushilka2;
 
-  // Запускаем опрос данных для Sushilka2 каждые 10 секунд
-  setInterval(async () => {
-    try {
-      await readDataFunctionSushilka2(modbusClientCOM3, deviceIDSushilka2, deviceLabelSushilka2);
-    } catch (err) {
-      console.error(`Ошибка при опросе данных ${deviceLabelSushilka2}:`, err);
+  const readDevicesOnCOM3 = async () => {
+    for (const device of devicesOnCOM3) {
+      const module = await import(device.serviceModule);
+      const readDataFunction = module[device.readDataFunction];
+      const { deviceID, name: deviceLabel } = device;
+
+      try {
+        await readDataFunction(modbusClientCOM3, deviceID, deviceLabel);
+        // Задержка между запросами к устройствам на COM3
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (err) {
+        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
+      }
     }
-  }, 10000);
+  };
+
+  // Запускаем опрос данных на COM3 каждые 10 секунд
+  readDevicesOnCOM3();
+  setInterval(readDevicesOnCOM3, 10000);
+
+  // Устройства на COM10 (Сушилка1)
+  const devicesOnCOM10 = devicesConfig.filter(device => device.port === 'COM10');
+  const modbusClientCOM10 = modbusClients['COM10'];
+
+  const readDevicesOnCOM10 = async () => {
+    for (const device of devicesOnCOM10) {
+      const module = await import(device.serviceModule);
+      const readDataFunction = module[device.readDataFunction];
+      const { deviceID, name: deviceLabel } = device;
+
+      try {
+        await readDataFunction(modbusClientCOM10, deviceID, deviceLabel);
+        // Задержка между запросами к устройствам на COM10
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (err) {
+        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
+      }
+    }
+  };
+
+  // Запускаем опрос данных на COM10 каждые 10 секунд
+  readDevicesOnCOM10();
+  setInterval(readDevicesOnCOM10, 10000);
 };
 
 // Запускаем опрос данных

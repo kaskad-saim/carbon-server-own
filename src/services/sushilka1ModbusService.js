@@ -93,7 +93,7 @@ export const readDataSushilka1 = async (modbusClient, deviceID, deviceLabel) => 
 
     // Сохранение данных в базу данных
     await new Sushilka1Model(formattedData).save();
-    console.log(formattedData);
+    // console.log(formattedData);
   } catch (err) {
     console.error(`[${deviceLabel}] Ошибка при чтении данных:`, err);
   }

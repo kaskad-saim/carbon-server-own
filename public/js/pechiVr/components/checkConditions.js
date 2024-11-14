@@ -302,7 +302,7 @@ export const checkConditions = () => {
       min: -12,
       max: -3,
       description: 'В котле утилизаторе, кгс/м2',
-      modalId: 'razr-kotel-utiliz-modal', // Убедитесь, что modalId не пустой
+      modalId: 'razr-kotel-utiliz-modal',
     },
     {
       selector: '.razr-niz-zagr-kam',

@@ -18,7 +18,7 @@ function initializeChart(parameterType, elements, chartTitle) {
     yAxisConfig: {
       min: -100,
       max: 100,
-      stepSize: 5,
+      stepSize: 10,
       title: 'Уровень (мм)',
     },
     chartTitle,
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   if (elements1.chartCanvas) {
-    initializeChart('vr1', elements1, 'График уровня печи карбонизации №1');
+    initializeChart('vr1', elements1, 'График уровня в барабане котла ПК №1');
   }
 
   const elements2 = {
@@ -122,6 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   if (elements2.chartCanvas) {
-    initializeChart('vr2', elements2, 'График уровня печи карбонизации №2');
+    initializeChart('vr2', elements2, 'График уровня в барабане котла ПК №2');
   }
 });

@@ -17,7 +17,7 @@ export const devicesConfig = [
   {
     name: 'Sushilka1',
     deviceID: 1,
-    port: 'COM3',
+    port: 'COM10',
     readDataFunction: 'readDataSushilka1',
     serviceModule: './services/sushilka1ModbusService.js',
   },
