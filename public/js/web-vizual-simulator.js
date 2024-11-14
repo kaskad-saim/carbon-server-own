@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     iframes.forEach((iframe) => {
       iframe.style.height = `${height}px`;
     });
-  }
+  };
 
   adjustIframeHeight();
   window.addEventListener('resize', adjustIframeHeight);
@@ -41,7 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Обновляем состояние активной под-вкладки
       const activeTab = document.getElementById(tabId);
       activeTab.querySelectorAll('.sub-tab-button').forEach((btn) => btn.classList.remove('sub-tab-button--active'));
-      activeTab.querySelector(`.sub-tab-button[data-url="${defaultUrl}"]`).classList.add('sub-tab-button--active');
+
+      const activeSubTabButton = activeTab.querySelector(`.sub-tab-button[data-url="${defaultUrl}"]`);
+      if (activeSubTabButton) {
+        activeSubTabButton.classList.add('sub-tab-button--active');
+      }
     });
   });
 
@@ -51,14 +55,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const activeTab = document.querySelector('.tab-content.tab-content--active');
       const iframe = activeTab.querySelector('iframe');
       const url = button.getAttribute('data-url');
-
-      // Проверяем, если это одна из сушилок, путь оставляем как есть
       const tabId = activeTab.id;
-      if (tabId.startsWith('sushilka')) {
-        iframe.src = url;
-      } else {
-        // Для печей карбонизации используем локальные пути
-        iframe.src = `../production/carbon/pechiVr${url}.html`;
+
+      // Проверяем пути для графиков печей карбонизации
+      if (tabId === 'carbonization-1' || tabId === 'carbonization-2') {
+        if (url === '/graph-vr-general-tempers') {
+          iframe.src = '../production/carbon/pechiVr/graphics/vrGeneralTemper.html';
+        } else if (url === '/graph-vr-general-pressure') {
+          iframe.src = '../production/carbon/pechiVr/graphics/vrGeneralPressure.html';
+        } else if (url === '/graph-vr-general-level') {
+          iframe.src = '../production/carbon/pechiVr/graphics/vrGeneralLevel.html';
+        } else {
+          iframe.src = `../production/carbon/pechiVr${url}.html`;
+        }
+      } else if (tabId.startsWith('sushilka')) {
+        iframe.src = url; // Для сушилок путь оставляем как есть
       }
 
       activeTab.querySelectorAll('.sub-tab-button').forEach((btn) => btn.classList.remove('sub-tab-button--active'));
