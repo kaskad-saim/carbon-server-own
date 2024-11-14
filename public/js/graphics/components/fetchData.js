@@ -9,8 +9,10 @@ export async function fetchData(parameterType, start = null, end = null) {
     let url = '';
     if (parameterType === 'vr1') {
       url = `http://169.254.0.156:${port}/api/vr1/data`;
+      // url = `http://localhost:${port}/api/vr1/data`;
     } else if (parameterType === 'vr2') {
       url = `http://169.254.0.156:${port}/api/vr2/data`;
+      // url = `http://localhost:${port}/api/vr2/data`;
     } else {
       throw new Error('Неверный тип параметра');
     }
