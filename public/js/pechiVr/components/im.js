@@ -50,7 +50,7 @@ export const updateIms = (data) => {
   if (im4 !== undefined) {
     if (im4 === true) {
       imLeft4.style.borderLeft = `13px solid ${green}`;
-      kranRight4.style.borderRight = `13px solid ${green}`;
+      imRight4.style.borderRight = `13px solid ${green}`;
     } else {
       imLeft4.style.borderLeft = `13px solid ${red}`;
       imRight4.style.borderRight = `13px solid ${red}`;

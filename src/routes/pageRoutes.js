@@ -29,6 +29,10 @@ router.get('/web-vizual', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/', 'web-vizual.html'));
 });
 
+router.get('/web-vizual-simulator', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/', 'web-vizual-simulator.html'));
+});
+
 router.get('/graph-vr-general-tempers', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/pechiVr/graphics', 'vrGeneralTemper.html'));
 });

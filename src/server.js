@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ModbusClient } from './services/modbusClient.js';
+import { ModbusSimulator } from './services/modbusSimulator.js'; 
 import pageRoutes from './routes/pageRoutes.js';
 import vr1Routes from './routes/vr1Routes.js';
 import vr2Routes from './routes/vr2Routes.js';
@@ -20,11 +21,17 @@ const __dirname = path.dirname(__filename);
 
 // Загружаем переменные окружения
 dotenv.config();
+const port = process.env.PORT || 3002;
 
+// Определяем, использовать ли симулятор или реальный ModbusClient
+const isProduction = process.env.NODE_ENV === 'production';
+const Client = isProduction ? ModbusClient : ModbusSimulator;
+console.log(`Используется ${isProduction ? 'ModbusClient' : 'ModbusSimulator'}`);
+
+// Создаем приложение Express
 const app = express();
-const port = process.env.PORT || 3000;
 
-// Настройка Middleware
+// Подключаем middleware
 app.use(cors());
 app.use(express.json());
 
@@ -42,8 +49,7 @@ const modbusClients = {};
 
 devicesConfig.forEach((device) => {
   if (!modbusClients[device.port]) {
-    modbusClients[device.port] = new ModbusClient(device.port);
-    // Инициализируем соединение при старте
+    modbusClients[device.port] = new Client(device.port);
     modbusClients[device.port].connect().catch(err => {
       console.error(`Ошибка при начальном подключении к порту ${device.port}:`, err);
     });
