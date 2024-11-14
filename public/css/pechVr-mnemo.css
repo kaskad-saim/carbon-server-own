@@ -2220,10 +2220,10 @@ body::-webkit-scrollbar-thumb {
 }
 
 .laboratory__table--mnemo {
-  max-width: 333px;
+  max-width: 385px;
   position: absolute;
-  top: 37.8%;
-  left: 16.3%;
+  top: 22.9%;
+  left: 7.4%;
   z-index: 2;
 }
 
@@ -2486,10 +2486,8 @@ body::-webkit-scrollbar-thumb {
   }
 
   .light-alarm {
-
     top: 320px;
-    left: 430px;
-
+    left: 450px;
   }
 
   .temper-gazov-posle-skrubber {
