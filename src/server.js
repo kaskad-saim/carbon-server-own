@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ModbusClient } from './services/modbusClient.js';
-import { ModbusSimulator } from './services/modbusSimulator.js'; 
+import { ModbusSimulator } from './services/modbusSimulator.js';
 import pageRoutes from './routes/pageRoutes.js';
 import vr1Routes from './routes/vr1Routes.js';
 import vr2Routes from './routes/vr2Routes.js';
@@ -183,6 +183,12 @@ app.get('/api/vr2/data', async (req, res) => {
     console.error('Ошибка при получении данных VR2:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
+});
+
+// определение режима разработки и отправка его на клиент 
+app.get('/config.js', (req, res) => {
+  res.type('application/javascript');
+  res.send(`window.NODE_ENV = "${process.env.NODE_ENV}";`);
 });
 
 // Запуск сервера

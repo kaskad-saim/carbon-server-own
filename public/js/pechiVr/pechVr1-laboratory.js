@@ -1,6 +1,12 @@
 // client.js
 import { closeModal } from './components/modal.js';
 
+// Определяем базовый URL для API в зависимости от окружения
+const apiUrl =
+  window.NODE_ENV === 'development'
+    ? 'http://localhost:3002/api/lab'
+    : 'http://169.254.0.156:3002/api/lab';
+
 // Элементы формы и таблицы
 const form = document.querySelector('.laboratory__form');
 const volatileInput = document.getElementById('volatile-substances');
@@ -92,8 +98,8 @@ const showLastValueLoading = () => {
 // Функция для получения последних данных
 const fetchLastData = async () => {
   try {
-    showLastValueLoading(); // Показываем прелоудер для последнего значения
-    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr1/last'); // Новый порт и маршрут
+    showLastValueLoading();
+    const data = await fetchData(`${apiUrl}/pechVr1/last`);
     if (data) {
       setCellData(data.value, data.time, data.date);
     } else {
@@ -132,11 +138,10 @@ const createTableRow = (dateText, timeText, valueText) => {
 // Функция для получения данных за последние 24 часа и обновления таблицы
 const fetchLastDayData = async () => {
   try {
-    tableBody.innerHTML = '';  // Очищаем таблицу
-    tableBody.appendChild(showLoadingMessage()); // Показываем прелоудер
-
-    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr1/last-day'); // Новый порт и маршрут
-    tableBody.innerHTML = ''; // Очищаем перед добавлением данных
+    tableBody.innerHTML = '';
+    tableBody.appendChild(showLoadingMessage());
+    const data = await fetchData(`${apiUrl}/pechVr1/last-day`);
+    tableBody.innerHTML = '';
 
     if (data && data.length > 0) {
       data.forEach((item) => {
@@ -208,7 +213,7 @@ form.addEventListener('submit', async (event) => {
 
   // Отправка данных на сервер
   try {
-    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr1/submit', {
+    const data = await fetchData(`${apiUrl}/pechVr1/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value: numericValue.toString(), time }),

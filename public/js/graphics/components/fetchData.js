@@ -4,15 +4,17 @@ export async function fetchData(parameterType, start = null, end = null) {
     if (start) params.append('start', start.toISOString());
     if (end) params.append('end', end.toISOString());
 
+    // Определяем базовый URL в зависимости от окружения
+    const baseUrl = window.NODE_ENV === 'development'
+      ? 'http://localhost:3002/api'
+      : 'http://169.254.0.156:3002/api';
+
     // Определяем URL на основе типа параметра
-    const port = 3002; // Укажите ваш порт
     let url = '';
     if (parameterType === 'vr1') {
-      url = `http://169.254.0.156:${port}/api/vr1/data`;
-      // url = `http://localhost:${port}/api/vr1/data`;
+      url = `${baseUrl}/vr1/data`;
     } else if (parameterType === 'vr2') {
-      url = `http://169.254.0.156:${port}/api/vr2/data`;
-      // url = `http://localhost:${port}/api/vr2/data`;
+      url = `${baseUrl}/vr2/data`;
     } else {
       throw new Error('Неверный тип параметра');
     }

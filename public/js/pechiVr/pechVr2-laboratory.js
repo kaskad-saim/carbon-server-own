@@ -1,5 +1,11 @@
 import { closeModal } from './components/modal.js';
 
+// Определяем базовый URL для API в зависимости от окружения
+const apiUrl =
+  window.NODE_ENV === 'development'
+    ? 'http://localhost:3002/api/lab'
+    : 'http://169.254.0.156:3002/api/lab';
+
 // Элементы формы и таблицы
 const form = document.querySelector('.laboratory__form');
 const volatileInput = document.getElementById('volatile-substances');
@@ -91,8 +97,7 @@ const showLastValueLoading = () => {
 const fetchLastData = async () => {
   try {
     showLastValueLoading();
-
-    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr2/last');
+    const data = await fetchData(`${apiUrl}/pechVr2/last`);
     if (data) {
       setCellData(data.value, data.time, data.date);
     } else {
@@ -133,8 +138,7 @@ const fetchLastDayData = async () => {
   try {
     tableBody.innerHTML = '';
     tableBody.appendChild(showLoadingMessage());
-
-    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr2/last-day');
+    const data = await fetchData(`${apiUrl}/pechVr2/last-day`);
     tableBody.innerHTML = '';
 
     if (data && data.length > 0) {
@@ -208,7 +212,7 @@ form.addEventListener('submit', async (event) => {
 
   // Отправка данных на сервер
   try {
-    const data = await fetchData('http://169.254.0.156:3002/api/lab/pechVr2/submit', {
+    const data = await fetchData(`${apiUrl}/pechVr2/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value: numericValue.toString(), time }),
