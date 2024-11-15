@@ -38,14 +38,22 @@
             <span class="laboratory__form-error" id="error-volatile-substances"></span>
           </div>
           <div class="laboratory__form-item">
+            <label class="laboratory__form-label" for="volatile-substances">pH </label>
+            <input class="laboratory__form-input" type="text" id="value-ph">
+          </div>
+          <div class="laboratory__form-item">
+            <label class="laboratory__form-label" for="volatile-substances">Суммарка </label>
+            <input class="laboratory__form-input" type="text" id="value-sum">
+          </div>
+          <div class="laboratory__form-item">
             <label class="laboratory__form-label" for="input-time">Время</label>
             <input class="laboratory__form-input" type="time" id="input-time">
-            <span class="laboratory__form-error" id="error-input-time"></span>
+            <span class="laboratory__form-error time-error" id="error-input-time"></span>
           </div>
           <div class="laboratory__form-item">
             <label class="laboratory__form-label" for="volatile-substances-password">Пароль </label>
             <input class="laboratory__form-input" type="password" id="volatile-substances-password">
-            <span class="laboratory__form-error" id="error-volatile-substances-password"></span>
+            <span class="laboratory__form-error password-error" id="error-volatile-substances-password"></span>
           </div>
           <button class="laboratory__form-btn btn-reset" type="submit">Принять</button>
         </form>
@@ -56,6 +64,8 @@
               <th class="table__th laboratory__table-th table__left">Дата</th>
               <th class="table__th laboratory__table-th table__left">Время</th>
               <th class="table__th laboratory__table-th ">Летучие вещества, %</th>
+              <th class="table__th laboratory__table-th ">pH</th>
+              <th class="table__th laboratory__table-th ">Суммарка</th>
             </tr>
           </thead>
           <tbody class="table__tbody laboratory__table-tbody">
@@ -1571,15 +1581,15 @@
           </tr>
           <tr class="table__tr">
             <td class="table__td laboratory__table-td--mnemo table__right">pH</td>
-            <td class="table__td laboratory__table-td--mnemo  table__right"></td>
-            <td class="table__td laboratory__table-td--mnemo  table__left"></td>
-            <td class="table__td laboratory__table-td--mnemo  table__left"></td>
+            <td class="table__td laboratory__table-td--mnemo laboratory__table-td--mnemo-val-ph table__right"></td>
+            <td class="table__td laboratory__table-td--mnemo laboratory__table-td--mnemo-date-ph table__left"></td>
+            <td class="table__td laboratory__table-td--mnemo laboratory__table-td--mnemo-time-ph table__left"></td>
           </tr>
           <tr class="table__tr">
             <td class="table__td laboratory__table-td--mnemo table__right">Суммарка</td>
-            <td class="table__td laboratory__table-td--mnemo  table__right"></td>
-            <td class="table__td laboratory__table-td--mnemo  table__left"></td>
-            <td class="table__td laboratory__table-td--mnemo  table__left"></td>
+            <td class="table__td laboratory__table-td--mnemo laboratory__table-td--mnemo-val-sum table__right"></td>
+            <td class="table__td laboratory__table-td--mnemo laboratory__table-td--mnemo-date-sum table__left"></td>
+            <td class="table__td laboratory__table-td--mnemo laboratory__table-td--mnemo-time-sum table__left"></td>
           </tr>
         </tbody>
       </table>

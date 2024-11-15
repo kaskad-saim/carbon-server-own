@@ -8,18 +8,54 @@ const router = express.Router();
 // Функция для обработки сохранения данных
 const saveData = async (model, req, res) => {
   try {
-    const { value, time } = req.body;
+    const { value, valuePH, valueSUM, time } = req.body;
 
-    if (!value || !time) {
-      return res.status(400).json({ message: 'Необходимо указать значение и время' });
+    if (!time) {
+      return res.status(400).json({ message: 'Необходимо указать время' });
+    }
+
+    if (!value && !valuePH && !valueSUM) {
+      return res.status(400).json({ message: 'Необходимо указать хотя бы одно значение' });
     }
 
     const date = new Date().toLocaleDateString('ru-RU');
-    const newData = new model({ value, time, date });
+
+    const newData = new model({
+      value: value ?? '-',
+      valueTime: value ? time : '-',
+      valueDate: value ? date : '-',
+
+      valuePH: valuePH ?? '-',
+      valuePHTime: valuePH ? time : '-',
+      valuePHDate: valuePH ? date : '-',
+
+      valueSUM: valueSUM ?? '-',
+      valueSUMTime: valueSUM ? time : '-',
+      valueSUMDate: valueSUM ? date : '-',
+
+      recordTime: time,
+      recordDate: date,
+    });
+
     await newData.save();
 
-    console.log('Полученные данные:', { value, time, date });
-    res.json({ message: 'Данные успешно сохранены', value, time, date });
+    // Возвращаем последние известные значения для отображения в таблице последних значений
+    const lastValueData = await model.findOne({ value: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
+    const lastValuePHData = await model.findOne({ valuePH: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
+    const lastValueSUMData = await model.findOne({ valueSUM: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
+
+    res.json({
+      message: 'Данные успешно сохранены',
+      value: lastValueData?.value || '-',
+      valueTime: lastValueData?.valueTime || '-',
+      valueDate: lastValueData?.valueDate || '-',
+      valuePH: lastValuePHData?.valuePH || '-',
+      valuePHTime: lastValuePHData?.valuePHTime || '-',
+      valuePHDate: lastValuePHData?.valuePHDate || '-',
+      valueSUM: lastValueSUMData?.valueSUM || '-',
+      valueSUMTime: lastValueSUMData?.valueSUMTime || '-',
+      valueSUMDate: lastValueSUMData?.valueSUMDate || '-',
+    });
   } catch (error) {
     console.error('Ошибка при сохранении данных:', error);
     res.status(500).json({ message: 'Произошла ошибка при сохранении данных' });
@@ -29,8 +65,22 @@ const saveData = async (model, req, res) => {
 // Функция для получения последних данных
 const getLastData = async (model, req, res) => {
   try {
-    const lastData = await model.findOne().sort({ createdAt: -1 }).lean();
-    res.json(lastData || { value: null, time: null, date: null });
+    // Получаем последние записи для каждого параметра
+    const lastValueData = await model.findOne({ value: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
+    const lastValuePHData = await model.findOne({ valuePH: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
+    const lastValueSUMData = await model.findOne({ valueSUM: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
+
+    res.json({
+      value: lastValueData?.value || '-',
+      valueTime: lastValueData?.valueTime || '-',
+      valueDate: lastValueData?.valueDate || '-',
+      valuePH: lastValuePHData?.valuePH || '-',
+      valuePHTime: lastValuePHData?.valuePHTime || '-',
+      valuePHDate: lastValuePHData?.valuePHDate || '-',
+      valueSUM: lastValueSUMData?.valueSUM || '-',
+      valueSUMTime: lastValueSUMData?.valueSUMTime || '-',
+      valueSUMDate: lastValueSUMData?.valueSUMDate || '-',
+    });
   } catch (error) {
     console.error('Ошибка при получении последних данных:', error);
     res.status(500).json({ message: 'Произошла ошибка при получении данных' });
@@ -46,7 +96,15 @@ const getLastDayData = async (model, req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    res.json(lastDayData.map(({ value, time, date }) => ({ value, time, date })));
+    res.json(
+      lastDayData.map((item) => ({
+        value: item.value || '-',
+        valuePH: item.valuePH || '-',
+        valueSUM: item.valueSUM || '-',
+        recordTime: item.recordTime || '-',
+        recordDate: item.recordDate || '-',
+      }))
+    );
   } catch (error) {
     console.error('Ошибка при получении данных за последние сутки:', error);
     res.status(500).json({ message: 'Произошла ошибка при получении данных' });

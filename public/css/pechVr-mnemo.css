@@ -2100,12 +2100,15 @@ body::-webkit-scrollbar-thumb {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  max-width: 520px;
+  max-width: 605px;
 }
 
 .laboratory__form-item {
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .laboratory__form-item:not(:last-child) {
@@ -2138,13 +2141,22 @@ body::-webkit-scrollbar-thumb {
   display: none;
   position: absolute;
   bottom: -15px;
-  left: 0;
+  left: 55px;
+  width: 600px;
   z-index: 1;
   font-size: 12px;
   line-height: 12px;
   font-weight: 600;
   color: red;
   font-style: italic;
+}
+
+.time-error {
+  left: 0;
+}
+
+.password-error {
+  left: -8px;
 }
 
 .laboratory__form-input.error {
