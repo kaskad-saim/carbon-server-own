@@ -1,11 +1,9 @@
 // client.js
-import { closeModal } from './components/modal.js';
+import { closeModal, openModal } from './components/modal.js';
 
 // Определяем базовый URL для API в зависимости от окружения
 const apiUrl =
-  window.NODE_ENV === 'development'
-    ? 'http://localhost:3002/api/lab'
-    : 'http://169.254.0.156:3002/api/lab';
+  window.NODE_ENV === 'development' ? 'http://localhost:3002/api/lab' : 'http://169.254.0.156:3002/api/lab';
 
 // Элементы формы и таблицы
 const form = document.querySelector('.laboratory__form');
@@ -14,7 +12,6 @@ const timeInput = document.getElementById('input-time');
 const passwordInput = document.getElementById('volatile-substances-password');
 const valuePHInput = document.getElementById('value-ph');
 const valueSUMInput = document.getElementById('value-sum');
-
 
 const dateCell = document.querySelector('.laboratory__table-td--mnemo-date');
 const timeCell = document.querySelector('.laboratory__table-td--mnemo-time');
@@ -32,7 +29,7 @@ const errorSpans = {
 
 // Функция для блокировки и разблокировки инпутов
 const toggleInputs = (isDisabled) => {
-  [volatileInput, timeInput, passwordInput].forEach((input) => {
+  [volatileInput, timeInput, passwordInput, valuePHInput, valueSUMInput].forEach((input) => {
     input.readOnly = isDisabled;
   });
 };
@@ -43,7 +40,7 @@ const clearErrors = () => {
     span.textContent = '';
     span.classList.remove('active');
   });
-  [volatileInput, timeInput, passwordInput].forEach((input) => {
+  [volatileInput, timeInput, passwordInput, valuePHInput, valueSUMInput].forEach((input) => {
     input.classList.remove('error');
   });
 };
@@ -84,25 +81,16 @@ const setCellData = (data) => {
   document.querySelector('.laboratory__table-td--mnemo-date-sum').textContent = data.valueSUMDate ?? '-';
 };
 
-
-
 // Функция для показа прелоудера "Данные загружаются"
 const showLoadingMessage = () => {
   const row = document.createElement('tr');
   row.classList.add('table__tr');
-
-  const createLoadingCell = () => {
+  for (let i = 0; i < 5; i++) {
     const cell = document.createElement('td');
     cell.textContent = 'Загрузка...';
     cell.classList.add('table__td', 'laboratory__table-td');
-    return cell;
-  };
-
-  // Добавляем пять ячеек для пяти столбцов
-  for (let i = 0; i < 5; i++) {
-    row.appendChild(createLoadingCell());
+    row.appendChild(cell);
   }
-
   return row;
 };
 
@@ -124,15 +112,12 @@ const showLastValueLoading = () => {
   document.querySelector('.laboratory__table-td--mnemo-date-sum').textContent = 'Загрузка...';
 };
 
-
 // Функция для получения последних данных
 const fetchLastData = async () => {
   try {
-    showLastValueLoading(); // Показываем прелоудер
+    showLastValueLoading();
     const data = await fetchData(`${apiUrl}/pechVr1/last`);
-    if (data) {
-      setCellData(data);
-    }
+    if (data) setCellData(data);
     errorSpan.textContent = '';
     errorSpan.classList.remove('active');
     toggleInputs(false);
@@ -143,10 +128,13 @@ const fetchLastData = async () => {
   }
 };
 
+// Переменные для модальных окон
+const tableModalId = 'lab-modal-1'; // ID модалки с таблицей
+const passwordModalId = 'lab-modal-2'; // ID модалки с подтверждением пароля
+let recordIdToDelete = null; // Переменная для хранения ID записи, которую нужно удалить
 
-
-// Функция для создания строки таблицы
-const createTableRow = (recordDate, recordTime, value, valuePH, valueSUM) => {
+// Функция для создания строки таблицы с кнопкой удаления
+const createTableRow = (recordDate, recordTime, value, valuePH, valueSUM, recordId) => {
   const row = document.createElement('tr');
   row.classList.add('table__tr');
 
@@ -163,17 +151,107 @@ const createTableRow = (recordDate, recordTime, value, valuePH, valueSUM) => {
   row.appendChild(createCell(valuePH, ['table__right', 'laboratory__table-td']));
   row.appendChild(createCell(valueSUM, ['table__right', 'laboratory__table-td']));
 
+  // Добавляем кнопку удаления
+  const deleteButtonCell = createDeleteButton(recordId);
+  row.appendChild(deleteButtonCell);
+
   return row;
 };
 
+// Функция для создания кнопки удаления
+const createDeleteButton = (recordId) => {
+  const cell = document.createElement('td');
+  cell.classList.add('table__td', 'laboratory__table-td', 'laboratory__table-td-btn');
 
+  const button = document.createElement('button');
+  button.classList.add('delete-button', 'laboratory__table-td-btn-delete', 'btn-reset');
+  button.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 32 40" fill="none">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M6 6V8H0V12H3L5.01193 34.5336C5.28823 37.6282
+       7.88123 40 10.9882 40H21.0118C24.1188 40 26.7118 37.6282 26.9881 34.5336L29 12H32V8H26V6C26 2.68629 23.3137
+        0 20 0H12C8.68629 0 6 2.68629 6 6ZM12 4C10.8954 4 10 4.89543 10 6V8H22V6C22 4.89543 21.1046
+        4 20 4H12Z" fill="#827F73"/>
+    </svg>
+  `;
 
+  if (recordId) {
+    button.addEventListener('click', () => confirmDelete(recordId));
+  } else {
+    button.disabled = true;
+    button.title = 'ID записи отсутствует';
+  }
+
+  cell.appendChild(button);
+  return cell;
+};
+
+// Обработчик кнопки удаления
+const confirmDelete = (recordId) => {
+  recordIdToDelete = recordId; // Сохраняем ID записи
+  closeModal(tableModalId); // Закрываем модалку с таблицей
+  openModal(passwordModalId); // Открываем модалку с паролем
+};
+
+// Элементы формы подтверждения удаления
+const deleteForm = document.getElementById('delete-confirm-form');
+const deletePasswordInput = document.getElementById('delete-password');
+const deletePasswordErrorSpan = document.getElementById('error-delete-password');
+const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
+// Функция для отображения ошибки в форме удаления
+const showDeleteFormError = (inputElement, errorSpan, message) => {
+  errorSpan.textContent = message;
+  errorSpan.classList.add('active');
+  inputElement.classList.add('error');
+};
+
+// Обработчик формы подтверждения удаления
+deleteForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  confirmDeleteBtn.disabled = true;
+
+  // Очищаем предыдущие ошибки
+  deletePasswordErrorSpan.textContent = '';
+  deletePasswordErrorSpan.classList.remove('active');
+  deletePasswordInput.classList.remove('error');
+
+  const password = deletePasswordInput.value.trim();
+
+  if (password === '123') {
+    try {
+      await fetch(`${apiUrl}/delete/pechVr1/${recordIdToDelete}`, { method: 'DELETE' });
+      fetchLastDayData(); // Обновляем данные за последние сутки
+      fetchLastData(); // Обновляем последние значения
+      deletePasswordInput.value = ''; // Очищаем поле пароля
+      closeModal(passwordModalId); // Закрываем модалку с паролем
+      openModal(tableModalId); // Открываем модалку с таблицей
+    } catch (error) {
+      console.error('Ошибка при удалении записи:', error);
+      showDeleteFormError(deletePasswordInput, deletePasswordErrorSpan, 'Ошибка при удалении записи');
+    }
+  } else {
+    showDeleteFormError(deletePasswordInput, deletePasswordErrorSpan, 'Неверный пароль');
+  }
+
+  confirmDeleteBtn.disabled = false;
+});
+
+// Закрытие модалки с паролем по кнопке "Закрыть"
+document.querySelector(`#${passwordModalId} .mnemo__modal-close`).addEventListener('click', () => {
+  closeModal(passwordModalId);
+  openModal(tableModalId);
+});
+
+// Закрытие модалки с таблицей по кнопке "Закрыть"
+document.querySelector(`#${tableModalId} .mnemo__modal-close`).addEventListener('click', () => {
+  closeModal(tableModalId);
+});
 
 // Функция для получения данных за последние 24 часа и обновления таблицы
 const fetchLastDayData = async () => {
   try {
     tableBody.innerHTML = '';
-    tableBody.appendChild(showLoadingMessage()); // Показываем прелоудер
+    tableBody.appendChild(showLoadingMessage());
     const data = await fetchData(`${apiUrl}/pechVr1/last-day`);
     tableBody.innerHTML = '';
 
@@ -184,12 +262,13 @@ const fetchLastDayData = async () => {
           item.recordTime || '-',
           item.value || '-',
           item.valuePH || '-',
-          item.valueSUM || '-'
+          item.valueSUM || '-',
+          item._id // Убедитесь, что сервер возвращает _id
         );
         tableBody.appendChild(row);
       });
     } else {
-      const row = createTableRow('-', '-', '-', '-', '-');
+      const row = createTableRow('-', '-', '-', '-', '-', null); // Передаем null, если ID нет
       tableBody.appendChild(row);
     }
     toggleInputs(false);
@@ -197,7 +276,7 @@ const fetchLastDayData = async () => {
     errorSpan.classList.remove('active');
   } catch (error) {
     tableBody.innerHTML = '';
-    const row = createTableRow('Нет связи', 'Нет связи', 'Нет связи', 'Нет связи', 'Нет связи');
+    const row = createTableRow('Нет связи', 'Нет связи', 'Нет связи', 'Нет связи', 'Нет связи', null);
     tableBody.appendChild(row);
     errorSpan.textContent = 'Нет связи';
     errorSpan.classList.add('active');
@@ -265,9 +344,9 @@ form.addEventListener('submit', async (event) => {
     clearErrors();
 
     // Обновление таблиц
-    setCellData(data.value, data.time, data.date, data.valuePH, data.valueSUM);
-    fetchLastDayData();  // Обновление таблицы за последние 24 часа
-    fetchLastData();     // Обновление последнего значения
+    setCellData(data);
+    fetchLastDayData(); // Обновление таблицы за последние 24 часа
+    fetchLastData(); // Обновление последнего значения
     closeModal('lab-modal-1');
   } catch (error) {
     showError(volatileInput, errorSpans.value, 'Ошибка при отправке данных');
@@ -276,7 +355,6 @@ form.addEventListener('submit', async (event) => {
     submitButton.classList.remove('loading');
   }
 });
-
 
 // Инициализация данных при загрузке страницы
 const tableBody = document.querySelector('.laboratory__table-tbody');

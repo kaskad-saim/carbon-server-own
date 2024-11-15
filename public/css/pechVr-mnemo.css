@@ -979,7 +979,7 @@ body::-webkit-scrollbar-thumb {
   position: absolute;
   top: 10px;
   right: -40px;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
   max-width: 380px;
   height: fit-content;
@@ -993,6 +993,7 @@ body::-webkit-scrollbar-thumb {
 .table__tr {
   height: 15px;
   border: 1px solid black;
+  position: relative;
 }
 
 .table__th {
@@ -1042,9 +1043,14 @@ body::-webkit-scrollbar-thumb {
   line-height: 19px;
 }
 
-.table__th:not(:last-child),
-.table__td:not(:last-child) {
+.table__th,
+.table__td {
   border-right: 1px solid black;
+}
+
+.table__th:nth-child(5),
+.table__td:nth-child(5) {
+  border-right: none;
 }
 
 .table__tr--incorrect-param {
@@ -2141,8 +2147,8 @@ body::-webkit-scrollbar-thumb {
   display: none;
   position: absolute;
   bottom: -15px;
-  left: 55px;
-  width: 600px;
+  left: 0;
+  width: 200px;
   z-index: 1;
   font-size: 12px;
   line-height: 12px;
@@ -2260,6 +2266,51 @@ body::-webkit-scrollbar-thumb {
   font-size: 15px;
   line-height: 19px;
   font-weight: 600;
+}
+
+.laboratory__table-td-btn-delete {
+  position: absolute;
+  top: 50%;
+  right: -33px;
+  z-index: 1;
+  transform: translateY(-50%);
+}
+
+.laboratory__table-td-btn-delete path {
+  transition: fill .3s ease-in-out;
+}
+
+.laboratory__table-td-btn-delete:hover path {
+  fill: green;
+}
+
+.mnemo__modal-body--delete {
+  min-height: 100px;
+  justify-content: center;
+}
+
+.laboratory__form--delete {
+  width: auto;
+}
+
+.laboratory__form-input-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-left: 30px;
+}
+
+.laboratory__form-item--delete {
+  flex-direction: row;
+}
+
+.laboratory__form-error--delete {
+  left: 0;
+}
+
+.laboratory__form-error--password-error {
+  left: 0;
+  width: 110px;
 }
 
 @media (max-width: 1280px) {

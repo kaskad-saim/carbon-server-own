@@ -98,6 +98,7 @@ const getLastDayData = async (model, req, res) => {
 
     res.json(
       lastDayData.map((item) => ({
+        _id: item._id, // Добавляем _id в ответ
         value: item.value || '-',
         valuePH: item.valuePH || '-',
         valueSUM: item.valueSUM || '-',
@@ -111,6 +112,7 @@ const getLastDayData = async (model, req, res) => {
   }
 };
 
+
 // Обработка POST-запросов на /submit
 router.post('/pechVr1/submit', (req, res) => saveData(PechVr1LabModel, req, res));
 router.post('/pechVr2/submit', (req, res) => saveData(PechVr2LabModel, req, res));
@@ -122,5 +124,35 @@ router.get('/pechVr2/last', (req, res) => getLastData(PechVr2LabModel, req, res)
 // Обработка GET-запросов на /last-day
 router.get('/pechVr1/last-day', (req, res) => getLastDayData(PechVr1LabModel, req, res));
 router.get('/pechVr2/last-day', (req, res) => getLastDayData(PechVr2LabModel, req, res));
+
+
+// Добавление маршрута для удаления записи
+router.delete('/delete/:pech/:id', async (req, res) => {
+  try {
+    const { pech, id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'ID записи не указан' });
+    }
+
+    let model;
+    if (pech === 'pechVr1') {
+      model = PechVr1LabModel;
+    } else if (pech === 'pechVr2') {
+      model = PechVr2LabModel;
+    } else {
+      return res.status(400).json({ message: 'Неверный тип печи' });
+    }
+
+    const record = await model.findByIdAndDelete(id);
+    if (!record) {
+      return res.status(404).json({ message: 'Запись не найдена' });
+    }
+    res.status(200).json({ message: 'Запись успешно удалена' });
+  } catch (error) {
+    console.error('Ошибка при удалении записи:', error);
+    res.status(500).json({ message: 'Ошибка при удалении записи' });
+  }
+});
+
 
 export default router;
