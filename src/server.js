@@ -10,6 +10,9 @@ import vr1Routes from './routes/vr1Routes.js';
 import vr2Routes from './routes/vr2Routes.js';
 import sushilka1Routes from './routes/sushilka1Routes.js';
 import sushilka2Routes from './routes/sushilka2Routes.js';
+import mill1Routes from './routes/mill1Routes.js';
+import mill2Routes from './routes/mill2Routes.js';
+import reactorRoutes from './routes/reactor296Routes.js';
 import laboratoryRoutes from './routes/laboratoryRoutes.js';
 import { connectDB } from './services/dataBaseService.js';
 import { devicesConfig } from './services/devicesConfig.js';
@@ -131,6 +134,43 @@ const startDataRetrieval = async () => {
   // Запускаем опрос данных на COM10 каждые 10 секунд
   readDevicesOnCOM10();
   setInterval(readDevicesOnCOM10, 10000);
+  // Устройства на COM13
+  const devicesOnCOM13 = devicesConfig.filter(device => device.port === 'COM13');
+  const modbusClientCOM13 = modbusClients['COM13'];
+  const readDevicesOnCOM13 = async () => {
+    for (const device of devicesOnCOM13) {
+      const module = await import(device.serviceModule);
+      const readDataFunction = module[device.readDataFunction];
+      const { deviceID, name: deviceLabel } = device;
+      try {
+        await readDataFunction(modbusClientCOM13, deviceID, deviceLabel);
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (err) {
+        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
+      }
+    }
+  };
+  readDevicesOnCOM13();
+  setInterval(readDevicesOnCOM13, 10000);
+
+  // Устройства на COM7 (Мельница 2 и Реактор К296)
+  const devicesOnCOM7 = devicesConfig.filter(device => device.port === 'COM7');
+  const modbusClientCOM7 = modbusClients['COM7'];
+  const readDevicesOnCOM7 = async () => {
+    for (const device of devicesOnCOM7) {
+      const module = await import(device.serviceModule);
+      const readDataFunction = module[device.readDataFunction];
+      const { deviceID, name: deviceLabel } = device;
+      try {
+        await readDataFunction(modbusClientCOM7, deviceID, deviceLabel);
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (err) {
+        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
+      }
+    }
+  };
+  readDevicesOnCOM7();
+  setInterval(readDevicesOnCOM7, 10000);
 };
 
 // Запускаем опрос данных
@@ -141,6 +181,9 @@ app.use('/api', vr1Routes);
 app.use('/api', vr2Routes);
 app.use('/api', sushilka1Routes);
 app.use('/api', sushilka2Routes);
+app.use('/api', mill1Routes);
+app.use('/api', mill2Routes);
+app.use('/api', reactorRoutes);
 app.use('/api/lab', laboratoryRoutes);
 
 app.get('/api/server-time', (req, res) => {
