@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Current</title>
+	<link rel="stylesheet" href="../../../css/k296-currentParam.css">
+</head>
+<#Refresh Content=60>
+
+	<body>
+		<div class="current-param">
+			<h1 class="current-param__title">
+				<span class="current-param__title-span">Карбон</span>
+
+				Корпус 296
+			</h1>
+			<div class="current-param__box">
+				<span class="current-param__date">
+					<#Date>
+				</span>
+				<span class="current-param__time">
+					<#Time>
+				</span>
+			</div>
+		</div>
+
+
+		<div class="tables">
+			<table class="table">
+				<caption class="table__title"> Смоляные реактора (Температуры)
+				</caption>
+				<thead class="table__thead">
+					<tr class="table__tr">
+						<th class="table__th table__left">Наименование параметра</th>
+						<th class="table__th ">Значение &#176C</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="table__tr">
+						<td class="table__td table__left">Смоляной реактор №1</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=194 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left"> Смоляной реактор №2</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=195 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left">Смоляной реактор №3</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=196 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left">Смоляной реактор №4</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=197 Precision=1>
+						</td>
+					</tr>
+
+				</tbody>
+			</table>
+
+
+			<table class="table">
+				<caption class="table__title"> Смоляные реактора (Уровни)
+				</caption>
+				<thead class="table__thead">
+					<tr class="table__tr">
+						<th class="table__th table__left">Наименование параметра</th>
+						<th class="table__th ">Значение (мм)</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="table__tr">
+						<td class="table__td table__left">Смоляной реактор №1</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=198 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left"> Смоляной реактор №2</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=199 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left">Смоляной реактор №3</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=200 Precision=1>
+						</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__left">Смоляной реактор №4</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=201 Precision=1>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</body>
+
+</html>

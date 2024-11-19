@@ -66,4 +66,16 @@ router.get('/currentParam-gorelki', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/gorelki/', 'currentParam-gorelki.html'));
 });
 
+router.get('/current-melnizi', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/melnizi/', 'current-melnizi.html'));
+});
+
+router.get('/current-k296', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/k296/', 'current-k296.html'));
+});
+
+router.get('/mnemo-k296', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/k296/', 'mnemo-k296.html'));
+});
+
 export default router;

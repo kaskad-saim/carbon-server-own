@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Current</title>
+	<link rel="stylesheet" href="../../../css/melnizi-currentParam.css">
+</head>
+<#Refresh Content=60>
+
+	<body>
+		<div class="current-param">
+			<h1 class="current-param__title">
+				<span class="current-param__title-span">Карбон</span>
+				Мельницы
+			</h1>
+			<div class="current-param__box">
+				<span class="current-param__date">
+					<#Date>
+				</span>
+				<span class="current-param__time">
+					<#Time>
+				</span>
+			</div>
+		</div>
+
+		<div class="tables">
+			<table class="table">
+				<caption class="table__title">Текущие параметры вибрации мельниц (мм/с) У.П. к.10б
+				</caption>
+				<thead class="table__thead">
+					<tr class="table__tr">
+						<th class="table__th" colspan="3">Мельница ШБМ №3</th>
+						<th class="table__th " colspan="3">Мельница YGM-9517</th>
+						<th class="table__th " colspan="3">Мельница YCVOK-130</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="table__tr">
+						<td class="table__td">Осевое</td>
+						<td class="table__td">Вертикальное</td>
+						<td class="table__td">Поперечное</td>
+						<td class="table__td">Фронтальное</td>
+						<td class="table__td">Осевое</td>
+						<td class="table__td">Поперечное</td>
+						<td class="table__td">Фронтальное</td>
+						<td class="table__td">Поперечное</td>
+						<td class="table__td">Осевое</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=161 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=162 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=163 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=164 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=165 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=166 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=167 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=168 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=169 Precision=1>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+
+			<table class="table">
+				<caption class="table__title">Текущие параметры вибрации мельниц (мм/с) Carbon к.296
+				</caption>
+				<thead class="table__thead">
+					<tr class="table__tr">
+						<th class="table__th" colspan="3">Мельница №1</th>
+						<th class="table__th " colspan="3">Мельница №2</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="table__tr">
+						<td class="table__td">Фронтальное</td>
+						<td class="table__td">Поперечное</td>
+						<td class="table__td">Осевое</td>
+						<td class="table__td">Фронтальное</td>
+						<td class="table__td">Поперечное</td>
+						<td class="table__td">Осевое</td>
+					</tr>
+					<tr class="table__tr">
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=151 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=152 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=153 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=156 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=157 Precision=1>
+						</td>
+						<td class="table__td table__right">
+							<#PasspValue PasspType=1 PasspID=158 Precision=1>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+
+		<script src="../../../js/melnizi/melnizi.js"></script>
+	</body>
+
+</html>

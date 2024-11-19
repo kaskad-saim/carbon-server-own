@@ -1,0 +1,785 @@
+@font-face {
+  font-family: "Bitter";
+  font-display: swap;
+  src: url("../fonts/Bitter-SemiBold.woff2") format("woff2"), url("../fonts/Bitter-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Bitter";
+  font-display: swap;
+  src: url("../fonts/Bitter-Regular.woff2") format("woff2"), url("../fonts/Bitter-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Bitter";
+  font-display: swap;
+  src: url("../fonts/Bitter-Medium.woff2") format("woff2"), url("../fonts/Bitter-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Bold.woff2") format("woff2"), url("../fonts/Gilroy-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Medium.woff2") format("woff2"), url("../fonts/Gilroy-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Regular.woff2") format("woff2"), url("../fonts/Gilroy-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Semibold.woff2") format("woff2"), url("../fonts/Gilroy-Semibold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-display: swap;
+  src: url("../fonts/Oswald-SemiBold.woff2") format("woff2"), url("../fonts/Oswald-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-display: swap;
+  src: url("../fonts/Oswald-Regular.woff2") format("woff2"), url("../fonts/Oswald-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-display: swap;
+  src: url("../fonts/Oswald-Medium.woff2") format("woff2"), url("../fonts/Oswald-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Bitter', sans-serif;
+}
+
+
+
+
+body::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+  /* ширина scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background-color: #dfdcdc;
+  /* цвет дорожки */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: green;
+  /* цвет плашки */
+  border-radius: 20px;
+  /* закругления плашки */
+}
+
+.list-reset {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.title-reset {
+  margin: 0;
+}
+
+.btn-reset {
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0px;
+  border-width: initial;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+}
+
+.mnemo {
+  position: relative;
+  margin: 20px auto 0;
+  max-width: 1080px;
+}
+
+.mnemo__param-val {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  background-color: rgb(218, 215, 215);
+  padding: 3px;
+  font-size: 16px;
+}
+
+.mnemo__param-val:hover {
+  box-shadow: none;
+  cursor: default;
+}
+
+.mnemo__param-val:active {
+  box-shadow: none;
+  cursor: default;
+}
+
+.mnemo__param-text {
+  font-size: 14px;
+  line-height: 14px;
+  color: blue;
+  font-weight: 600;
+}
+
+.mnemo__param-naimenov {
+  font-size: 14px;
+  line-height: 14px;
+  color: blue;
+  font-weight: 600;
+}
+
+.mnemo__param-descr {
+  position: absolute;
+  z-index: 1;
+  font-size: 12px;
+  /* font-family: Verdana, Geneva, Tahoma, sans-serif;sx */
+
+  line-height: 14px;
+  color: rgb(10, 59, 10);
+  font-weight: 600;
+  text-align: center;
+}
+
+.mnemo__title {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+  text-align: center;
+  font-size: 32px;
+  line-height: 32px;
+  font-weight: 600;
+  color: green;
+}
+
+.current-param__title-span {
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 600;
+  color: black;
+}
+
+.reactors {
+  padding-left: 15px;
+  padding-right: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.reaktor {
+  position: relative;
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.reaktor-meshalka {
+  width: 30px;
+}
+
+.reactor-dvig-platform {
+  width: 20px;
+  height: 30px;
+  background-color: rgb(179, 176, 176);
+
+  margin: 0 auto;
+}
+
+.reaktor-dvig {
+  width: 30px;
+  height: 50px;
+}
+
+.reaktor-emkost {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+  width: 100%;
+  height: 300px;
+  /* background-color: blue; */
+  background: linear-gradient(to right, rgb(56, 56, 247), rgb(219, 216, 216), rgb(56, 56, 247));
+  border-radius: 30px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.reaktor-niz {
+  width: 20px;
+  height: 50px;
+  background-color: rgb(179, 176, 176);
+  margin: 0 auto;
+}
+
+.reaktors-connect {
+  width: 100%;
+  height: 20px;
+  background-color: rgb(179, 176, 176);
+}
+
+/* Всплывающие подсказки */
+.mnemo__param-box--btns {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.mnemo__param-box--btn {
+  padding: 5px;
+  font-size: 16px;
+  line-height: 23px;
+  font-weight: 600;
+  color: green;
+  border: 1px solid green;
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.mnemo__param-box--btn:hover {
+  color: white;
+  background-color: green;
+}
+
+.mnemo__param-box--btn:active {
+  color: white;
+  background-color: green;
+}
+
+.mnemo__param-clue {
+  width: 150px;
+  position: absolute !important;
+  z-index: 2;
+  border-radius: 15px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 5px, rgba(0, 0, 0, 0.12) 0px 0px 3px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.mnemo__param-clue-content {
+  position: relative;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(240, 238, 238);
+  border: 2px solid green;
+  border-radius: 15px;
+}
+
+.mnemo__param-clue-content::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  z-index: -1;
+  width: 25px;
+  height: 25px;
+  background-color: green;
+  transform: rotate(45deg) translateX(-50%);
+}
+
+.mnemo__param-clue-div:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.mnemo__param-clue-div {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 400;
+}
+
+.mnemo__param-clue-span {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.mnemo__param-val:hover .mnemo__param-clue {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.mnemo__param-val:active .mnemo__param-clue {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.mnemo__param-val:focus {
+  outline: none;
+}
+
+.mnemo__param-val:focus .mnemo__param-clue {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.enabled-hover:hover {
+  box-shadow: 0 0 0 3px white, 0 0 0 6px green;
+  transition: box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.enabled-hover:active {
+  box-shadow: 0 0 0 3px white, 0 0 0 6px green;
+  transition: box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.enabled-hover:hover .mnemo__param-clue {
+  visibility: visible;
+  opacity: 1;
+}
+
+.enabled-hover:hover .mnemo__param-clue {
+  visibility: visible;
+  opacity: 1;
+}
+
+.enabled-hover:focus {
+  outline: none;
+}
+
+.enabled-hover:focus .mnemo__param-clue {
+  visibility: visible;
+  opacity: 1;
+}
+
+.temp-clue {
+  width: 190px;
+  top: 47px;
+  left: -48px;
+}
+
+.level-clue {
+  width: 217px;
+  top: 197px;
+  left: -63px;
+}
+
+
+/* модальное окно */
+.mnemo__modal-box--btns {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.mnemo__modal-box--btn {
+  padding: 5px;
+  font-family: 'Bitter', sans-serif;
+  font-size: 16px;
+  line-height: 23px;
+  font-weight: 600;
+  background-color: white;
+  color: green;
+  border: 1px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+.mnemo__modal-box--btn:hover {
+  color: white;
+  background-color: green;
+  cursor: pointer;
+}
+
+.mnemo__modal-box--btn:active {
+  color: white;
+  background-color: green;
+  cursor: pointer;
+}
+
+
+.mnemo__modal-background {
+  position: fixed;
+  top: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  z-index: -3;
+  cursor: default;
+}
+
+.mnemo__modal-background.enabled {
+  cursor: pointer;
+  opacity: 1;
+  z-index: 3;
+  transition: opacity .5s ease-in-out;
+}
+
+.mnemo__modal-active {
+  padding: 20px;
+
+  position: absolute;
+  max-width: 780px;
+  width: 100%;
+  /* height: 50px; */
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 3px 6px, rgba(0, 0, 0, 0.7) 0px 3px 6px;
+  cursor: default;
+}
+
+.mnemo__modal-active.enabled {
+  height: 100%;
+  max-height: 600px;
+  transition: height .4s ease-in-out;
+}
+
+.mnemo__modal-title {
+  padding-bottom: 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid gray;
+}
+
+.mnemo__modal-title-text {
+  position: relative;
+  font-size: 28px;
+  font-family: 'Bitter', sans-serif;
+  line-height: 24px;
+  color: black;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mnemo__modal-window {
+  padding-top: 20px;
+  overflow-y: auto;
+  height: 80%;
+}
+
+.mnemo__modal-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  width: 35px;
+  height: 35px;
+  transition: opacity .3s ease-in-out;
+}
+
+.mnemo__modal-close:hover {
+  opacity: 0.5;
+}
+
+.mnemo__modal-close:active {
+  opacity: 0.5;
+}
+
+.modal-content__box {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-content__link {
+  position: relative;
+  font-size: 16px;
+  line-height: 24px;
+  color: black;
+  font-weight: 500;
+  font-family: 'Bitter', sans-serif;
+}
+
+.modal-content__link-download {
+  padding: 6px 10px;
+  font-size: 15px;
+  line-height: 14px;
+  color: green;
+  font-weight: 500;
+  font-family: 'Bitter', sans-serif;
+  text-decoration: none;
+  border: 2px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+.modal-content__link-download:first-child {
+  border-right: none;
+}
+
+.modal-content__link-download:hover {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download:active {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download:focus {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download--one:first-child {
+  border-right: 2px solid green;
+}
+
+.modal-content__link-download-solo {
+  padding: 6px 10px;
+  font-size: 15px;
+  line-height: 14px;
+  color: green;
+  font-family: 'Bitter', sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  border: 2px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+
+
+.modal-content__link-download-solo:hover {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download-solo:active {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-download-solo:focus {
+  background-color: green;
+  color: white;
+}
+
+.modal-content__link-container {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.modal-content__link-container.active {
+  display: none;
+}
+
+.modal__accordion {
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.modal__accordion-title {
+  display: block;
+  padding: 3px;
+  cursor: pointer;
+  font-family: 'Bitter', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: green;
+  background-color: white;
+
+  border: 1px green solid;
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.modal__accordion-title:hover {
+  color: white;
+  background-color: green;
+}
+
+.modal__accordion-title:active {
+  color: white;
+  background-color: green;
+}
+
+.modal__accordion-title.enabled {
+  color: white;
+  background-color: green;
+}
+
+
+.modal__accordion-content {
+  margin: 0;
+  padding: 0;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-right: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-height: 0px;
+  font-size: 30px;
+  line-height: 36px;
+  list-style-type: none;
+  transition: max-height .3s ease-in-out;
+  overflow: hidden;
+}
+
+.modal__accordion-content-item {
+  margin-bottom: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-content__link {
+  margin-right: 30px;
+}
+
+/* Password */
+
+.password-window {
+  display: none;
+}
+
+.password-window.active {
+  display: block;
+  z-index: 1;
+}
+
+.password-form {
+  display: flex;
+  padding-right: 5px;
+  opacity: 0;
+}
+
+.password-form.active {
+  opacity: 1;
+}
+
+.password-form__container {
+  display: flex;
+  flex-direction: column;
+}
+
+.password-label {
+  margin-top: 27px;
+  position: absolute;
+  display: none;
+  z-index: 1;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+  font-style: italic;
+  color: red;
+  transition: opacity .3s ease-in-out;
+}
+
+.password-label.active {
+  display: block;
+}
+
+.password-input {
+  padding-left: 15px;
+  margin-right: 10px;
+  height: 26px;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: black;
+  border: 2px solid green;
+  background-color: white;
+  border-radius: 10px;
+  transition: border .3s ease-in-out;
+}
+
+.password-input:hover {
+  border: 2px solid blue;
+}
+
+.password-input:active {
+  border: 2px solid blue;
+}
+
+.password-input:focus {
+  border: 2px solid blue;
+  outline: none;
+}
+
+.password-input::placeholder {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: black;
+}
+
+.password-input.error {
+  border: 2px solid red;
+  transition: border .3s ease-in-out;
+}
+
+.modal-content__link-may {
+  display: none;
+}
+
+.modal-content__link-may.active {
+  padding-right: 5px;
+  display: flex;
+  flex-shrink: 0;
+}
+
+.password-btn--ok {
+  padding: 3px 10px;
+  height: 26px;
+  font-size: 15px;
+  line-height: 14px;
+  color: green;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 10px;
+  border: 2px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+.password-btn--ok:hover {
+  background-color: green;
+  color: white;
+}
