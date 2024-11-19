@@ -49,12 +49,14 @@ const modbusClients = {};
 
 devicesConfig.forEach((device) => {
   if (!modbusClients[device.port]) {
-    modbusClients[device.port] = new Client(device.port);
-    modbusClients[device.port].connect().catch(err => {
-      console.error(`Ошибка при начальном подключении к порту ${device.port}:`, err);
+    const { port, baudRate, timeout, retryInterval, maxRetries } = device;
+    modbusClients[port] = new Client(port, baudRate, timeout, retryInterval, maxRetries); // Передаем параметры
+    modbusClients[port].connect().catch(err => {
+      console.error(`Ошибка при начальном подключении к порту ${port}:`, err);
     });
   }
 });
+
 
 // Функция для запуска опроса данных
 const startDataRetrieval = async () => {
@@ -141,6 +143,10 @@ app.use('/api', sushilka1Routes);
 app.use('/api', sushilka2Routes);
 app.use('/api/lab', laboratoryRoutes);
 
+app.get('/api/server-time', (req, res) => {
+  res.json({ time: new Date().toISOString() });
+});
+
 // Маршрут для получения данных VR1
 app.get('/api/vr1/data', async (req, res) => {
   try {
@@ -185,7 +191,7 @@ app.get('/api/vr2/data', async (req, res) => {
   }
 });
 
-// определение режима разработки и отправка его на клиент 
+// определение режима разработки и отправка его на клиент
 app.get('/config.js', (req, res) => {
   res.type('application/javascript');
   res.send(`window.NODE_ENV = "${process.env.NODE_ENV}";`);

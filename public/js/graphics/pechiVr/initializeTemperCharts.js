@@ -3,6 +3,27 @@ import { getLastHoursRange } from '../components/dataUtils.js';
 import { dataLabels } from '../components/data.js';
 import { setupInactivityTimer } from '../components/timer.js';
 
+let serverTimeOffset = 0;
+
+// Функция для синхронизации времени с сервером
+async function syncServerTime() {
+  try {
+    const response = await fetch('/api/server-time'); // Эндпоинт на сервере для получения текущего времени
+    const serverData = await response.json(); // Ожидаем { time: "2024-11-19T12:00:00Z" }
+    const serverDate = new Date(serverData.time);
+    const localDate = new Date();
+    serverTimeOffset = serverDate.getTime() - localDate.getTime();
+    console.log('Смещение времени с сервером:', serverTimeOffset, 'мс');
+  } catch (error) {
+    console.error('Ошибка синхронизации времени с сервером:', error);
+  }
+}
+
+// Функция для получения скорректированного времени
+function getCorrectedTime(date) {
+  return new Date(date.getTime() + serverTimeOffset);
+}
+
 // Функция для инициализации графика
 function initializeChart(parameterType, elements, chartTitle) {
   let isUserInteracting = false;
@@ -64,16 +85,16 @@ function initializeChart(parameterType, elements, chartTitle) {
     isUserInteracting = false;
     isRealTime = true;
     const { start, end } = getLastHoursRange();
-    currentStartTime = start;
-    currentEndTime = end;
-    renderGraphic(start, end);
+    currentStartTime = getCorrectedTime(start);
+    currentEndTime = getCorrectedTime(end);
+    renderGraphic(currentStartTime, currentEndTime);
   });
 
   // Инициализация графика при загрузке
   const { start, end } = getLastHoursRange();
-  currentStartTime = start;
-  currentEndTime = end;
-  renderGraphic(start, end);
+  currentStartTime = getCorrectedTime(start);
+  currentEndTime = getCorrectedTime(end);
+  renderGraphic(currentStartTime, currentEndTime);
 
   // Настройка таймера неактивности
   setupInactivityTimer(() => {
@@ -88,15 +109,18 @@ function initializeChart(parameterType, elements, chartTitle) {
   setInterval(() => {
     if (!isUserInteracting && isRealTime) {
       const { start, end } = getLastHoursRange();
-      currentStartTime = start;
-      currentEndTime = end;
-      renderGraphic(start, end, true);
+      currentStartTime = getCorrectedTime(start);
+      currentEndTime = getCorrectedTime(end);
+      renderGraphic(currentStartTime, currentEndTime, true);
     }
   }, 2000);
 }
 
 // Инициализация графиков в зависимости от их наличия
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Синхронизируем время перед инициализацией графиков
+  await syncServerTime();
+
   const elements1 = {
     chartCanvas: document.getElementById('chartCanvas1'),
     loadingWrapper: document.getElementById('loadingWrapper1'),
@@ -124,4 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (elements2.chartCanvas) {
     initializeChart('vr2', elements2, 'График температур печи карбонизации №2');
   }
+
+  // Периодически синхронизируем время
+  setInterval(syncServerTime, 5 * 60 * 1000); // Повторяем каждые 5 минут
 });

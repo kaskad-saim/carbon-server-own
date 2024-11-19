@@ -3,7 +3,7 @@ import ModbusRTU from 'modbus-serial';
 import { Mutex } from 'async-mutex';
 
 export class ModbusClient {
-  constructor(port, baudRate = 57600, timeout = 12000, retryInterval = 15000, maxRetries = 3) {
+  constructor(port, baudRate, timeout, retryInterval, maxRetries) {
     this.port = port;
     this.baudRate = baudRate;
     this.timeout = timeout;
