@@ -15,3 +15,4 @@ const millSchema = new mongoose.Schema({
 
 export const Mill1Model = mongoose.model('Mill1', millSchema);
 export const Mill2Model = mongoose.model('Mill2', millSchema);
+export const Mill10bModel = mongoose.model('Mill10b', millSchema);

@@ -12,6 +12,7 @@ import sushilka1Routes from './routes/sushilka1Routes.js';
 import sushilka2Routes from './routes/sushilka2Routes.js';
 import mill1Routes from './routes/mill1Routes.js';
 import mill2Routes from './routes/mill2Routes.js';
+import mill10bRoutes from './routes/mill10bRoutes.js';
 import reactorRoutes from './routes/reactor296Routes.js';
 import laboratoryRoutes from './routes/laboratoryRoutes.js';
 import { connectDB } from './services/dataBaseService.js';
@@ -54,17 +55,16 @@ devicesConfig.forEach((device) => {
   if (!modbusClients[device.port]) {
     const { port, baudRate, timeout, retryInterval, maxRetries } = device;
     modbusClients[port] = new Client(port, baudRate, timeout, retryInterval, maxRetries); // Передаем параметры
-    modbusClients[port].connect().catch(err => {
+    modbusClients[port].connect().catch((err) => {
       console.error(`Ошибка при начальном подключении к порту ${port}:`, err);
     });
   }
 });
 
-
 // Функция для запуска опроса данных
 const startDataRetrieval = async () => {
   // Устройства на COM8
-  const devicesOnCOM8 = devicesConfig.filter(device => device.port === 'COM8');
+  const devicesOnCOM8 = devicesConfig.filter((device) => device.port === 'COM8');
   const modbusClientCOM8 = modbusClients['COM8'];
 
   const readDevicesOnCOM8 = async () => {
@@ -76,7 +76,7 @@ const startDataRetrieval = async () => {
       try {
         await readDataFunction(modbusClientCOM8, deviceID, deviceLabel);
         // Задержка между запросами к устройствам на COM8
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (err) {
         console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
       }
@@ -88,7 +88,7 @@ const startDataRetrieval = async () => {
   setInterval(readDevicesOnCOM8, 10000);
 
   // Устройства на COM3 (Сушилка2)
-  const devicesOnCOM3 = devicesConfig.filter(device => device.port === 'COM3');
+  const devicesOnCOM3 = devicesConfig.filter((device) => device.port === 'COM3');
   const modbusClientCOM3 = modbusClients['COM3'];
 
   const readDevicesOnCOM3 = async () => {
@@ -100,7 +100,7 @@ const startDataRetrieval = async () => {
       try {
         await readDataFunction(modbusClientCOM3, deviceID, deviceLabel);
         // Задержка между запросами к устройствам на COM3
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (err) {
         console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
       }
@@ -112,7 +112,7 @@ const startDataRetrieval = async () => {
   setInterval(readDevicesOnCOM3, 10000);
 
   // Устройства на COM10 (Сушилка1)
-  const devicesOnCOM10 = devicesConfig.filter(device => device.port === 'COM10');
+  const devicesOnCOM10 = devicesConfig.filter((device) => device.port === 'COM10');
   const modbusClientCOM10 = modbusClients['COM10'];
 
   const readDevicesOnCOM10 = async () => {
@@ -124,7 +124,7 @@ const startDataRetrieval = async () => {
       try {
         await readDataFunction(modbusClientCOM10, deviceID, deviceLabel);
         // Задержка между запросами к устройствам на COM10
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (err) {
         console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
       }
@@ -135,7 +135,7 @@ const startDataRetrieval = async () => {
   readDevicesOnCOM10();
   setInterval(readDevicesOnCOM10, 10000);
   // Устройства на COM13
-  const devicesOnCOM13 = devicesConfig.filter(device => device.port === 'COM13');
+  const devicesOnCOM13 = devicesConfig.filter((device) => device.port === 'COM13');
   const modbusClientCOM13 = modbusClients['COM13'];
   const readDevicesOnCOM13 = async () => {
     for (const device of devicesOnCOM13) {
@@ -144,7 +144,7 @@ const startDataRetrieval = async () => {
       const { deviceID, name: deviceLabel } = device;
       try {
         await readDataFunction(modbusClientCOM13, deviceID, deviceLabel);
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (err) {
         console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
       }
@@ -154,7 +154,7 @@ const startDataRetrieval = async () => {
   setInterval(readDevicesOnCOM13, 10000);
 
   // Устройства на COM7 (Мельница 2 и Реактор К296)
-  const devicesOnCOM7 = devicesConfig.filter(device => device.port === 'COM7');
+  const devicesOnCOM7 = devicesConfig.filter((device) => device.port === 'COM7');
   const modbusClientCOM7 = modbusClients['COM7'];
   const readDevicesOnCOM7 = async () => {
     for (const device of devicesOnCOM7) {
@@ -163,7 +163,7 @@ const startDataRetrieval = async () => {
       const { deviceID, name: deviceLabel } = device;
       try {
         await readDataFunction(modbusClientCOM7, deviceID, deviceLabel);
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (err) {
         console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
       }
@@ -171,6 +171,30 @@ const startDataRetrieval = async () => {
   };
   readDevicesOnCOM7();
   setInterval(readDevicesOnCOM7, 10000);
+
+  // Устройства на COM1 (Mill10B)
+  const devicesOnCOM1 = devicesConfig.filter((device) => device.port === 'COM1');
+  const modbusClientCOM1 = modbusClients['COM1'];
+
+  const readDevicesOnCOM1 = async () => {
+    for (const device of devicesOnCOM1) {
+      const module = await import(device.serviceModule);
+      const readDataFunction = module[device.readDataFunction];
+      const { deviceID, name: deviceLabel } = device;
+
+      try {
+        await readDataFunction(modbusClientCOM1, deviceID, deviceLabel);
+        // Задержка между запросами к устройствам на COM1
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } catch (err) {
+        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
+      }
+    }
+  };
+
+  // Запускаем опрос данных на COM1 каждые 10 секунд
+  readDevicesOnCOM1();
+  setInterval(readDevicesOnCOM1, 10000);
 };
 
 // Запускаем опрос данных
@@ -183,6 +207,7 @@ app.use('/api', sushilka1Routes);
 app.use('/api', sushilka2Routes);
 app.use('/api', mill1Routes);
 app.use('/api', mill2Routes);
+app.use('/api', mill10bRoutes);
 app.use('/api', reactorRoutes);
 app.use('/api/lab', laboratoryRoutes);
 

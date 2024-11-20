@@ -1,12 +1,12 @@
 import express from 'express';
-import { Mill2Model } from '../models/millModel.js';
+import { Mill10bModel } from '../models/millModel.js';
 
 const router = express.Router();
 
-// Роут для получения данных Mill2
-router.get('/mill2-data', async (req, res) => {
+// Роут для получения данных Mill10b
+router.get('/mill10b-data', async (req, res) => {
   try {
-    const data = await Mill2Model.find().sort({ lastUpdated: -1 }).limit(1); // Получаем последние данные
+    const data = await Mill10bModel.find().sort({ lastUpdated: -1 }).limit(1);
     if (!data[0]) {
       return res.status(404).json({ message: 'Данные не найдены' });
     }
@@ -14,10 +14,8 @@ router.get('/mill2-data', async (req, res) => {
     const lastUpdated = new Date(data[0].lastUpdated);
     const currentTime = new Date();
 
-    // Проверка актуальности данных
-    const isDataOutdated = currentTime - lastUpdated > 60000; // 60000 мс = 1 минута
+    const isDataOutdated = currentTime - lastUpdated > 60000; // 1 минута
 
-    // Если данные устарели, заменяем их на прочерки
     const responseData = isDataOutdated
       ? {
           data: mapValuesToDash(data[0].data),
@@ -43,15 +41,13 @@ router.get('/mill2-data', async (req, res) => {
         };
 
     res.json(responseData);
-    // console.log(responseData);
-
   } catch (err) {
-    console.error('Ошибка при получении данных Mill2:', err);
+    console.error('Ошибка при получении данных Mill10b:', err);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
 
-// Функция для замены всех значений в объекте на прочерк
+// Функция для замены всех значений на прочерки
 const mapValuesToDash = (obj) => {
   return Object.fromEntries(Object.keys(obj).map((key) => [key, '-']));
 };

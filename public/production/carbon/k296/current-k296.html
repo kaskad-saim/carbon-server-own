@@ -8,104 +8,103 @@
 	<title>Current</title>
 	<link rel="stylesheet" href="../../../css/k296-currentParam.css">
 </head>
-<#Refresh Content=60>
 
-	<body>
-		<div class="current-param">
-			<h1 class="current-param__title">
-				<span class="current-param__title-span">Карбон</span>
+<body>
+	<div class="current-param">
+		<h1 class="current-param__title">
+			<span class="current-param__title-span">Карбон</span>
+			Корпус 296
+		</h1>
+		<div class="current-param__box">
+			<span class="current-param__date">
 
-				Корпус 296
-			</h1>
-			<div class="current-param__box">
-				<span class="current-param__date">
-					<#Date>
-				</span>
-				<span class="current-param__time">
-					<#Time>
-				</span>
-			</div>
+			</span>
+			<span class="current-param__time">
+
+			</span>
 		</div>
+	</div>
 
 
-		<div class="tables">
-			<table class="table">
-				<caption class="table__title"> Смоляные реактора (Температуры)
-				</caption>
-				<thead class="table__thead">
-					<tr class="table__tr">
-						<th class="table__th table__left">Наименование параметра</th>
-						<th class="table__th ">Значение &#176C</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="table__tr">
-						<td class="table__td table__left">Смоляной реактор №1</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=194 Precision=1>
-						</td>
-					</tr>
-					<tr class="table__tr">
-						<td class="table__td table__left"> Смоляной реактор №2</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=195 Precision=1>
-						</td>
-					</tr>
-					<tr class="table__tr">
-						<td class="table__td table__left">Смоляной реактор №3</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=196 Precision=1>
-						</td>
-					</tr>
-					<tr class="table__tr">
-						<td class="table__td table__left">Смоляной реактор №4</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=197 Precision=1>
-						</td>
-					</tr>
+	<div class="tables">
+		<table class="table">
+			<caption class="table__title"> Смоляные реактора (Температуры)
+			</caption>
+			<thead class="table__thead">
+				<tr class="table__tr">
+					<th class="table__th table__left">Наименование параметра</th>
+					<th class="table__th ">Значение &#176C</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="table__tr">
+					<td class="table__td table__left">Смоляной реактор №1</td>
+					<td class="table__td table__right reaktor-1-t-val">
 
-				</tbody>
-			</table>
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left"> Смоляной реактор №2</td>
+					<td class="table__td table__right reaktor-2-t-val">
+
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Смоляной реактор №3</td>
+					<td class="table__td table__right reaktor-3-t-val">
+
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Смоляной реактор №4</td>
+					<td class="table__td table__right reaktor-4-t-val">
+
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
 
 
-			<table class="table">
-				<caption class="table__title"> Смоляные реактора (Уровни)
-				</caption>
-				<thead class="table__thead">
-					<tr class="table__tr">
-						<th class="table__th table__left">Наименование параметра</th>
-						<th class="table__th ">Значение (мм)</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="table__tr">
-						<td class="table__td table__left">Смоляной реактор №1</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=198 Precision=1>
-						</td>
-					</tr>
-					<tr class="table__tr">
-						<td class="table__td table__left"> Смоляной реактор №2</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=199 Precision=1>
-						</td>
-					</tr>
-					<tr class="table__tr">
-						<td class="table__td table__left">Смоляной реактор №3</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=200 Precision=1>
-						</td>
-					</tr>
-					<tr class="table__tr">
-						<td class="table__td table__left">Смоляной реактор №4</td>
-						<td class="table__td table__right">
-							<#PasspValue PasspType=1 PasspID=201 Precision=1>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		<table class="table">
+			<caption class="table__title"> Смоляные реактора (Уровни)
+			</caption>
+			<thead class="table__thead">
+				<tr class="table__tr">
+					<th class="table__th table__left">Наименование параметра</th>
+					<th class="table__th ">Значение (мм)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="table__tr">
+					<td class="table__td table__left">Смоляной реактор №1</td>
+					<td class="table__td table__right reaktor-1-h-val">
 
-	</body>
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left"> Смоляной реактор №2</td>
+					<td class="table__td table__right reaktor-2-h-val">
+
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Смоляной реактор №3</td>
+					<td class="table__td table__right reaktor-3-h-val">
+
+					</td>
+				</tr>
+				<tr class="table__tr">
+					<td class="table__td table__left">Смоляной реактор №4</td>
+					<td class="table__td table__right reaktor-4-h-val">
+
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<script type="module" src="../../../js/k296/k296.js"></script>
+</body>
 
 </html>

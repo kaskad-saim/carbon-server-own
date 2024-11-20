@@ -26,7 +26,7 @@ export const readDataMill1 = async (modbusClient, deviceID, deviceLabel) => {
     };
 
     await new Mill1Model(formattedData).save();
-    console.log(formattedData);
+    // console.log(formattedData);
 
   } catch (err) {
     console.error(`[${deviceLabel}] Ошибка при чтении данных:`, err);

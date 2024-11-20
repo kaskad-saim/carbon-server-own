@@ -1,27 +1,59 @@
-// routes/reactorRoutes.js
-
 import express from 'express';
 import { Reactor296Model } from '../models/reactor296Model.js';
 
-
 const router = express.Router();
 
-router.get('/reactorK296/data', async (req, res) => {
+// Роут для получения данных ReactorK296
+router.get('/reactorK296-data', async (req, res) => {
   try {
-    const { start, end } = req.query;
-    const query = {};
-    if (start && end) {
-      query.lastUpdated = {
-        $gte: new Date(start),
-        $lte: new Date(end),
-      };
+    const data = await Reactor296Model.find().sort({ lastUpdated: -1 }).limit(1); // Получаем последние данные
+    if (!data[0]) {
+      return res.status(404).json({ message: 'Данные не найдены' });
     }
-    const data = await Reactor296Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    console.error('Ошибка при получении данных Реактора К296:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
+
+    const lastUpdated = new Date(data[0].lastUpdated);
+    const currentTime = new Date();
+
+    // Проверка актуальности данных
+    const isDataOutdated = currentTime - lastUpdated > 60000; // 60000 мс = 1 минута
+
+    // Если данные устарели, заменяем их на прочерки
+    const responseData = isDataOutdated
+      ? {
+          data: mapValuesToDash(data[0].data),
+          lastUpdated: new Date(data[0].lastUpdated).toLocaleString('ru-RU', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          }),
+        }
+      : {
+          ...data[0]._doc,
+          lastUpdated: new Date(data[0].lastUpdated).toLocaleString('ru-RU', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          }),
+        };
+
+    res.json(responseData);
+    // console.log(responseData);
+
+  } catch (err) {
+    console.error('Ошибка при получении данных ReactorK296:', err);
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
+
+// Функция для замены всех значений в объекте на прочерк
+const mapValuesToDash = (obj) => {
+  return Object.fromEntries(Object.keys(obj).map((key) => [key, '-']));
+};
 
 export default router;

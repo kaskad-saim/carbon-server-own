@@ -24,7 +24,7 @@ export const readDataReactorK296 = async (modbusClient, deviceID, deviceLabel) =
     for (const [label, address] of Object.entries(temperatureAddresses)) {
       try {
         const value = await modbusClient.readFloat(deviceID, address, deviceLabel);
-        temperatures[label] = parseFloat(value.toFixed(2));
+        temperatures[label] = parseFloat(value.toFixed(0));
       } catch (error) {
         console.error(`[${deviceLabel}] Ошибка при чтении температуры с адреса ${address} (${label}):`, error);
       }
@@ -33,7 +33,7 @@ export const readDataReactorK296 = async (modbusClient, deviceID, deviceLabel) =
     for (const [label, address] of Object.entries(levelAddresses)) {
       try {
         const value = await modbusClient.readFloat(deviceID, address, deviceLabel);
-        levels[label] = parseFloat(value.toFixed(2));
+        levels[label] = parseFloat(value.toFixed(0));
       } catch (error) {
         console.error(`[${deviceLabel}] Ошибка при чтении уровня с адреса ${address} (${label}):`, error);
       }
@@ -46,7 +46,7 @@ export const readDataReactorK296 = async (modbusClient, deviceID, deviceLabel) =
     };
 
     await new Reactor296Model(formattedData).save();
-    console.log(formattedData);
+    // console.log(formattedData);
 
   } catch (err) {
     console.error(`[${deviceLabel}] Ошибка при чтении данных:`, err);
