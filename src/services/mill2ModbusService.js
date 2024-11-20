@@ -1,5 +1,3 @@
-// services/mill2ModbusService.js
-
 import { Mill2Model } from '../models/millModel.js';
 
 export const readDataMill2 = async (modbusClient, deviceID, deviceLabel) => {
@@ -14,7 +12,7 @@ export const readDataMill2 = async (modbusClient, deviceID, deviceLabel) => {
     for (const [label, address] of Object.entries(addresses)) {
       try {
         const value = await modbusClient.readInt16(deviceID, address, deviceLabel);
-        data[label] = value;
+        data[label] = Math.round(value * 0.1 * 10) / 10;
       } catch (error) {
         console.error(`[${deviceLabel}] Ошибка чтения с адреса ${address} (${label}):`, error);
       }

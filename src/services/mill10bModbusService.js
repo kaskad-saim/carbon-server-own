@@ -1,5 +1,8 @@
 import { Mill10bModel } from '../models/millModel.js';
 
+// Функция для интерпретации значений как знаковых 16-битных чисел
+const interpretSignedInt16 = (value) => (value >= 0x8000 ? value - 0x10000 : value);
+
 export const readDataMill10b = async (modbusClient, deviceID, deviceLabel) => {
   try {
     const addresses = {
@@ -17,8 +20,9 @@ export const readDataMill10b = async (modbusClient, deviceID, deviceLabel) => {
     const data = {};
     for (const [label, address] of Object.entries(addresses)) {
       try {
-        const value = await modbusClient.readInt16(deviceID, address, deviceLabel);
-        data[label] = value * 2 ** 16; // Преобразуем int16 в int32
+        let value = await modbusClient.readInt16(deviceID, address, deviceLabel);
+        value = interpretSignedInt16(value); // Корректная интерпретация как signed int16
+        data[label] = Math.round(value * 0.1 * 10) / 10; 
       } catch (error) {
         console.error(`[${deviceLabel}] Ошибка чтения с адреса ${address} (${label}):`, error);
       }
@@ -30,6 +34,7 @@ export const readDataMill10b = async (modbusClient, deviceID, deviceLabel) => {
     };
 
     await new Mill10bModel(formattedData).save();
+    // console.log(formattedData);
   } catch (err) {
     console.error(`[${deviceLabel}] Ошибка при чтении данных:`, err);
   }

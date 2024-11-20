@@ -1,5 +1,19 @@
 import { updateDateTime } from "./components/time-date.js";
-import { updateMill1Params, updateMill2Params } from "./components/updateParams.js";
+import { updateMill10bParams, updateMill1Params, updateMill2Params } from "./components/updateParams.js";
+
+// Функция для получения данных мельницы 10Б
+export const fetchMill10bData = async () => {
+  try {
+    const response = await fetch('/api/mill10b-data');
+    const mill10bData = await response.json();
+
+    // Вызываем функцию обновления с соответствующими данными
+    updateMill10bParams(mill10bData);
+  } catch (error) {
+    console.error('Ошибка при получении данных mill10b:', error);
+  }
+};
+
 
 // Функция для получения данных обеих мельниц
 export const fetchMillData = async () => {
@@ -25,6 +39,10 @@ export const fetchMillData = async () => {
 // Изначальный вызов и периодический опрос данных
 fetchMillData();
 setInterval(fetchMillData, 10000);
+
+// Изначальный вызов и периодический опрос данных
+fetchMill10bData();
+setInterval(fetchMill10bData, 10000);
 
 // Вызовите функцию обновления даты и времени при загрузке страницы
 updateDateTime();

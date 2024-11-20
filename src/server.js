@@ -61,6 +61,28 @@ devicesConfig.forEach((device) => {
   }
 });
 
+// Механизм очереди запросов для COM7
+const requestQueueCOM7 = [];
+let isProcessingQueueCOM7 = false;
+
+const addToQueueCOM7 = (fn) => {
+  requestQueueCOM7.push(fn);
+  processQueueCOM7();
+};
+
+const processQueueCOM7 = async () => {
+  if (isProcessingQueueCOM7 || requestQueueCOM7.length === 0) return;
+  isProcessingQueueCOM7 = true;
+  const fn = requestQueueCOM7.shift();
+  try {
+    await fn();
+  } catch (err) {
+    console.error('Ошибка при обработке очереди на COM7:', err);
+  }
+  isProcessingQueueCOM7 = false;
+  processQueueCOM7();
+};
+
 // Функция для запуска опроса данных
 const startDataRetrieval = async () => {
   // Устройства на COM8
@@ -161,12 +183,16 @@ const startDataRetrieval = async () => {
       const module = await import(device.serviceModule);
       const readDataFunction = module[device.readDataFunction];
       const { deviceID, name: deviceLabel } = device;
-      try {
-        await readDataFunction(modbusClientCOM7, deviceID, deviceLabel);
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      } catch (err) {
-        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
-      }
+
+      addToQueueCOM7(async () => {
+        try {
+          await readDataFunction(modbusClientCOM7, deviceID, deviceLabel);
+          // Увеличенная задержка между запросами
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } catch (err) {
+          console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
+        }
+      });
     }
   };
   readDevicesOnCOM7();
