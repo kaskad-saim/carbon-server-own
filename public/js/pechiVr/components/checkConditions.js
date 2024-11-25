@@ -117,7 +117,7 @@ export const checkConditions = () => {
     const temp1Value = Number(temper1Skolz.innerText);
     const temp3Value = Number(temper3Skolz.innerText);
 
-    if (temp1Value < 550 && temp1Value > 50) {
+    if (temp1Value <= 550 && temp1Value > 50) {
       modeTitle.innerText = 'Выход на режим';
       const isError = temp3Value > 750; // Ошибка, если temp3Value >750
       if (isError) {

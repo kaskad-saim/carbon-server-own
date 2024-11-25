@@ -2653,14 +2653,14 @@ body::-webkit-scrollbar-thumb {
   }
 
   .laboratory__table-th--mnemo {
-    font-size: 14px;
-    line-height: 19px;
+    font-size: 12px;
+    line-height: 16px;
     font-weight: 400;
   }
 
   .laboratory__table-td--mnemo {
-    font-size: 14px;
-    line-height: 19px;
+    font-size: 12px;
+    line-height: 10px;
     font-weight: 600;
   }
 }

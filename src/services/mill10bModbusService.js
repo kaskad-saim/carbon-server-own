@@ -22,7 +22,7 @@ export const readDataMill10b = async (modbusClient, deviceID, deviceLabel) => {
       try {
         let value = await modbusClient.readInt16(deviceID, address, deviceLabel);
         value = interpretSignedInt16(value); // Корректная интерпретация как signed int16
-        data[label] = Math.round(value * 0.1 * 10) / 10; 
+        data[label] = Math.round(value * 0.1 * 10) / 10;
       } catch (error) {
         console.error(`[${deviceLabel}] Ошибка чтения с адреса ${address} (${label}):`, error);
       }

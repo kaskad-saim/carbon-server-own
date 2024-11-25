@@ -1,7 +1,9 @@
+// server.js
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import logger from './logger.js';
 import { fileURLToPath } from 'url';
 import { ModbusClient } from './services/modbusClient.js';
 import { ModbusSimulator } from './services/modbusSimulator.js';
@@ -30,7 +32,7 @@ const port = process.env.PORT || 3002;
 // Определяем, использовать ли симулятор или реальный ModbusClient
 const isProduction = process.env.NODE_ENV === 'production';
 const Client = isProduction ? ModbusClient : ModbusSimulator;
-console.log(`Используется ${isProduction ? 'ModbusClient' : 'ModbusSimulator'}`);
+logger.info(`Используется ${isProduction ? 'ModbusClient' : 'ModbusSimulator'}`);
 
 // Создаем приложение Express
 const app = express();
@@ -50,178 +52,142 @@ connectDB();
 
 // Создаем карту Modbus-клиентов для каждого COM-порта
 const modbusClients = {};
+const connectionAttempts = {}; // Отслеживание количества попыток подключения
 
+// Функция для переподключения клиента
+const reconnectModbusClient = async (client, port) => {
+  if (connectionAttempts[port] >= 5) {
+    logger.error(`Превышено максимальное количество попыток переподключения к порту ${port}.`);
+    return;
+  }
+
+  try {
+    logger.info(`Попытка переподключения к порту ${port}...`);
+    connectionAttempts[port] = (connectionAttempts[port] || 0) + 1;
+
+    // Проверяем, поддерживается ли метод disconnect
+    if (typeof client.disconnect === 'function') {
+      await client.disconnect(); // Очистить предыдущее соединение, если возможно
+    } else {
+      logger.warn(`Метод disconnect не поддерживается клиентом для порта ${port}`);
+    }
+
+    await client.connect();
+    logger.info(`Успешное переподключение к порту ${port}`);
+    connectionAttempts[port] = 0; // Сброс счетчика после успешного подключения
+  } catch (err) {
+    logger.error(`Ошибка при переподключении к порту ${port}:`, err);
+    setTimeout(() => reconnectModbusClient(client, port), 5000); // Повторить попытку через 5 секунд
+  }
+};
+
+
+// Инициализация клиентов
 devicesConfig.forEach((device) => {
   if (!modbusClients[device.port]) {
     const { port, baudRate, timeout, retryInterval, maxRetries } = device;
-    modbusClients[port] = new Client(port, baudRate, timeout, retryInterval, maxRetries); // Передаем параметры
-    modbusClients[port].connect().catch((err) => {
-      console.error(`Ошибка при начальном подключении к порту ${port}:`, err);
-    });
+    modbusClients[port] = new Client(port, baudRate, timeout, retryInterval, maxRetries);
+
+    modbusClients[port]
+      .connect()
+      .then(() => logger.info(`Успешное подключение к порту ${port}`))
+      .catch((err) => {
+        logger.error(`Ошибка при начальном подключении к порту ${port}:`, err);
+        reconnectModbusClient(modbusClients[port], port);
+      });
+
+    // Добавляем мониторинг состояния
+    setInterval(async () => {
+      if (!modbusClients[port].isConnected) {
+        logger.warn(`Соединение с портом ${port} отсутствует. Попытка переподключения...`);
+        await reconnectModbusClient(modbusClients[port], port);
+      }
+    }, 10000); // Проверка каждые 10 секунд
   }
 });
 
-// Механизм очереди запросов для COM7
-const requestQueueCOM7 = [];
-let isProcessingQueueCOM7 = false;
+// Добавляем список нестабильных портов
+const unstablePorts = ['COM7'];
 
-const addToQueueCOM7 = (fn) => {
-  requestQueueCOM7.push(fn);
-  processQueueCOM7();
-};
+// Объекты для хранения очередей запросов и флагов состояния для каждого порта
+const requestQueues = {};
+const isProcessing = {};
 
-const processQueueCOM7 = async () => {
-  if (isProcessingQueueCOM7 || requestQueueCOM7.length === 0) return;
-  isProcessingQueueCOM7 = true;
-  const fn = requestQueueCOM7.shift();
-  try {
-    await fn();
-  } catch (err) {
-    console.error('Ошибка при обработке очереди на COM7:', err);
+// Функция для добавления в очередь с таймаутом
+const addToQueueWithTimeout = (port, fn, timeout = 10000) => {
+  if (!requestQueues[port]) {
+    requestQueues[port] = [];
   }
-  isProcessingQueueCOM7 = false;
-  processQueueCOM7();
+  requestQueues[port].push({ fn, timeout });
+  processQueue(port);
 };
 
-// Функция для запуска опроса данных
+// Функция для обработки очереди
+const processQueue = async (port) => {
+  if (isProcessing[port]) return;
+  isProcessing[port] = true;
+
+  while (requestQueues[port] && requestQueues[port].length) {
+    const { fn, timeout } = requestQueues[port].shift();
+    try {
+      await Promise.race([
+        fn(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Queue operation timed out')), timeout)
+        ),
+      ]);
+    } catch (err) {
+      logger.error(`Ошибка при выполнении операции из очереди ${port}:`, err);
+      if (err.message === 'Queue operation timed out') {
+        await modbusClients[port].disconnect();
+        await modbusClients[port].connect();
+      }
+    }
+    // Добавляем задержку между операциями
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Задержка в 2 секунды
+  }
+
+  isProcessing[port] = false;
+};
+
+// Обновленная функция для опроса данных
 const startDataRetrieval = async () => {
-  // Устройства на COM8
-  const devicesOnCOM8 = devicesConfig.filter((device) => device.port === 'COM8');
-  const modbusClientCOM8 = modbusClients['COM8'];
+  const ports = ['COM8', 'COM3', 'COM10', 'COM13', 'COM7', 'COM1'];
 
-  const readDevicesOnCOM8 = async () => {
-    for (const device of devicesOnCOM8) {
-      const module = await import(device.serviceModule);
-      const readDataFunction = module[device.readDataFunction];
-      const { deviceID, name: deviceLabel } = device;
+  for (const port of ports) {
+    const devices = devicesConfig.filter((device) => device.port === port);
+    const client = modbusClients[port];
 
-      try {
-        await readDataFunction(modbusClientCOM8, deviceID, deviceLabel);
-        // Задержка между запросами к устройствам на COM8
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      } catch (err) {
-        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
-      }
-    }
-  };
+    const readDevices = async () => {
+      for (const device of devices) {
+        const module = await import(device.serviceModule);
+        const readDataFunction = module[device.readDataFunction];
+        const { deviceID, name: deviceLabel } = device;
 
-  // Запускаем опрос данных на COM8 каждые 10 секунд
-  readDevicesOnCOM8();
-  setInterval(readDevicesOnCOM8, 10000);
-
-  // Устройства на COM3 (Сушилка2)
-  const devicesOnCOM3 = devicesConfig.filter((device) => device.port === 'COM3');
-  const modbusClientCOM3 = modbusClients['COM3'];
-
-  const readDevicesOnCOM3 = async () => {
-    for (const device of devicesOnCOM3) {
-      const module = await import(device.serviceModule);
-      const readDataFunction = module[device.readDataFunction];
-      const { deviceID, name: deviceLabel } = device;
-
-      try {
-        await readDataFunction(modbusClientCOM3, deviceID, deviceLabel);
-        // Задержка между запросами к устройствам на COM3
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      } catch (err) {
-        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
-      }
-    }
-  };
-
-  // Запускаем опрос данных на COM3 каждые 10 секунд
-  readDevicesOnCOM3();
-  setInterval(readDevicesOnCOM3, 10000);
-
-  // Устройства на COM10 (Сушилка1)
-  const devicesOnCOM10 = devicesConfig.filter((device) => device.port === 'COM10');
-  const modbusClientCOM10 = modbusClients['COM10'];
-
-  const readDevicesOnCOM10 = async () => {
-    for (const device of devicesOnCOM10) {
-      const module = await import(device.serviceModule);
-      const readDataFunction = module[device.readDataFunction];
-      const { deviceID, name: deviceLabel } = device;
-
-      try {
-        await readDataFunction(modbusClientCOM10, deviceID, deviceLabel);
-        // Задержка между запросами к устройствам на COM10
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      } catch (err) {
-        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
-      }
-    }
-  };
-
-  // Запускаем опрос данных на COM10 каждые 10 секунд
-  readDevicesOnCOM10();
-  setInterval(readDevicesOnCOM10, 10000);
-  // Устройства на COM13
-  const devicesOnCOM13 = devicesConfig.filter((device) => device.port === 'COM13');
-  const modbusClientCOM13 = modbusClients['COM13'];
-  const readDevicesOnCOM13 = async () => {
-    for (const device of devicesOnCOM13) {
-      const module = await import(device.serviceModule);
-      const readDataFunction = module[device.readDataFunction];
-      const { deviceID, name: deviceLabel } = device;
-      try {
-        await readDataFunction(modbusClientCOM13, deviceID, deviceLabel);
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      } catch (err) {
-        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
-      }
-    }
-  };
-  readDevicesOnCOM13();
-  setInterval(readDevicesOnCOM13, 10000);
-
-  // Устройства на COM7 (Мельница 2 и Реактор К296)
-  const devicesOnCOM7 = devicesConfig.filter((device) => device.port === 'COM7');
-  const modbusClientCOM7 = modbusClients['COM7'];
-  const readDevicesOnCOM7 = async () => {
-    for (const device of devicesOnCOM7) {
-      const module = await import(device.serviceModule);
-      const readDataFunction = module[device.readDataFunction];
-      const { deviceID, name: deviceLabel } = device;
-
-      addToQueueCOM7(async () => {
         try {
-          await readDataFunction(modbusClientCOM7, deviceID, deviceLabel);
-          // Увеличенная задержка между запросами
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          if (unstablePorts.includes(port)) {
+            addToQueueWithTimeout(port, async () => {
+              if (!client.isConnected) await reconnectModbusClient(client, port);
+              await readDataFunction(client, deviceID, deviceLabel);
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+            });
+          } else {
+            if (!client.isConnected) await reconnectModbusClient(client, port);
+            await readDataFunction(client, deviceID, deviceLabel);
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
         } catch (err) {
-          console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
+          logger.error(`Ошибка при опросе данных ${deviceLabel} на порту ${port}:`, err);
         }
-      });
-    }
-  };
-  readDevicesOnCOM7();
-  setInterval(readDevicesOnCOM7, 10000);
-
-  // Устройства на COM1 (Mill10B)
-  const devicesOnCOM1 = devicesConfig.filter((device) => device.port === 'COM1');
-  const modbusClientCOM1 = modbusClients['COM1'];
-
-  const readDevicesOnCOM1 = async () => {
-    for (const device of devicesOnCOM1) {
-      const module = await import(device.serviceModule);
-      const readDataFunction = module[device.readDataFunction];
-      const { deviceID, name: deviceLabel } = device;
-
-      try {
-        await readDataFunction(modbusClientCOM1, deviceID, deviceLabel);
-        // Задержка между запросами к устройствам на COM1
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      } catch (err) {
-        console.error(`Ошибка при опросе данных ${deviceLabel}:`, err);
       }
-    }
-  };
+    };
 
-  // Запускаем опрос данных на COM1 каждые 10 секунд
-  readDevicesOnCOM1();
-  setInterval(readDevicesOnCOM1, 10000);
+    // Периодический запуск опроса данных
+    readDevices();
+    setInterval(readDevices, 10000);
+  }
 };
+
 
 // Запускаем опрос данных
 startDataRetrieval();
@@ -241,51 +207,32 @@ app.get('/api/server-time', (req, res) => {
   res.json({ time: new Date().toISOString() });
 });
 
-// Маршрут для получения данных VR1
+// Маршруты для получения данных VR1 и VR2
 app.get('/api/vr1/data', async (req, res) => {
   try {
     const { start, end } = req.query;
-
-    // Формируем условия поиска
-    const query = {};
-    if (start && end) {
-      query.lastUpdated = {
-        $gte: new Date(start),
-        $lte: new Date(end),
-      };
-    }
-
+    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
     const data = await PechVr1Model.find(query).sort({ lastUpdated: 1 });
     res.json(data);
   } catch (error) {
-    console.error('Ошибка при получении данных VR1:', error);
+    logger.error('Ошибка при получении данных VR1:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });
 
-// Маршрут для получения данных VR2
 app.get('/api/vr2/data', async (req, res) => {
   try {
     const { start, end } = req.query;
-
-    // Формируем условия поиска
-    const query = {};
-    if (start && end) {
-      query.lastUpdated = {
-        $gte: new Date(start),
-        $lte: new Date(end),
-      };
-    }
-
+    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
     const data = await PechVr2Model.find(query).sort({ lastUpdated: 1 });
     res.json(data);
   } catch (error) {
-    console.error('Ошибка при получении данных VR2:', error);
+    logger.error('Ошибка при получении данных VR2:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });
 
-// определение режима разработки и отправка его на клиент
+// Режим разработки
 app.get('/config.js', (req, res) => {
   res.type('application/javascript');
   res.send(`window.NODE_ENV = "${process.env.NODE_ENV}";`);
@@ -293,5 +240,5 @@ app.get('/config.js', (req, res) => {
 
 // Запуск сервера
 app.listen(port, () => {
-  console.log(`Сервер запущен на http://localhost:${port}`);
+  logger.info(`Сервер запущен на http://localhost:${port}`);
 });
