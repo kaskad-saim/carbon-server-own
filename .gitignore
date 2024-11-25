@@ -2,4 +2,4 @@
 /reports/
 /node_modules/
 /.env
-/logs
+/src/logs

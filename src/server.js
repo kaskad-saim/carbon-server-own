@@ -52,62 +52,6 @@ connectDB();
 
 // Создаем карту Modbus-клиентов для каждого COM-порта
 const modbusClients = {};
-const connectionAttempts = {}; // Отслеживание количества попыток подключения
-
-// Функция для переподключения клиента
-const reconnectModbusClient = async (client, port) => {
-  if (connectionAttempts[port] >= 5) {
-    logger.error(`Превышено максимальное количество попыток переподключения к порту ${port}.`);
-    return;
-  }
-
-  try {
-    logger.info(`Попытка переподключения к порту ${port}...`);
-    connectionAttempts[port] = (connectionAttempts[port] || 0) + 1;
-
-    // Проверяем, поддерживается ли метод disconnect
-    if (typeof client.disconnect === 'function') {
-      await client.disconnect(); // Очистить предыдущее соединение, если возможно
-    } else {
-      logger.warn(`Метод disconnect не поддерживается клиентом для порта ${port}`);
-    }
-
-    await client.connect();
-    logger.info(`Успешное переподключение к порту ${port}`);
-    connectionAttempts[port] = 0; // Сброс счетчика после успешного подключения
-  } catch (err) {
-    logger.error(`Ошибка при переподключении к порту ${port}:`, err);
-    setTimeout(() => reconnectModbusClient(client, port), 5000); // Повторить попытку через 5 секунд
-  }
-};
-
-
-// Инициализация клиентов
-devicesConfig.forEach((device) => {
-  if (!modbusClients[device.port]) {
-    const { port, baudRate, timeout, retryInterval, maxRetries } = device;
-    modbusClients[port] = new Client(port, baudRate, timeout, retryInterval, maxRetries);
-
-    modbusClients[port]
-      .connect()
-      .then(() => logger.info(`Успешное подключение к порту ${port}`))
-      .catch((err) => {
-        logger.error(`Ошибка при начальном подключении к порту ${port}:`, err);
-        reconnectModbusClient(modbusClients[port], port);
-      });
-
-    // Добавляем мониторинг состояния
-    setInterval(async () => {
-      if (!modbusClients[port].isConnected) {
-        logger.warn(`Соединение с портом ${port} отсутствует. Попытка переподключения...`);
-        await reconnectModbusClient(modbusClients[port], port);
-      }
-    }, 10000); // Проверка каждые 10 секунд
-  }
-});
-
-// Добавляем список нестабильных портов
-const unstablePorts = ['COM7'];
 
 // Объекты для хранения очередей запросов и флагов состояния для каждого порта
 const requestQueues = {};
@@ -137,7 +81,7 @@ const processQueue = async (port) => {
         ),
       ]);
     } catch (err) {
-      logger.error(`Ошибка при выполнении операции из очереди ${port}:`, err);
+      logger.error(`Ошибка при выполнении операции из очереди на порту ${port}:`, err);
       if (err.message === 'Queue operation timed out') {
         await modbusClients[port].disconnect();
         await modbusClients[port].connect();
@@ -150,13 +94,46 @@ const processQueue = async (port) => {
   isProcessing[port] = false;
 };
 
-// Обновленная функция для опроса данных
+// Инициализация клиентов
+devicesConfig.forEach((device) => {
+  const {
+    port,
+    baudRate,
+    timeout,
+    retryInterval,
+    maxRetries,
+    unstable,
+  } = device;
+
+  if (!modbusClients[port]) {
+    modbusClients[port] = new Client(
+      port,
+      baudRate,
+      timeout,
+      retryInterval,
+      maxRetries,
+      unstable
+    );
+
+    modbusClients[port]
+      .connect()
+      .then(() => logger.info(`Успешное подключение к порту ${port}`))
+      .catch((err) => {
+        logger.error(`Ошибка при начальном подключении к порту ${port}:`, err);
+        // Здесь можно вызвать функцию переподключения, если необходимо
+      });
+  }
+});
+
+// Функция для опроса данных
 const startDataRetrieval = async () => {
-  const ports = ['COM8', 'COM3', 'COM10', 'COM13', 'COM7', 'COM1'];
+  // Получаем уникальные порты из конфигурации устройств
+  const ports = [...new Set(devicesConfig.map((device) => device.port))];
 
   for (const port of ports) {
     const devices = devicesConfig.filter((device) => device.port === port);
     const client = modbusClients[port];
+    const unstable = devices.some((device) => device.unstable);
 
     const readDevices = async () => {
       for (const device of devices) {
@@ -165,16 +142,18 @@ const startDataRetrieval = async () => {
         const { deviceID, name: deviceLabel } = device;
 
         try {
-          if (unstablePorts.includes(port)) {
+          if (unstable) {
+            // Обработка нестабильных портов с использованием очереди
             addToQueueWithTimeout(port, async () => {
-              if (!client.isConnected) await reconnectModbusClient(client, port);
+              if (!client.isConnected) await client.safeReconnect();
               await readDataFunction(client, deviceID, deviceLabel);
-              await new Promise((resolve) => setTimeout(resolve, 1000));
+              await new Promise((resolve) => setTimeout(resolve, 1000)); // Задержка между запросами
             });
           } else {
-            if (!client.isConnected) await reconnectModbusClient(client, port);
+            // Обработка стабильных портов
+            if (!client.isConnected) await client.safeReconnect();
             await readDataFunction(client, deviceID, deviceLabel);
-            await new Promise((resolve) => setTimeout(resolve, 500));
+            await new Promise((resolve) => setTimeout(resolve, 500)); // Задержка между запросами
           }
         } catch (err) {
           logger.error(`Ошибка при опросе данных ${deviceLabel} на порту ${port}:`, err);
@@ -187,7 +166,6 @@ const startDataRetrieval = async () => {
     setInterval(readDevices, 10000);
   }
 };
-
 
 // Запускаем опрос данных
 startDataRetrieval();

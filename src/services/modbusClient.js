@@ -1,18 +1,29 @@
+// modbusClient.js
 import ModbusRTU from 'modbus-serial';
 import { Mutex } from 'async-mutex';
 import logger from '../logger.js';
 
 export class ModbusClient {
-  constructor(port, baudRate, timeout, retryInterval, maxRetries) {
+  constructor(port, baudRate, timeout, retryInterval, maxRetries, unstable = false) {
     this.port = port;
     this.baudRate = baudRate;
     this.timeout = timeout;
     this.retryInterval = retryInterval;
     this.maxRetries = maxRetries;
+    this.unstable = unstable;
     this.isConnected = false;
     this.client = new ModbusRTU();
     this.mutex = new Mutex();
     this.reconnecting = false; // Флаг для предотвращения одновременных попыток переподключения
+
+    // Настройка параметров для нестабильных портов
+    if (this.unstable) {
+      this.retryInterval *= 2;
+      this.maxRetries *= 2;
+      this.client.setTimeout(this.timeout * 2);
+    } else {
+      this.client.setTimeout(this.timeout);
+    }
 
     // Обработка событий клиента
     this.client.on('close', () => this.handleDisconnect('close'));
@@ -29,7 +40,6 @@ export class ModbusClient {
       this.reconnecting = true;
       try {
         logger.info(`Попытка подключения к порту ${this.port}...`);
-        this.client.setTimeout(this.timeout);
         await this.client.connectRTUBuffered(this.port, { baudRate: this.baudRate });
         logger.info(`Подключено к порту ${this.port}`);
         this.isConnected = true;
@@ -81,11 +91,14 @@ export class ModbusClient {
       return;
     }
 
+    this.reconnecting = true;
     try {
-      logger.info(`Безопасное переподключение к порту ${this.port}...`);
+      await this.disconnect();
       await this.connect();
     } catch (err) {
       logger.error(`Ошибка переподключения к порту ${this.port}:`, err);
+    } finally {
+      this.reconnecting = false;
     }
   }
 
