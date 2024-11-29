@@ -52,8 +52,8 @@ export const readDataMpa3 = async (modbusClient, deviceID, deviceLabel) => {
       'Температура верх регенератора левый МПА3': 0x0000,
       'Температура верх ближний левый МПА3': 0x0001,
       'Температура верх дальний левый МПА3': 0x0002,
-      'Температура середина ближняя левая МПА3': 0x0003,
-      'Температура середина дальняя левая МПА3': 0x0004,
+      'Температура середина ближняя левый МПА3': 0x0003,
+      'Температура середина дальняя левый МПА3': 0x0004,
       'Температура низ ближний левый МПА3': 0x0005,
       'Температура низ дальний левый МПА3': 0x0006,
       'Температура верх регенератора правый МПА3': 0x0007,
@@ -92,13 +92,13 @@ export const readDataMpa3 = async (modbusClient, deviceID, deviceLabel) => {
 
     // Чтение давлений
     const pressuresMpa3 = {
-      'Разрежение Дымовой боров МПА3': (
+      'Разрежение дымовой боров МПА3': (
         interpretSignedInt16(await modbusClient.readInt16(deviceID, 0x0012, deviceLabel)) * 0.1
       ).toFixed(1),
-      'Давление Воздух левый МПА3': (
+      'Давление воздух левый МПА3': (
         interpretSignedInt16(await modbusClient.readInt16(deviceID, 0x0010, deviceLabel))
       ).toFixed(1),
-      'Давление Воздух правый МПА3': (
+      'Давление воздух правый МПА3': (
         interpretSignedInt16(await modbusClient.readInt16(deviceID, 0x0011, deviceLabel))
       ).toFixed(1),
     };
@@ -112,22 +112,22 @@ export const readDataMpa3 = async (modbusClient, deviceID, deviceLabel) => {
         'Давление низ ближний правый МПА3': (
           interpretSignedInt16(await modbusClient.readInt16(9, 0x0001, deviceLabel)) * 0.1
         ).toFixed(1),
-        'Давление середина ближняя левая МПА3': (
+        'Давление середина ближняя левый МПА3': (
           interpretSignedInt16(await modbusClient.readInt16(9, 0x0002, deviceLabel)) * 0.1
         ).toFixed(1),
-        'Давление середина ближняя правая МПА3': (
+        'Давление середина ближняя правый МПА3': (
           interpretSignedInt16(await modbusClient.readInt16(9, 0x0003, deviceLabel)) * 0.1
         ).toFixed(1),
-        'Давление середина дальняя левая МПА3': (
+        'Давление середина дальняя левый МПА3': (
           interpretSignedInt16(await modbusClient.readInt16(9, 0x0004, deviceLabel)) * 0.1
         ).toFixed(1),
-        'Давление середина дальняя правая МПА3': (
+        'Давление середина дальняя правый МПА3': (
           interpretSignedInt16(await modbusClient.readInt16(9, 0x0005, deviceLabel)) * 0.1
         ).toFixed(1),
-        'Давление верх дальний левая МПА3': (
+        'Давление верх дальний левый МПА3': (
           interpretSignedInt16(await modbusClient.readInt16(9, 0x0006, deviceLabel)) * 0.1
         ).toFixed(1),
-        'Давление верх дальний правая МПА3': (
+        'Давление верх дальний правый МПА3': (
           interpretSignedInt16(await modbusClient.readInt16(9, 0x0007, deviceLabel)) * 0.1
         ).toFixed(1),
       };
