@@ -3,3 +3,7 @@
 /node_modules/
 /.env
 /src/logs
+/icon_offline.ico
+/icon_online.ico
+/settings.ini
+/start_server.exe

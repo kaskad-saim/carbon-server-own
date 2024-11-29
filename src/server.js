@@ -12,6 +12,8 @@ import vr1Routes from './routes/vr1Routes.js';
 import vr2Routes from './routes/vr2Routes.js';
 import sushilka1Routes from './routes/sushilka1Routes.js';
 import sushilka2Routes from './routes/sushilka2Routes.js';
+import mpa2Routes from './routes/mpa2Routes.js'
+import mpa3Routes from './routes/mpa3Routes.js'
 import mill1Routes from './routes/mill1Routes.js';
 import mill2Routes from './routes/mill2Routes.js';
 import mill10bRoutes from './routes/mill10bRoutes.js';
@@ -175,6 +177,8 @@ app.use('/api', vr1Routes);
 app.use('/api', vr2Routes);
 app.use('/api', sushilka1Routes);
 app.use('/api', sushilka2Routes);
+app.use('/api', mpa2Routes);
+app.use('/api', mpa3Routes);
 app.use('/api', mill1Routes);
 app.use('/api', mill2Routes);
 app.use('/api', mill10bRoutes);

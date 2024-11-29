@@ -24,6 +24,26 @@
             "date": 1732474900839,
             "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-25.log",
             "hash": "cce608bd71a9b5b820e4fc650395634fa020edef813be6038831da740ddc96e9"
+        },
+        {
+            "date": 1732561205585,
+            "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-26.log",
+            "hash": "89ca42ae11832e47769d55b5743020020b8e6217073640281708c5e821c58961"
+        },
+        {
+            "date": 1732647617353,
+            "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-27.log",
+            "hash": "80b0c5b0fa04152f93dd27b3d2d73b631a85f3c56ce38c8fcf697a81d8c69daf"
+        },
+        {
+            "date": 1732734000352,
+            "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-28.log",
+            "hash": "f0f80116f5bebbe8d83647c7eed37a7330685bf10c28e932ea834f2d2ea0a5ba"
+        },
+        {
+            "date": 1732820400598,
+            "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-29.log",
+            "hash": "fdc4623598dfb70a52b214707300c0b02a37d5ac23b2676ce593bf0e6d03ae00"
         }
     ],
     "hashType": "sha256"
