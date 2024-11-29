@@ -111,6 +111,7 @@ export const checkConditions = () => {
 
   // Массив для сбора ошибок
   const errors = [];
+  let isFurnaceWorking = false; // Флаг для состояния печи
 
   // Обработка специальных параметров temper1Skolz и temper3Skolz
   if (temper1Skolz && temper3Skolz && temper3SkolzSpan) {
@@ -118,6 +119,7 @@ export const checkConditions = () => {
     const temp3Value = Number(temper3Skolz.innerText);
 
     if (temp1Value <= 550 && temp1Value > 50) {
+      isFurnaceWorking = true; // Печь работает
       modeTitle.innerText = 'Выход на режим';
       const isError = temp3Value > 750; // Ошибка, если temp3Value >750
       if (isError) {
@@ -132,8 +134,11 @@ export const checkConditions = () => {
         animationPaused(temper3Skolz);
         animationPaused(temper3SkolzSpan);
       }
-      updateRow(isError, 'На 3-ей скользящей, °C', temp3Value, 'temper-3-skolz-modal');
+      if (isFurnaceWorking) {
+        updateRow(isError, 'На 3-ей скользящей, °C', temp3Value, 'temper-3-skolz-modal');
+      }
     } else if (temp1Value > 550) {
+      isFurnaceWorking = true; // Печь работает
       modeTitle.innerText = 'Установившийся режим';
       const isError = temp3Value > 400; // Ошибка, если temp3Value >400
       if (isError) {
@@ -148,19 +153,19 @@ export const checkConditions = () => {
         animationPaused(temper3Skolz);
         animationPaused(temper3SkolzSpan);
       }
-      updateRow(isError, 'На 3-ей скользящей, °C', temp3Value, 'temper-3-skolz-modal');
+      if (isFurnaceWorking) {
+        updateRow(isError, 'На 3-ей скользящей, °C', temp3Value, 'temper-3-skolz-modal');
+      }
     } else {
       modeTitle.innerText = 'Печь не работает';
-      const isError = false; // Нет ошибки, так как печь не работает
       animationPaused(temper3Skolz);
       animationPaused(temper3SkolzSpan);
-      updateRow(isError, 'На 3-ей скользящей, °C', temp3Value, 'temper-3-skolz-modal');
+      updateRow(false, 'На 3-ей скользящей, °C', temp3Value, 'temper-3-skolz-modal');
     }
   } else {
     modeTitle.innerText = 'Печь не работает';
     console.warn('Необходимые элементы для обработки 3-й скользящей отсутствуют.');
   }
-
   // Обработка остальных параметров
   const params = [
     // Селекторы параметров температур
@@ -315,39 +320,38 @@ export const checkConditions = () => {
   ];
 
   // Обработка параметров
-  params.forEach(({ selector, spanSelector, min = -Infinity, max = Infinity, description, modalId }) => {
-    const param = document.querySelector(selector);
-    const paramSpan = document.querySelector(spanSelector);
+  // Обработка остальных параметров
+  if (isFurnaceWorking) {
+    params.forEach(({ selector, spanSelector, min = -Infinity, max = Infinity, description, modalId }) => {
+      const param = document.querySelector(selector);
+      const paramSpan = document.querySelector(spanSelector);
 
-    if (param && paramSpan) {
-      const rawValue = param.innerText.trim();
-      const value = Number(rawValue.replace(',', '.'));
+      if (param && paramSpan) {
+        const rawValue = param.innerText.trim();
+        const value = Number(rawValue.replace(',', '.'));
 
-      if (isNaN(value)) {
-        // console.warn(`Невозможно преобразовать значение "${rawValue}" для селектора "${selector}" в число.`);
-        return;
+        if (isNaN(value)) {
+          return;
+        }
+
+        const isError = (value > max || value < min);
+        if (isError) {
+          animationRun(param);
+          animationRun(paramSpan);
+          errors.push({
+            description,
+            value,
+            modalId,
+          });
+        } else {
+          animationPaused(param);
+          animationPaused(paramSpan);
+        }
+
+        updateRow(isError, description, value, modalId);
       }
-
-      const isError = (value > max || value < min);
-
-      if (isError) {
-        animationRun(param);
-        animationRun(paramSpan);
-        errors.push({
-          description,
-          value,
-          modalId,
-        });
-      } else {
-        animationPaused(param);
-        animationPaused(paramSpan);
-      }
-
-      updateRow(isError, description, value, modalId);
-    } else {
-      // console.warn(`Элемент с селектором "${selector}" или "${spanSelector}" не найден.`);
-    }
-  });
+    });
+  }
 
   // Очистка существующих строк ошибок и добавление новых
   const tableTbody = document.querySelector('.table__tbody-params');
@@ -371,7 +375,6 @@ export const checkConditions = () => {
       tableTbody.appendChild(row);
     });
   } else {
-    // Если нет ошибок, добавить строку "нет данных"
     const noDataRow = document.createElement('tr');
     noDataRow.classList.add('table__tr', 'no-data-row');
     noDataRow.innerHTML = `
@@ -382,9 +385,9 @@ export const checkConditions = () => {
     tableTbody.appendChild(noDataRow);
   }
 
-  // Определяем наличие ошибок на основе количества errorRows
-  const hasErrors = errors.length > 0;
+  // Определяем наличие ошибок только если печь работает
+  const hasErrors = isFurnaceWorking && errors.length > 0;
 
-  // Вызываем toggleSiren с параметром hasErrors
+  // Управление сиреной
   toggleSiren(hasErrors);
 };
