@@ -78,4 +78,12 @@ router.get('/mnemo-k296', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/k296/', 'mnemo-k296.html'));
 });
 
+router.get('/mnemo-mpa2', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/', 'mnemo-mpa-2.html'));
+});
+
+router.get('/mnemo-mpa3', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/', 'mnemo-mpa-3.html'));
+});
+
 export default router;

@@ -147,7 +147,7 @@ export const readDataMpa3 = async (modbusClient, deviceID, deviceLabel) => {
 
     // Сохранение данных в базу данных
     await new PechMpa3Model(formattedDataMpa3).save();
-    console.log(formattedDataMpa3);
+    // console.log(formattedDataMpa3);
   } catch (err) {
     console.error(`[${deviceLabel}] Ошибка при чтении данных:`, err);
   }
