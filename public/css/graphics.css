@@ -16,11 +16,10 @@
 .dynamic-graph__content {
   position: relative;
   height: 400px;
+  max-height: 400px;
 }
 
 .dynamic-graph__graph {
-  height: 600px;
-  max-height: 600px;
   cursor: pointer;
 }
 
