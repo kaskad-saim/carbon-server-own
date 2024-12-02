@@ -35,9 +35,10 @@ function initializeChart(type, dataType, elements, chartTitle) {
   const labels = dataLabels[dataType];
   const units = labels.map(() => (dataType === 'temperatures' ? '°C' : 'кгс/м2'));
 
-  const yAxisConfig = dataType === 'temperatures'
-    ? { min: 0, max: 1200, stepSize: 100, title: 'Температура (°C)' }
-    : { min: -30, max: 150, stepSize: 10, title: 'Давление/разрежение (кгс/м2)' };
+  const yAxisConfig =
+    dataType === 'temperatures'
+      ? { min: 0, max: 1200, stepSize: 100, title: 'Температура (°C)' }
+      : { min: -30, max: 185, stepSize: 5, title: 'Давление/разрежение (кгс/м2)' };
 
   const chart = createChart({
     parameterType: type,
