@@ -442,12 +442,24 @@ body::-webkit-scrollbar-thumb {
 
 .mnemo__gif-2 {
   bottom: 3%;
-  right: 47%;
+  right: 47.5%;
 }
 
 .mnemo__gif-2 img {
-  width: 80px;
-  height: 62px;
+  width: 65px;
+  height: 60px;
+  animation: rotate 1s infinite linear;
+  animation-play-state: paused;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .table-mpa {

@@ -14,47 +14,58 @@ export class ModbusSimulator {
 
   // Адреса температур
   temperatureAddressesList = [
+    // Существующие адреса температур
     0x0000, 0x0002, 0x0004, 0x0006, // Температуры реактора К296
     0x0002, 0x0004, 0x0006, 0x0000, 0x0012, 0x0008, // Общие
     0x000A, 0x000C, 0x004E, 0x000E, 0x0010, 0x004C, // Общие
     0x0014, 0x0016, // Общие
-    0x0000, 0x0002, 0x0006 // Температуры для сушилок
+    0x0000, 0x0002, 0x0006, // Температуры для сушилок
+    // Адреса температур для МПА2 и МПА3
+    0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005,
+    0x0006, 0x0007, 0x0008, 0x0009, 0x000A, 0x000B,
+    0x000C, 0x000D, 0x000E, 0x000F,
   ];
 
   // Адреса давления
   pressureAddressesList = [
-    0x0026, 0x0028 // Давления для общих параметров
+    // Существующие адреса давлений
+    0x0026, 0x0028,
+    // Адреса давлений для МПА2 и МПА3
+    0x0010, 0x0011, 0x0012,
+    // Дополнительные давления с устройств ID 8 и 9
+    0x0000, 0x0001, 0x0002, 0x0003,
+    0x0004, 0x0005, 0x0006, 0x0007,
   ];
 
   // Адреса разрежения
   vacuumAddressesList = [
     0x0020, 0x0024, 0x0022, // Общие
-    0x000A, 0x000C, 0x000E  // Разрежение для сушилок
+    0x000A, 0x000C, 0x000E, // Разрежение для сушилок
   ];
 
   // Адреса уровней
   levelAddressesList = [
     0x0008, 0x000A, 0x000C, 0x000E, // Уровни реактора К296
-    0x002A, 0x003E, 0x0018 // Уровни для общих параметров
+    0x002A, 0x003E, 0x0018, // Уровни для общих параметров
   ];
 
   // Адреса импульсных сигналов
   imAddressesList = [
     0x0044, 0x0046, 0x0048, 0x004A, 0x001C, // Общие
-    0x001E, 0x0020 // Сигналы для сушилок
+    0x001E, 0x0020, // Сигналы для сушилок
   ];
 
   // Адреса горелок
   gorelkaAddressesList = [
-    0x0010, 0x0012, 0x0014 // Параметры горелки для сушилок
+    0x0010, 0x0012, 0x0014, // Параметры горелки для сушилок
   ];
 
   // Адреса для мельниц, включая mill10b
   millAddressesList = [
     0x0000, 0x0001, 0x0002, // Адреса для mill1 и mill2
     0x0000, 0x0001, 0x0002, // Адреса для mill10b (совпадают с предыдущими)
-    0x0003, 0x0004, 0x0005, // Дополнительные адреса для mill10b
-    0x0006, 0x0007, 0x0008  // Дополнительные адреса для mill10b
+    0x0003, 0x0004, 0x0005, // Дополнительные адресы для mill10b
+    0x0006, 0x0007, 0x0008, // Дополнительные адресы для mill10b
   ];
 
   // Метод для чтения float значений
@@ -67,20 +78,22 @@ export class ModbusSimulator {
     const isLevel = this.levelAddressesList.includes(address);
     const isImpulseSignal = this.imAddressesList.includes(address);
 
+    const key = `${deviceID}-${address}`;
+
     if (isTemperature || isLevel) {
       // Плавное изменение для температур и уровней
-      if (!this.currentValues[address]) {
-        this.currentValues[address] = this.initializeValue(range.min, range.max);
+      if (!this.currentValues[key]) {
+        this.currentValues[key] = this.initializeValue(range.min, range.max);
       }
       const maxStep = range.step || 50; // Шаг изменения
       const change = (Math.random() - 0.5) * maxStep;
-      let newValue = this.currentValues[address] + change;
+      let newValue = this.currentValues[key] + change;
 
       // Ограничиваем значение в заданном диапазоне
       if (newValue > range.max) newValue = range.max;
       if (newValue < range.min) newValue = range.min;
 
-      this.currentValues[address] = newValue;
+      this.currentValues[key] = newValue;
       return parseFloat(newValue.toFixed(2));
     } else if (isImpulseSignal) {
       // Логика для импульсных сигналов (boolean)
@@ -94,10 +107,44 @@ export class ModbusSimulator {
 
   // Метод для чтения int16 значений
   async readInt16(deviceID, address, deviceLabel = '') {
-    const isMillAddress = this.millAddressesList.includes(address);
+    const key = `${deviceID}-${address}`;
 
+    // Проверяем, является ли адрес температурой
+    if (this.temperatureAddressesList.includes(address)) {
+      // Симулируем температуру
+      if (!this.currentValues[key]) {
+        this.currentValues[key] = this.getRandomInt(0, 1100); // Значения от 0 до 1100
+      } else {
+        // Изменяем значение плавно
+        const change = Math.floor((Math.random() - 0.5) * 20); // Шаг изменения
+        let newValue = this.currentValues[key] + change;
+        newValue = Math.max(0, Math.min(1100, newValue));
+        this.currentValues[key] = newValue;
+      }
+      return this.currentValues[key];
+    }
+
+    // Проверяем, является ли адрес давлением
+    if (
+      this.pressureAddressesList.includes(address) ||
+      ((deviceID === 8 || deviceID === 9) && address >= 0x0000 && address <= 0x0007)
+    ) {
+      // Симулируем давление
+      if (!this.currentValues[key]) {
+        this.currentValues[key] = this.getRandomInt(-100, 300); // Значения от -100 до 300
+      } else {
+        // Изменяем значение плавно
+        const change = Math.floor((Math.random() - 0.5) * 20); // Шаг изменения
+        let newValue = this.currentValues[key] + change;
+        newValue = Math.max(-100, Math.min(300, newValue));
+        this.currentValues[key] = newValue;
+      }
+      return this.currentValues[key];
+    }
+
+    // Обработка адресов мельниц
+    const isMillAddress = this.millAddressesList.includes(address);
     if (isMillAddress) {
-      const key = `${deviceID}-${address}`;
       if (!this.currentValues[key]) {
         this.currentValues[key] = Math.floor(Math.random() * 11); // Значения от 0 до 10
       } else {
@@ -107,10 +154,10 @@ export class ModbusSimulator {
         this.currentValues[key] = newValue;
       }
       return this.currentValues[key];
-    } else {
-      // Обработка других адресов при необходимости
-      return 0; // Значение по умолчанию
     }
+
+    // Значение по умолчанию
+    return 0;
   }
 
   // Метод для чтения int32 значений (можно оставить как есть или настроить по аналогии)
@@ -153,5 +200,10 @@ export class ModbusSimulator {
 
     // По умолчанию
     return { min: 0, max: 100, step: 10 };
+  }
+
+  // Метод для получения случайного целого числа в диапазоне
+  getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }

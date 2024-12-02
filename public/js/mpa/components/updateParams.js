@@ -1,42 +1,43 @@
-export const updateTemperatures = (data) => {
-  const temperature1Sk = data.temperatures && data.temperatures['1-СК'];
-  const temperature2Sk = data.temperatures && data.temperatures['2-СК'];
-  const temperature3Sk = data.temperatures && data.temperatures['3-СК'];
-  const temperVhodPechDozhig = data.temperatures && data.temperatures['На входе печи дожига'];
-  const temperVnizKamerZagruz = data.temperatures && data.temperatures['Внизу камеры загрузки'];
-  const temperVerhKamerZagruz = data.temperatures && data.temperatures['Вверху камеры загрузки'];
-  const temperVihodPechDozhig = data.temperatures && data.temperatures['На выходе печи дожига'];
-  const temperGazovKotelUtiliz = data.temperatures && data.temperatures['Дымовых газов котла'];
-  const temperGranulHolod = data.temperatures && data.temperatures['Гранул после холод-ка'];
-  const temperPosleSkruber = data.temperatures && data.temperatures['Газов после скруббера'];
-  const temperVodyVannaSkruber = data.temperatures && data.temperatures['Воды в ванне скруббера'];
-  const temperKamerVygruz = data.temperatures && data.temperatures['Камеры выгрузки'];
-  const temperTopka = data.temperatures && data.temperatures['В топке'];
-  const temperDoSkruber = data.temperatures && data.temperatures['Газов до скруббера'];
+export const updateMpa2Params = (data) => {
+  const elements = {
+    // Температуры
+    'vrl-t-val': data?.temperatures?.['Температура верх регенератора левый МПА2'] || '-',
+    'vrp-t-val': data?.temperatures?.['Температура верх регенератора правый МПА2'] || '-',
+    'vbl-t-val': data?.temperatures?.['Температура верх ближний левый МПА2'] || '-',
+    'vdl-t-val': data?.temperatures?.['Температура верх дальний левый МПА2'] || '-',
+    'sbl-t-val': data?.temperatures?.['Температура середина ближняя левая МПА2'] || '-',
+    'sdl-t-val': data?.temperatures?.['Температура середина дальняя левая МПА2'] || '-',
+    'nbl-t-val': data?.temperatures?.['Температура низ ближний левый МПА2'] || '-',
+    'ndl-t-val': data?.temperatures?.['Температура низ дальний левый МПА2'] || '-',
+    'vrp-t-val': data?.temperatures?.['Температура верх регенератора правый МПА2'] || '-',
+    'vbp-t-val': data?.temperatures?.['Температура верх ближний правый МПА2'] || '-',
+    'vdp-t-val': data?.temperatures?.['Температура верх дальний правый МПА2'] || '-',
+    'sbp-t-val': data?.temperatures?.['Температура середина ближняя правый МПА2'] || '-',
+    'sdp-t-val': data?.temperatures?.['Температура середина дальняя правый МПА2'] || '-',
+    'nbp-t-val': data?.temperatures?.['Температура низ ближний правый МПА2'] || '-',
+    'ndp-t-val': data?.temperatures?.['Температура низ дальний правый МПА2'] || '-',
+    'ks-t-val': data?.temperatures?.['Температура камера сгорания МПА2'] || '-',
+    'db-t-val': data?.temperatures?.['Температура дымовой боров МПА2'] || '-',
 
-  if (temperature1Sk !== undefined) document.querySelector('.temper-1-skolz').innerText = temperature1Sk;
-  if (temperature2Sk !== undefined) document.querySelector('.temper-2-skolz').innerText = temperature2Sk;
-  if (temperature3Sk !== undefined) document.querySelector('.temper-3-skolz').innerText = temperature3Sk;
-  if (temperVhodPechDozhig !== undefined) document.querySelector('.temper-vhod-pech-dozhig').innerText = temperVhodPechDozhig;
-  if (temperVnizKamerZagruz !== undefined) document.querySelector('.temper-vniz-kamer-zagruz').innerText = temperVnizKamerZagruz;
-  if (temperVerhKamerZagruz !== undefined) document.querySelector('.temper-verh-kamer-zagruz').innerText = temperVerhKamerZagruz;
-  if (temperVihodPechDozhig !== undefined) document.querySelector('.temper-vihod-pech-dozhig').innerText = temperVihodPechDozhig;
-  if (temperGazovKotelUtiliz !== undefined) document.querySelector('.temper-gazov-kotel-utiliz').innerText = temperGazovKotelUtiliz;
-  if (temperGranulHolod !== undefined) document.querySelector('.temper-granul-holod').innerText = temperGranulHolod;
-  if (temperPosleSkruber !== undefined) document.querySelector('.temper-posle-skruber').innerText = temperPosleSkruber;
-  if (temperVodyVannaSkruber !== undefined) document.querySelector('.temper-vody-vanna-skruber').innerText = temperVodyVannaSkruber;
-  if (temperKamerVygruz !== undefined) document.querySelector('.temper-kamer-vygruz').innerText = temperKamerVygruz;
-  if (temperTopka !== undefined) document.querySelector('.temper-topka').innerText = temperTopka;
-  if (temperDoSkruber !== undefined) document.querySelector('.temper-do-skruber').innerText = temperDoSkruber;
-};
+    // Давления
+    'db-p-val': data?.pressures?.['Разрежение Дымовой боров МПА2'] || '-',
+    'vozduh-left-val': data?.pressures?.['Давление Воздух левый МПА2'] || '-',
+    'vozduh-right-val': data?.pressures?.['Давление Воздух правый МПА2'] || '-',
+    'nbl-p-val': data?.pressures?.['Давление низ ближний левый МПА2'] || '-',
+    'nbp-p-val': data?.pressures?.['Давление низ ближний правый МПА2'] || '-',
+    'sbl-p-val': data?.pressures?.['Давление середина ближняя левая МПА2'] || '-',
+    'sbp-p-val': data?.pressures?.['Давление середина ближняя правая МПА2'] || '-',
+    'sdl-p-val': data?.pressures?.['Давление середина дальняя левая МПА2'] || '-',
+    'sdp-p-val': data?.pressures?.['Давление середина дальняя правая МПА2'] || '-',
+    'vdl-p-val': data?.pressures?.['Давление верх дальний левая МПА2'] || '-',
+    'vdp-p-val': data?.pressures?.['Давление верх дальний правая МПА2'] || '-',
+  };
 
-// Функция для обновления разрежения
-export const updateVacuums = (data) => {
-  const razrNizZagrKam = data.vacuums && data.vacuums['Низ загрузочной камеры'];
-  const razrKotelUtiliz = data.vacuums && data.vacuums['В котле утилизаторе'];
-  const davlTopka = data.vacuums && data.vacuums['В топке печи'];
-
-  if (razrNizZagrKam !== undefined) document.querySelector('.razr-niz-zagr-kam').innerText = razrNizZagrKam;
-  if (razrKotelUtiliz !== undefined) document.querySelector('.razr-kotel-utiliz').innerText = razrKotelUtiliz;
-  if (davlTopka !== undefined) document.querySelector('.davl-topka').innerText = davlTopka;
+  // Обновляем значения в DOM
+  for (const [selector, value] of Object.entries(elements)) {
+    const element = document.querySelector(`.${selector}`);
+    if (element) {
+      element.textContent = value;
+    }
+  }
 };
