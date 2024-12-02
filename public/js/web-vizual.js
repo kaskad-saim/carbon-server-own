@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     iframes.forEach((iframe) => {
       iframe.style.height = `${height}px`;
     });
-  }
+  };
 
   adjustIframeHeight();
   window.addEventListener('resize', adjustIframeHeight);
@@ -35,6 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
         defaultUrl = 'http://169.254.0.156:3002/mnemo-sushilka1';
       } else if (tabId === 'sushilka-2') {
         defaultUrl = 'http://169.254.0.156:3002/mnemo-sushilka2';
+      } else if (tabId === 'mpa-2') {
+        defaultUrl = 'http://169.254.0.156:3002/mnemo-mpa2';
+      } else if (tabId === 'mpa-3') {
+        defaultUrl = 'http://169.254.0.156:3002/mnemo-mpa3';
       }
       iframe.src = defaultUrl;
 
@@ -55,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Проверяем, если это одна из сушилок, путь оставляем как есть
       const tabId = activeTab.id;
       if (tabId.startsWith('sushilka')) {
+        iframe.src = url;
+      } else if (tabId.startsWith('mpa')) {
         iframe.src = url;
       } else {
         // Для остальных добавляем префикс

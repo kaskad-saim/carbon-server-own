@@ -35,6 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
         defaultUrl = '../production/carbon/sushilki/mnemo-sushilka1.html';
       } else if (tabId === 'sushilka-2') {
         defaultUrl = '../production/carbon/sushilki/mnemo-sushilka2.html';
+      } else if (tabId === 'mpa-2') {
+        defaultUrl = '../production/carbon/mpa/mnemo-mpa-2.html';
+      } else if (tabId === 'mpa-3') {
+        defaultUrl = '../production/carbon/mpa/mnemo-mpa-3.html';
       }
       iframe.src = defaultUrl;
 
@@ -69,6 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
           iframe.src = `../production/carbon/pechiVr${url}.html`;
         }
       } else if (tabId.startsWith('sushilka')) {
+        iframe.src = url; // Для сушилок путь оставляем как есть
+      } else if (tabId.startsWith('mpa')) {
         iframe.src = url; // Для сушилок путь оставляем как есть
       }
 
