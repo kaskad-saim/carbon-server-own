@@ -82,8 +82,16 @@ router.get('/mnemo-mpa2', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/', 'mnemo-mpa-2.html'));
 });
 
+router.get('/current-mpa2', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/', 'current-mpa-2.html'));
+});
+
 router.get('/mnemo-mpa3', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/', 'mnemo-mpa-3.html'));
+});
+
+router.get('/current-mpa3', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/', 'current-mpa-3.html'));
 });
 
 export default router;

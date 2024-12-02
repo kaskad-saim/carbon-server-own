@@ -8,7 +8,7 @@ export const fetchVr1Data = async () => {
   try {
     const response = await fetch('/api/vr1-data');
     const data = await response.json();
-    console.log('Данные VR1:', data);
+    // console.log('Данные VR1:', data);
 
     // Вызываем функции обновления с данными
     updateTemperatures(data); // параметры температур
