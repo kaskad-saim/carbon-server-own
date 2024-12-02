@@ -15,6 +15,10 @@ export async function fetchData(parameterType, start = null, end = null) {
       url = `${baseUrl}/vr1/data`;
     } else if (parameterType === 'vr2') {
       url = `${baseUrl}/vr2/data`;
+    } else if (parameterType === 'mpa2') {
+      url = `${baseUrl}/mpa2/data`;
+    } else if (parameterType === 'mpa3') {
+      url = `${baseUrl}/mpa3/data`;
     } else {
       throw new Error('Неверный тип параметра');
     }

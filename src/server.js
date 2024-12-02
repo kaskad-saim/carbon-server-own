@@ -19,9 +19,9 @@ import mill2Routes from './routes/mill2Routes.js';
 import mill10bRoutes from './routes/mill10bRoutes.js';
 import reactorRoutes from './routes/reactor296Routes.js';
 import laboratoryRoutes from './routes/laboratoryRoutes.js';
+import graphicRoutes from './routes/graphicRoutes.js'
 import { connectDB } from './services/dataBaseService.js';
 import { devicesConfig } from './services/devicesConfig.js';
-import { PechVr1Model, PechVr2Model } from './models/pechVrModel.js';
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -184,34 +184,10 @@ app.use('/api', mill2Routes);
 app.use('/api', mill10bRoutes);
 app.use('/api', reactorRoutes);
 app.use('/api/lab', laboratoryRoutes);
+app.use('/api', graphicRoutes); //api получасовых графиков
 
 app.get('/api/server-time', (req, res) => {
   res.json({ time: new Date().toISOString() });
-});
-
-// Маршруты для получения данных VR1 и VR2
-app.get('/api/vr1/data', async (req, res) => {
-  try {
-    const { start, end } = req.query;
-    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await PechVr1Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    logger.error('Ошибка при получении данных VR1:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
-});
-
-app.get('/api/vr2/data', async (req, res) => {
-  try {
-    const { start, end } = req.query;
-    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await PechVr2Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    logger.error('Ошибка при получении данных VR2:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
 });
 
 // Режим разработки
