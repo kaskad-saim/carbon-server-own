@@ -5,6 +5,7 @@
   height: 450px;
   margin: 5px auto;
 }
+
 .dynamic-graph__title {
   margin-bottom: 15px;
   font-size: 24px;
@@ -17,6 +18,14 @@
   position: relative;
   height: 400px;
   max-height: 400px;
+}
+
+.no-data-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 .dynamic-graph__graph {
@@ -98,9 +107,17 @@
 
 /* Анимация для прогресс-бара */
 @keyframes loading {
-  0% { width: 0; }
-  50% { width: 100%; }
-  100% { width: 0; }
+  0% {
+    width: 0;
+  }
+
+  50% {
+    width: 100%;
+  }
+
+  100% {
+    width: 0;
+  }
 }
 
 /* Стили для прелоадера графика №1 */
