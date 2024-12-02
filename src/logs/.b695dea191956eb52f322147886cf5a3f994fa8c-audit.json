@@ -6,26 +6,6 @@
     "auditLog": "C:\\web\\carbon-server-own\\src\\logs\\.b695dea191956eb52f322147886cf5a3f994fa8c-audit.json",
     "files": [
         {
-            "date": 1732271233249,
-            "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-22.log",
-            "hash": "a680a038a6c314deb525f356eeed468f8d872378f78ed077dd7aa4f66ad0b443"
-        },
-        {
-            "date": 1732302010601,
-            "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-23.log",
-            "hash": "6b6c6c5f81e2e4d02cff944dd8fab40ef5e162872200a8ca1330bb5c37ed9b88"
-        },
-        {
-            "date": 1732388516456,
-            "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-24.log",
-            "hash": "a57d4d6bbec8a9c0e3df17f51ac1d06cd3afd79c64e4d8b88789c55f623dd4a9"
-        },
-        {
-            "date": 1732474900839,
-            "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-25.log",
-            "hash": "cce608bd71a9b5b820e4fc650395634fa020edef813be6038831da740ddc96e9"
-        },
-        {
             "date": 1732561205585,
             "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-26.log",
             "hash": "89ca42ae11832e47769d55b5743020020b8e6217073640281708c5e821c58961"
@@ -44,6 +24,11 @@
             "date": 1732820400598,
             "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-11-29.log",
             "hash": "fdc4623598dfb70a52b214707300c0b02a37d5ac23b2676ce593bf0e6d03ae00"
+        },
+        {
+            "date": 1733120651368,
+            "name": "C:\\web\\carbon-server-own\\src\\logs\\error-2024-12-02.log",
+            "hash": "11960e55759490ef604c642abef4dcb6fe1f28eb6c1b40b45f7cb9768b85aa8c"
         }
     ],
     "hashType": "sha256"

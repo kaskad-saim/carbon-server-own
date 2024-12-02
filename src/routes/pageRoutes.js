@@ -90,4 +90,12 @@ router.get('/mnemo-mpa3', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/', 'mnemo-mpa-3.html'));
 });
 
+router.get('/current-mpa3', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/', 'current-mpa-3.html'));
+});
+
+router.get('/graph-mpa-general', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/graphics', 'mpaGeneralGraphics.html'));
+});
+
 export default router;
