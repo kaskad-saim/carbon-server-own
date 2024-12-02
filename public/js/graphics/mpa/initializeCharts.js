@@ -1,6 +1,6 @@
-import { createChart } from '../components/chartRendererHour.js';
+import { createChart } from '../components/chartRendererHourMpa.js';
 import { getLastHoursRange } from '../components/dataUtils.js';
-import { dataLabels } from '../components/data.js';
+import { dataLabelsMpa2, dataLabelsMpa3 } from '../components/data.js';
 import { setupInactivityTimer } from '../components/timer.js';
 
 let serverTimeOffset = 0;
@@ -17,31 +17,34 @@ async function syncServerTime() {
   } catch (error) {
     console.error('Ошибка синхронизации времени с сервером:', error);
   }
-} 
+}
 
 // Функция для получения скорректированного времени
 function getCorrectedTime(date) {
   return new Date(date.getTime() + serverTimeOffset);
 }
 
-// Функция для инициализации графика
-function initializeChart(parameterType, elements, chartTitle) {
+// Универсальная функция для инициализации графиков
+function initializeChart(type, dataType, elements, chartTitle) {
   let isUserInteracting = false;
   let isDataVisible = true;
   let isRealTime = true;
   let currentStartTime, currentEndTime;
 
+  const dataLabels = type === 'mpa2' ? dataLabelsMpa2 : dataLabelsMpa3;
+  const labels = dataLabels[dataType];
+  const units = labels.map(() => (dataType === 'temperatures' ? '°C' : 'кгс/м2'));
+
+  const yAxisConfig = dataType === 'temperatures'
+    ? { min: 0, max: 1200, stepSize: 100, title: 'Температура (°C)' }
+    : { min: -30, max: 150, stepSize: 10, title: 'Давление/разрежение (кгс/м2)' };
+
   const chart = createChart({
-    parameterType,
+    parameterType: type,
     elements,
-    labels: dataLabels.temperatures,
-    units: dataLabels.temperatures.map(() => '°C'),
-    yAxisConfig: {
-      min: 0,
-      max: 1500,
-      stepSize: 100,
-      title: 'Температура (°C)',
-    },
+    labels,
+    units,
+    yAxisConfig,
     chartTitle,
   });
 
@@ -116,38 +119,32 @@ function initializeChart(parameterType, elements, chartTitle) {
   }, 2000);
 }
 
-// Инициализация графиков в зависимости от их наличия
+// Инициализация графиков
 document.addEventListener('DOMContentLoaded', async () => {
-  // Синхронизируем время перед инициализацией графиков
   await syncServerTime();
 
-  const elements1 = {
-    chartCanvas: document.getElementById('chartCanvas1'),
-    loadingWrapper: document.getElementById('loadingWrapper1'),
-    noDataMessage: document.getElementById('noDataMessage1'),
-    backwardBtn: document.getElementById('backwardBtn1'),
-    forwardBtn: document.getElementById('forwardBtn1'),
-    resetBtn: document.getElementById('resetBtn1'),
-    toggleDataBtn: document.getElementById('toggleDataBtn1'),
-  };
+  const configs = [
+    { type: 'mpa2', dataType: 'temperatures', elementsIdPrefix: '1', chartTitle: 'График температур МПА2' },
+    { type: 'mpa3', dataType: 'temperatures', elementsIdPrefix: '2', chartTitle: 'График температур МПА3' },
+    { type: 'mpa2', dataType: 'pressures', elementsIdPrefix: '3', chartTitle: 'График давления/разрежения МПА2' },
+    { type: 'mpa3', dataType: 'pressures', elementsIdPrefix: '4', chartTitle: 'График давления/разрежения МПА3' },
+  ];
 
-  if (elements1.chartCanvas) {
-    initializeChart('mpa2', elements1, 'График температур печи карбонизации №1');
-  }
+  configs.forEach(({ type, dataType, elementsIdPrefix, chartTitle }) => {
+    const elements = {
+      chartCanvas: document.getElementById(`chartCanvas${elementsIdPrefix}`),
+      loadingWrapper: document.getElementById(`loadingWrapper${elementsIdPrefix}`),
+      noDataMessage: document.getElementById(`noDataMessage${elementsIdPrefix}`),
+      backwardBtn: document.getElementById(`backwardBtn${elementsIdPrefix}`),
+      forwardBtn: document.getElementById(`forwardBtn${elementsIdPrefix}`),
+      resetBtn: document.getElementById(`resetBtn${elementsIdPrefix}`),
+      toggleDataBtn: document.getElementById(`toggleDataBtn${elementsIdPrefix}`),
+    };
 
-  const elements2 = {
-    chartCanvas: document.getElementById('chartCanvas2'),
-    loadingWrapper: document.getElementById('loadingWrapper2'),
-    noDataMessage: document.getElementById('noDataMessage2'),
-    backwardBtn: document.getElementById('backwardBtn2'),
-    forwardBtn: document.getElementById('forwardBtn2'),
-    resetBtn: document.getElementById('resetBtn2'),
-    toggleDataBtn: document.getElementById('toggleDataBtn2'),
-  };
-
-  if (elements2.chartCanvas) {
-    initializeChart('mpa3', elements2, 'График температур печи карбонизации №2');
-  }
+    if (elements.chartCanvas) {
+      initializeChart(type, dataType, elements, chartTitle);
+    }
+  });
 
   // Периодически синхронизируем время
   setInterval(syncServerTime, 5 * 60 * 1000); // Повторяем каждые 5 минут

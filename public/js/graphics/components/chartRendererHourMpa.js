@@ -2,7 +2,7 @@ import { showNoDataMessage, hideNoDataMessage, showPreloader, hidePreloader } fr
 import { insertGapsInData, hasNoValidData } from './dataUtils.js';
 import { createCrosshairPlugin, chartAreaBorderPlugin, colors } from './chartUtils.js';
 import { fetchData } from './fetchData.js';
-import { displayNames } from './data.js';
+import { displayNamesMpa2, displayNamesMpa3 } from './data.js';
 
 export function createChart({
   parameterType,
@@ -15,7 +15,6 @@ export function createChart({
   let chartInstance = null;
   let isDataVisible = true;
 
-  // Основная функция для рендеринга графика
   async function renderChart(start, end, isAutoUpdate = false, removeRightPadding = false) {
     try {
       if (!isAutoUpdate) showPreloader(elements);
@@ -65,9 +64,6 @@ export function createChart({
               tooltip: {
                 mode: 'index',
                 intersect: false,
-                position: 'nearest', // Позиционирует тултип рядом с точкой
-                xAlign: 'left', // Расположение тултипа справа
-                yAlign: 'center', // Центрирование по вертикали
                 callbacks: {
                   label: function (tooltipItem) {
                     const datasetLabel = tooltipItem.dataset.label || '';
@@ -77,49 +73,30 @@ export function createChart({
                     return `${datasetLabel}: ${value} ${unit}`;
                   },
                 },
-                // Увеличение шрифта тултипа
-                titleFont: {
-                  size: 13, // Размер шрифта заголовка тултипа
-                  weight: 'bold'
-                },
-                bodyFont: {
-                  size: 12, // Размер шрифта для тела тултипа
-                }
               },
               title: {
                 display: true,
                 text: chartTitle,
-                color: 'green',
+                color: 'blue',
                 font: { size: 24, weight: 'bold' },
               },
               legend: {
                 position: 'right',
                 labels: {
-                  font: {
-                    size: 13, // Увеличение шрифта легенды
-                  },
+                  font: { size: 13 },
                   generateLabels: function (chart) {
                     return chart.data.datasets.map((dataset, i) => {
                       const lastVisiblePoint = dataset.data.filter((d) => d.y !== null).slice(-1)[0];
                       const lastValue = lastVisiblePoint ? lastVisiblePoint.y : '-';
                       const unit = units[i] || '';
-
-                      // Используем отображаемое имя из displayNames или, если его нет, оригинальное имя
-                      const displayName = displayNames[dataset.label] || dataset.label;
-
-                      // Форматируем текст так, чтобы сначала отображались lastValue и unit, затем цвет графика и название
+                      const displayName =
+                        displayNamesMpa2[dataset.label] ||
+                        displayNamesMpa3[dataset.label] ||
+                        dataset.label;
                       return {
                         text: `${lastValue} ${unit} | ${displayName}`,
-                        fillStyle: dataset.borderColor, // цвет квадрата рядом с текстом
+                        fillStyle: dataset.borderColor,
                         hidden: !chart.isDatasetVisible(i),
-                        lineCap: dataset.borderCapStyle,
-                        lineDash: dataset.borderDash,
-                        lineDashOffset: dataset.borderDashOffset,
-                        lineJoin: dataset.borderJoinStyle,
-                        lineWidth: dataset.borderWidth,
-                        strokeStyle: dataset.borderColor,
-                        pointStyle: dataset.pointStyle,
-                        datasetIndex: i,
                       };
                     });
                   },
@@ -137,24 +114,12 @@ export function createChart({
                   tooltipFormat: 'DD.MM.YY HH:mm',
                   displayFormats: { minute: 'HH:mm' },
                 },
-                ticks: { source: 'auto', autoSkip: true, maxTicksLimit: 24, maxRotation: 0, minRotation: 0,
-                font: {
-                  size: 14, // Увеличение размера шрифта меток
-                },},
               },
               y: {
                 min: yAxisConfig.min,
                 max: yAxisConfig.max,
-                ticks: { stepSize: yAxisConfig.stepSize, font: {
-                  size: 13,
-                }, },
-                title: {
-                  display: true,
-                  text: yAxisConfig.title,
-                  font: {
-                    size: 16, // Увеличение шрифта
-                  },
-                },
+                ticks: { stepSize: yAxisConfig.stepSize },
+                title: { display: true, text: yAxisConfig.title },
               },
             },
           },
@@ -162,7 +127,6 @@ export function createChart({
         });
         toggleChartData(isDataVisible);
       } else {
-        // Обновление данных и диапазона времени для существующего графика
         Object.keys(chartData).forEach((key, i) => {
           const dataset = chartInstance.data.datasets.find((ds) => ds.label === key);
           if (dataset) dataset.data = chartData[key];
@@ -181,7 +145,6 @@ export function createChart({
     }
   }
 
-  // Функция для переключения видимости данных на графике
   function toggleChartData(visible) {
     if (!chartInstance) return;
     chartInstance.data.datasets.forEach((dataset, index) => {
@@ -190,12 +153,10 @@ export function createChart({
     chartInstance.update();
   }
 
-  // Функция для сброса графика
   function resetChart() {
     destroyChart();
   }
 
-  // Функция для удаления графика
   function destroyChart() {
     if (chartInstance) {
       chartInstance.destroy();
@@ -203,20 +164,16 @@ export function createChart({
     }
   }
 
-  // Функция для получения значения по метке
   function getValueByLabel(item, label) {
     if (item.temperatures && item.temperatures[label] !== undefined) return item.temperatures[label];
     if (item.pressures && item.pressures[label] !== undefined) return parseFloat(item.pressures[label]);
-    if (item.levels && item.levels[label]) return item.levels[label].value;
-    if (item.vacuums && item.vacuums[label] !== undefined) return parseFloat(item.vacuums[label]);
-    if (item.im && item.im[label] !== undefined) return item.im[label]; // Добавляем проверку для поля im
-    if (item.gorelka && item.gorelka[label] !== undefined) return item.gorelka[label];
     return null;
   }
 
   return {
     renderChart,
     toggleChartData,
-    resetChart
+    resetChart,
   };
 }
+

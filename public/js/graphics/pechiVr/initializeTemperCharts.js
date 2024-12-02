@@ -1,6 +1,6 @@
-import { createChart } from '../components/chartRendererHour.js';
+import { createChart } from '../components/chartRendererHourVr.js';
 import { getLastHoursRange } from '../components/dataUtils.js';
-import { dataLabels } from '../components/data.js';
+import { dataLabelsVr } from '../components/data.js';
 import { setupInactivityTimer } from '../components/timer.js';
 
 let serverTimeOffset = 0;
@@ -34,8 +34,8 @@ function initializeChart(parameterType, elements, chartTitle) {
   const chart = createChart({
     parameterType,
     elements,
-    labels: dataLabels.temperatures,
-    units: dataLabels.temperatures.map(() => '°C'),
+    labels: dataLabelsVr.temperatures,
+    units: dataLabelsVr.temperatures.map(() => '°C'),
     yAxisConfig: {
       min: 0,
       max: 1500,

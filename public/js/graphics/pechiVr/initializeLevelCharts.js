@@ -1,6 +1,6 @@
-import { createChart } from '../components/chartRendererHour.js';
+import { createChart } from '../components/chartRendererHourVr.js';
 import { getLastHoursRange } from '../components/dataUtils.js';
-import { dataLabels } from '../components/data.js';
+import { dataLabelsVr } from '../components/data.js';
 import { setupInactivityTimer } from '../components/timer.js';
 
 let serverTimeOffset = 0;
@@ -34,8 +34,8 @@ function initializeChart(parameterType, elements, chartTitle) {
   const chart = createChart({
     parameterType,
     elements,
-    labels: dataLabels.levels,
-    units: dataLabels.levels.map((_, index) => index < 1 ? 'мм' : '%'),
+    labels: dataLabelsVr.levels,
+    units: dataLabelsVr.levels.map((_, index) => (index < 1 ? 'мм' : '%')),
     yAxisConfig: {
       min: -100,
       max: 100,
