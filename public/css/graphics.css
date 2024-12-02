@@ -29,6 +29,7 @@
 }
 
 .dynamic-graph__graph {
+  height: 400px;
   cursor: pointer;
   width: 100% !important;
 }

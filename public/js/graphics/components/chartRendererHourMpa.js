@@ -102,8 +102,16 @@ export function createChart({
                         dataset.label;
                       return {
                         text: `${lastValue} ${unit} | ${displayName}`,
-                        fillStyle: dataset.borderColor,
-                        hidden: !chart.isDatasetVisible(i),
+                        fillStyle: dataset.borderColor, // Цвет квадрата рядом с текстом
+                        hidden: !chart.isDatasetVisible(i), // Текущая видимость набора данных
+                        lineCap: dataset.borderCapStyle,
+                        lineDash: dataset.borderDash,
+                        lineDashOffset: dataset.borderDashOffset,
+                        lineJoin: dataset.borderJoinStyle,
+                        lineWidth: dataset.borderWidth,
+                        strokeStyle: dataset.borderColor, // Цвет линии
+                        pointStyle: dataset.pointStyle, // Стиль точки
+                        datasetIndex: i, // Индекс набора данных
                       };
                     });
                   },
