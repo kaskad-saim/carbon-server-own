@@ -2,7 +2,7 @@ import { showNoDataMessage, hideNoDataMessage, showPreloader, hidePreloader } fr
 import { insertGapsInData, hasNoValidData } from './dataUtils.js';
 import { createCrosshairPlugin, chartAreaBorderPlugin, colors } from './chartUtils.js';
 import { fetchData } from './fetchData.js';
-import { displayNamesMpa2, displayNamesMpa3 } from './data.js';
+import { displayNamesMpa2, displayNamesMpa3, displayNamesTooltipMpa2, displayNamesTooltipMpa3 } from './data.js';
 
 export function createChart({
   parameterType,
@@ -70,14 +70,21 @@ export function createChart({
                     const value = tooltipItem.parsed.y;
                     const datasetIndex = tooltipItem.datasetIndex;
                     const unit = units[datasetIndex] || '';
-                    return `${datasetLabel}: ${value} ${unit}`;
+
+                    // Получение "читаемого" имени из displayNamesMpa2 или displayNamesMpa3
+                    const displayName =
+                      displayNamesTooltipMpa2[datasetLabel] ||
+                      displayNamesTooltipMpa3[datasetLabel] ||
+                      datasetLabel;
+
+                    return `${displayName}: ${value} ${unit}`;
                   },
                 },
               },
               title: {
                 display: true,
                 text: chartTitle,
-                color: 'blue',
+                color: 'green',
                 font: { size: 24, weight: 'bold' },
               },
               legend: {
@@ -110,9 +117,13 @@ export function createChart({
                 max: removeRightPadding ? end : new Date(end.getTime() + 2 * 60 * 1000),
                 time: {
                   unit: 'minute',
-                  stepSize: 5,
                   tooltipFormat: 'DD.MM.YY HH:mm',
                   displayFormats: { minute: 'HH:mm' },
+                },
+                ticks: {
+                  stepSize: 2, // Шаг в 2 минуты
+                  autoSkip: false, // Отключаем автоматическое пропускание меток
+                  maxTicksLimit: Math.floor((end - start) / (60 * 1000)), // Ограничиваем число меток
                 },
               },
               y: {
