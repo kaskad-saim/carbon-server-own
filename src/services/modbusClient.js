@@ -173,6 +173,43 @@ export class ModbusClient {
     );
   }
 
+  async readFloatLE(deviceID, address, deviceLabel = '') {
+    return await this.executeRead(
+      async () => {
+        const data = await this.client.readInputRegisters(address, 2);
+        const buffer = Buffer.alloc(4);
+
+        // Записываем данные в порядке Little Endian:
+        // Младшее слово (data.data[1]) первым, старшее слово (data.data[0]) вторым
+        buffer.writeUInt16LE(data.data[1], 0); // Младшее слово
+        buffer.writeUInt16LE(data.data[0], 2); // Старшее слово
+
+        // Чтение как Float (Little Endian)
+        return buffer.readFloatLE(0);
+      },
+      deviceID,
+      address,
+      deviceLabel
+    );
+  }
+
+  async readFloatBE(deviceID, address, deviceLabel = '') {
+    return await this.executeRead(
+      async () => {
+        const data = await this.client.readInputRegisters(address, 2);
+        const buffer = Buffer.alloc(4);
+        buffer.writeUInt16BE(data.data[0], 2);
+        buffer.writeUInt16BE(data.data[1], 0);
+        return buffer.readFloatBE(0);
+      },
+      deviceID,
+      address,
+      deviceLabel
+    );
+  }
+
+
+
   async readInt16(deviceID, address, deviceLabel = '') {
     return await this.executeRead(
       async () => {

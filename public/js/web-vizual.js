@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (tabId.startsWith('sushilka')) {
         iframe.src = url;
       } else if (tabId.startsWith('mills')) {
-        iframe.src = url; 
+        iframe.src = url;
       } else if (tabId.startsWith('reactor-296')) {
         iframe.src = url;
       } else if (tabId.startsWith('mpa')) {
