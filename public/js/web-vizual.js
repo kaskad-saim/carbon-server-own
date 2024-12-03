@@ -39,6 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         defaultUrl = 'http://169.254.0.156:3002/mnemo-mpa2';
       } else if (tabId === 'mpa-3') {
         defaultUrl = 'http://169.254.0.156:3002/mnemo-mpa3';
+      } else if (tabId === 'mills') {
+        defaultUrl = 'http://169.254.0.156:3002/current-melnizi';
+      } else if (tabId === 'reactor-296') {
+        defaultUrl = 'http://169.254.0.156:3002/mnemo-k296';
       }
       iframe.src = defaultUrl;
 
@@ -59,6 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Проверяем, если это одна из сушилок, путь оставляем как есть
       const tabId = activeTab.id;
       if (tabId.startsWith('sushilka')) {
+        iframe.src = url;
+      } else if (tabId.startsWith('mills')) {
+        iframe.src = url; 
+      } else if (tabId.startsWith('reactor-296')) {
         iframe.src = url;
       } else if (tabId.startsWith('mpa')) {
         iframe.src = url;

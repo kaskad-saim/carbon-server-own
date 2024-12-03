@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>График давления/разрежения</title>
+  <link rel="stylesheet" href="../../../../css/graphics.css">
+</head>
+
+<body>
+  <!-- График №1 -->
+  <div id="chartContainer1" class="dynamic-graph">
+    <div id="loadingWrapper1" class="loading-wrapper">
+      Загрузка данных...
+      <div class="loading-bar"></div>
+    </div>
+    <div class="dynamic-graph__content">
+      <div id="noDataMessage1">Данные отсутствуют.</div>
+      <canvas class="dynamic-graph__graph" id="chartCanvas1"></canvas>
+    </div>
+    <div class="dynamic-graph__btns">
+      <button class="dynamic-graph__btn" id="backwardBtn1">Назад</button>
+      <button class="dynamic-graph__btn" id="forwardBtn1">Вперёд</button>
+      <button class="dynamic-graph__btn" id="resetBtn1">Вернуться к текущим значениям</button>
+      <button class="dynamic-graph__btn" id="toggleDataBtn1">Скрыть данные</button>
+    </div>
+  </div>
+
+  <!-- График №2 -->
+  <div id="chartContainer2" class="dynamic-graph">
+    <div id="loadingWrapper2" class="loading-wrapper">
+      Загрузка данных...
+      <div class="loading-bar"></div>
+    </div>
+    <div class="dynamic-graph__content">
+      <div id="noDataMessage2">Данные отсутствуют.</div>
+      <canvas class="dynamic-graph__graph" id="chartCanvas2"></canvas>
+    </div>
+    <div class="dynamic-graph__btns">
+      <button class="dynamic-graph__btn" id="backwardBtn2">Назад</button>
+      <button class="dynamic-graph__btn" id="forwardBtn2">Вперёд</button>
+      <button class="dynamic-graph__btn" id="resetBtn2">Вернуться к текущим значениям</button>
+      <button class="dynamic-graph__btn" id="toggleDataBtn2">Скрыть данные</button>
+    </div>
+  </div>
+
+  <script src="/config.js"></script>
+
+  <!-- Подключаем библиотеки -->
+  <script src="../../../../js/graphics/library/chart.js"></script>
+  <script src="../../../../js/graphics/library/chart-zoom.js"></script>
+  <script src="../../../../js/graphics/library/moment.js"></script>
+  <script src="../../../../js/graphics/library/chart-moment.js"></script>
+
+  <!-- Подключаем основной скрипт -->
+  <script type="module" src="../../../../js/graphics/sushilki/initializePressureCharts.js"></script>
+</body>
+
+</html>

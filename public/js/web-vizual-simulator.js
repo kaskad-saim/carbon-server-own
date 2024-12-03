@@ -39,6 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         defaultUrl = '../production/carbon/mpa/mnemo-mpa-2.html';
       } else if (tabId === 'mpa-3') {
         defaultUrl = '../production/carbon/mpa/mnemo-mpa-3.html';
+      } else if (tabId === 'mills') {
+        defaultUrl = '../production/carbon/melnizi/current-melnizi.html';
+      } else if (tabId === 'reactor-296') {
+        defaultUrl = '../production/carbon/k296/mnemo-k296.html';
       }
       iframe.src = defaultUrl;
 
@@ -62,20 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const tabId = activeTab.id;
 
       // Проверяем пути для графиков печей карбонизации
-      if (tabId === 'carbonization-1' || tabId === 'carbonization-2') {
-        if (url === '/graph-vr-general-tempers') {
-          iframe.src = '../production/carbon/pechiVr/graphics/vrGeneralTemper.html';
-        } else if (url === '/graph-vr-general-pressure') {
-          iframe.src = '../production/carbon/pechiVr/graphics/vrGeneralPressure.html';
-        } else if (url === '/graph-vr-general-level') {
-          iframe.src = '../production/carbon/pechiVr/graphics/vrGeneralLevel.html';
-        } else {
-          iframe.src = `../production/carbon/pechiVr${url}.html`;
-        }
+      if (tabId.startsWith('carbonization')) {
+        iframe.src = url; // Для vr путь оставляем как есть
       } else if (tabId.startsWith('sushilka')) {
         iframe.src = url; // Для сушилок путь оставляем как есть
       } else if (tabId.startsWith('mpa')) {
-        iframe.src = url; // Для сушилок путь оставляем как есть
+        iframe.src = url; // Для mpa путь оставляем как есть
+      } else if (tabId.startsWith('mills')) {
+        iframe.src = url; // Для mills путь оставляем как есть
+      } else if (tabId.startsWith('reactor-296')) {
+        iframe.src = url; // Для reactor296 путь оставляем как есть
       }
 
       activeTab.querySelectorAll('.sub-tab-button').forEach((btn) => btn.classList.remove('sub-tab-button--active'));
