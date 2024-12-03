@@ -10,200 +10,188 @@ export class ModbusSimulator {
     return Promise.resolve();
   }
 
-  // Списки адресов для различных типов параметров
+  // Объекты для каждого типа оборудования
+  pechiVr = {
+    temperatureAddressesList: [
+      0x0000, 0x0002, 0x0004, 0x0006, 0x0008, 0x0012, 0x000A, 0x000C, 0x004E, 0x000E, 0x0010, 0x004C, 0x0014, 0x0016
+    ],
+    pressureAddressesList: [
+      0x0026, 0x0028
+    ],
+    vacuumAddressesList: [
+      0x0020, 0x0022, 0x0024
+    ],
+    levelAddressesList: [
+      0x0018, 0x002A, 0x003E
+    ],
+    imAddressesList: [
+      0x0044, 0x0046, 0x0048, 0x004A, 0x001C
+    ],
+    gorelkaAddressesList: [
+      0x001A, 0x002E
+    ],
+    getRange(address, label = '') {
+      if (this.temperatureAddressesList.includes(address)) return { min: 0, max: 1500, step: 50 };
+      if (this.pressureAddressesList.includes(address)) return { min: 0, max: 30, step: 5 };
+      if (this.vacuumAddressesList.includes(address)) return { min: -20, max: 0, step: 5 };
+      if (this.levelAddressesList.includes(address)) {
+        if (label === 'В ванне скруббера') return { min: 0, max: 1000, step: 50 };
+        if (label === 'В емкости ХВО') return { min: 0, max: 6000, step: 100 };
+        return { min: -100, max: 100, step: 20 };
+      }
+      if (this.imAddressesList.includes(address)) return { min: 0, max: 1, step: 1 };
+      if (this.gorelkaAddressesList.includes(address)) return { min: 0, max: 100, step: 10 };
+      return { min: 0, max: 100, step: 10 }; // Значения по умолчанию
+    }
+  };
 
-  // Адреса температур
-  temperatureAddressesList = [
-    // Существующие адреса температур
-    0x0000, 0x0002, 0x0004, 0x0006, // Температуры реактора К296
-    0x0002, 0x0004, 0x0006, 0x0000, 0x0012, 0x0008, // Общие
-    0x000A, 0x000C, 0x004E, 0x000E, 0x0010, 0x004C, // Общие
-    0x0014, 0x0016, // Общие
-    0x0000, 0x0002, 0x0006, // Температуры для сушилок
-    // Адреса температур для МПА2 и МПА3
-    0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005,
-    0x0006, 0x0007, 0x0008, 0x0009, 0x000A, 0x000B,
-    0x000C, 0x000D, 0x000E, 0x000F,
-  ];
+  sushilki = {
+    temperatureAddressesList: [
+      0x0000, 0x0002, 0x0006
+    ],
+    vacuumAddressesList: [
+      0x000A, 0x000C, 0x000E
+    ],
+    imAddressesList: [
+      0x001E, 0x0020
+    ],
+    gorelkaAddressesList: [
+      0x0010, 0x0012, 0x0014
+    ],
+    getRange(address, label = '') {
+      if (this.temperatureAddressesList.includes(address)) return { min: 0, max: 600, step: 50 };
+      if (this.vacuumAddressesList.includes(address)) return { min: -20, max: 0, step: 5 };
+      if (this.imAddressesList.includes(address)) return { min: 0, max: 1, step: 1 };
+      if (this.gorelkaAddressesList.includes(address)) return { min: 0, max: 100, step: 10 };
+      return { min: 0, max: 100, step: 10 }; // Значения по умолчанию
+    }
+  };
 
-  // Адреса давления
-  pressureAddressesList = [
-    // Существующие адреса давлений
-    0x0026, 0x0028,
-    // Адреса давлений для МПА2 и МПА3
-    0x0010, 0x0011, 0x0012,
-    // Дополнительные давления с устройств ID 8 и 9
-    0x0000, 0x0001, 0x0002, 0x0003,
-    0x0004, 0x0005, 0x0006, 0x0007,
-  ];
+  mpa = {
+    temperatureAddressesList: [
+      0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x000F
+    ],
+    pressureAddressesList: [
+      0x0010, 0x0011, 0x0012
+    ],
+    vacuumAddressesList: [
+      0x0012, 0x0010, 0x0011
+    ],
+    getRange(address) {
+      if (this.temperatureAddressesList.includes(address)) return { min: 0, max: 1200, step: 50 };
+      if (this.pressureAddressesList.includes(address)) return { min: 0, max: 150, step: 5 };
+      if (this.vacuumAddressesList.includes(address)) return { min: -30, max: 0, step: 5 };
+      return { min: 0, max: 100, step: 10 }; // Значения по умолчанию
+    }
+  };
 
-  // Адреса разрежения
-  vacuumAddressesList = [
-    0x0020, 0x0024, 0x0022, // Общие
-    0x000A, 0x000C, 0x000E, // Разрежение для сушилок
-  ];
+  mills = {
+    millAddressesList: [
+      0x0000, 0x0001, 0x0002
+    ],
+    getRange(address) {
+      if (this.millAddressesList.includes(address)) return { min: 0, max: 30, step: 1 };
+      return { min: 0, max: 100, step: 10 }; // Значения по умолчанию
+    }
+  };
 
-  // Адреса уровней
-  levelAddressesList = [
-    0x0008, 0x000A, 0x000C, 0x000E, // Уровни реактора К296
-    0x002A, 0x003E, 0x0018, // Уровни для общих параметров
-  ];
+  mill10b = {
+    millAddressesList: [
+      0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008
+    ],
+    getRange(address) {
+      if (this.millAddressesList.includes(address)) return { min: 0, max: 30, step: 1 };
+      return { min: 0, max: 100, step: 10 }; // Значения по умолчанию
+    }
+  };
 
-  // Адреса импульсных сигналов
-  imAddressesList = [
-    0x0044, 0x0046, 0x0048, 0x004A, 0x001C, // Общие
-    0x001E, 0x0020, // Сигналы для сушилок
-  ];
+  reactor296 = {
+    temperatureAddressesList: [
+      0x0000, 0x0002, 0x0004, 0x0006
+    ],
+    levelAddressesList: [
+      0x0008, 0x000A, 0x000C, 0x000E
+    ],
+    getRange(address) {
+      if (this.temperatureAddressesList.includes(address)) return { min: 0, max: 100, step: 10 };
+      if (this.levelAddressesList.includes(address)) return { min: 0, max: 2500, step: 50 };
+      return { min: 0, max: 100, step: 10 }; // Значения по умолчанию
+    }
+  };
 
-  // Адреса горелок
-  gorelkaAddressesList = [
-    0x0010, 0x0012, 0x0014, // Параметры горелки для сушилок
-  ];
-
-  // Адреса для мельниц, включая mill10b
-  millAddressesList = [
-    0x0000, 0x0001, 0x0002, // Адреса для mill1 и mill2
-    0x0000, 0x0001, 0x0002, // Адреса для mill10b (совпадают с предыдущими)
-    0x0003, 0x0004, 0x0005, // Дополнительные адресы для mill10b
-    0x0006, 0x0007, 0x0008, // Дополнительные адресы для mill10b
-  ];
-
-  // Метод для чтения float значений
+  // Метод для чтения значений с учётом объекта и диапазона
   async readFloat(deviceID, address, deviceLabel = '') {
-    // Определяем диапазоны и начальные значения для каждого параметра
-    const range = this.getRangeForParameter(deviceLabel, address);
+    let range = null;
 
-    // Проверяем тип параметра по адресу и применяем соответствующий метод генерации значений
-    const isTemperature = this.temperatureAddressesList.includes(address);
-    const isLevel = this.levelAddressesList.includes(address);
-    const isImpulseSignal = this.imAddressesList.includes(address);
+    // Проверка диапазонов для всех объектов
+    if (this.pechiVr.getRange(address, deviceLabel)) range = this.pechiVr.getRange(address, deviceLabel);
+    if (this.sushilki.getRange(address, deviceLabel)) range = this.sushilki.getRange(address, deviceLabel);
+    if (this.mpa.getRange(address)) range = this.mpa.getRange(address);
+    if (this.mills.getRange(address)) range = this.mills.getRange(address);
+    if (this.mill10b.getRange(address)) range = this.mill10b.getRange(address);
+    if (this.reactor296.getRange(address)) range = this.reactor296.getRange(address);
+
+    // Если диапазон не найден, устанавливаем дефолтное значение
+    if (!range) range = { min: 0, max: 100, step: 10 };
 
     const key = `${deviceID}-${address}`;
-
-    if (isTemperature || isLevel) {
-      // Плавное изменение для температур и уровней
-      if (!this.currentValues[key]) {
-        this.currentValues[key] = this.initializeValue(range.min, range.max);
-      }
-      const maxStep = range.step || 50; // Шаг изменения
-      const change = (Math.random() - 0.5) * maxStep;
-      let newValue = this.currentValues[key] + change;
-
-      // Ограничиваем значение в заданном диапазоне
-      if (newValue > range.max) newValue = range.max;
-      if (newValue < range.min) newValue = range.min;
-
-      this.currentValues[key] = newValue;
-      return parseFloat(newValue.toFixed(2));
-    } else if (isImpulseSignal) {
-      // Логика для импульсных сигналов (boolean)
-      return Math.random() > 0.5 ? 1 : 0;
-    } else {
-      // Рандомное значение для остальных параметров
-      const randomValue = this.initializeValue(range.min, range.max);
-      return parseFloat(randomValue.toFixed(2));
+    if (!this.currentValues[key]) {
+      this.currentValues[key] = this.initializeValue(range.min, range.max);
     }
+
+    const maxStep = range.step || 50;
+
+    // Генерация случайного изменения в пределах диапазона
+    const change = (Math.random() - 0.5) * Math.min(maxStep, range.max - range.min);  // Ограничиваем изменение
+
+    let newValue = this.currentValues[key] + change;
+
+    // Проверка на выход за пределы диапазона
+    if (newValue > range.max) newValue = range.max;
+    if (newValue < range.min) newValue = range.min;
+
+    // Логирование изменений
+    // console.log(`Старое значение: ${this.currentValues[key]}, Изменение: ${change}, Новое значение: ${newValue}`);
+
+    this.currentValues[key] = newValue;
+    return parseFloat(newValue.toFixed(2));  // Возвращаем значение с двумя знаками после запятой
   }
 
   // Метод для чтения int16 значений
-  async readInt16(deviceID, address, deviceLabel = '') {
+  async readInt16(deviceID, address) {
+    let range = null;
+
+    // Проверка диапазонов для всех объектов
+    if (this.pechiVr.getRange(address)) range = this.pechiVr.getRange(address);
+    if (this.sushilki.getRange(address)) range = this.sushilki.getRange(address);
+    if (this.mpa.getRange(address)) range = this.mpa.getRange(address);
+    if (this.mills.getRange(address)) range = this.mills.getRange(address);
+    if (this.mill10b.getRange(address)) range = this.mill10b.getRange(address);
+    if (this.reactor296.getRange(address)) range = this.reactor296.getRange(address);
+
+    if (!range) range = { min: 0, max: 100, step: 10 };  // Дефолтные значения
+
     const key = `${deviceID}-${address}`;
-
-    // Проверяем, является ли адрес температурой
-    if (this.temperatureAddressesList.includes(address)) {
-      // Симулируем температуру
-      if (!this.currentValues[key]) {
-        this.currentValues[key] = this.getRandomInt(0, 1100); // Значения от 0 до 1100
-      } else {
-        // Изменяем значение плавно
-        const change = Math.floor((Math.random() - 0.5) * 20); // Шаг изменения
-        let newValue = this.currentValues[key] + change;
-        newValue = Math.max(0, Math.min(1100, newValue));
-        this.currentValues[key] = newValue;
-      }
-      return this.currentValues[key];
+    if (!this.currentValues[key]) {
+      this.currentValues[key] = this.initializeValue(range.min, range.max);
     }
 
-    // Проверяем, является ли адрес давлением
-    if (
-      this.pressureAddressesList.includes(address) ||
-      ((deviceID === 8 || deviceID === 9) && address >= 0x0000 && address <= 0x0007)
-    ) {
-      // Симулируем давление
-      if (!this.currentValues[key]) {
-        this.currentValues[key] = this.getRandomInt(-100, 300); // Значения от -100 до 300
-      } else {
-        // Изменяем значение плавно
-        const change = Math.floor((Math.random() - 0.5) * 20); // Шаг изменения
-        let newValue = this.currentValues[key] + change;
-        newValue = Math.max(-100, Math.min(300, newValue));
-        this.currentValues[key] = newValue;
-      }
-      return this.currentValues[key];
-    }
+    const maxStep = range.step || 50;
 
-    // Обработка адресов мельниц
-    const isMillAddress = this.millAddressesList.includes(address);
-    if (isMillAddress) {
-      if (!this.currentValues[key]) {
-        this.currentValues[key] = Math.floor(Math.random() * 11); // Значения от 0 до 10
-      } else {
-        const change = Math.floor((Math.random() - 0.5) * 2);
-        let newValue = this.currentValues[key] + change;
-        newValue = Math.max(0, Math.min(10, newValue));
-        this.currentValues[key] = newValue;
-      }
-      return this.currentValues[key];
-    }
+    // Генерация случайного изменения
+    const change = (Math.random() - 0.5) * Math.min(maxStep, range.max - range.min);
+    let newValue = this.currentValues[key] + change;
 
-    // Значение по умолчанию
-    return 0;
+    // Проверка на выход за пределы диапазона
+    if (newValue > range.max) newValue = range.max;
+    if (newValue < range.min) newValue = range.min;
+
+    this.currentValues[key] = newValue;
+    return parseInt(newValue.toFixed(0));  // Возвращаем целочисленное значение
   }
 
-  // Метод для чтения int32 значений (можно оставить как есть или настроить по аналогии)
-  async readInt32(deviceID, address, deviceLabel = '') {
-    // Для простоты используем ту же логику, что и для readInt16
-    return await this.readInt16(deviceID, address, deviceLabel);
-  }
-
-  // Инициализация начального значения в пределах min и max
+  // Метод для инициализации значений
   initializeValue(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-
-  // Определяем диапазон и шаг изменения для каждого параметра на основе адреса или метки
-  getRangeForParameter(label, address) {
-    if (this.temperatureAddressesList.includes(address)) {
-      if (address >= 0x0000 && address <= 0x0006) {
-        // Температуры реактора К296
-        return { min: 0, max: 100, step: 5 };
-      }
-      return { min: 0, max: 1100, step: 100 };
-    }
-
-    if (this.levelAddressesList.includes(address)) {
-      if (address >= 0x0008 && address <= 0x000E) {
-        // Уровни реактора К296
-        return { min: 0, max: 2500, step: 50 };
-      }
-      // Другие уровни
-      if (label === 'В ванне скруббера') return { min: 0, max: 1000, step: 50 };
-      if (label === 'В емкости ХВО') return { min: 0, max: 6000, step: 100 };
-      if (label === 'В барабане котла') return { min: -100, max: 100, step: 20 };
-    }
-
-    if (this.pressureAddressesList.includes(address)) return { min: -20, max: 30, step: 5 };
-    if (this.vacuumAddressesList.includes(address)) return { min: -20, max: 30, step: 5 };
-
-    if (this.gorelkaAddressesList.includes(address)) return { min: 0, max: 100, step: 10 };
-    if (this.imAddressesList.includes(address)) return { min: 0, max: 1, step: 1 };
-
-    // По умолчанию
-    return { min: 0, max: 100, step: 10 };
-  }
-
-  // Метод для получения случайного целого числа в диапазоне
-  getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return min + Math.random() * (max - min);  // Инициализация случайным значением в пределах диапазона
   }
 }
