@@ -47,18 +47,39 @@ export const getDailyReportData = async (date) => {
     const model = modelsMap[modelKey];
     const modelData = await model.find({ lastUpdated: { $gte: startOfDay, $lt: endOfDay } });
 
-    // Для каждого часа вычисляем среднее значение
+    // Для каждого часа извлекаем значение "Гкал/ч"
     const hourlyData = hours.map(hour => {
       const time = `${String(hour).padStart(2, '0')}:00`;
       const filteredData = modelData.filter(entry => new Date(entry.lastUpdated).getHours() === hour);
 
-      // Если данные отсутствуют, ставим дефис
-      const average = filteredData.length > 0 ? calculateAverage(filteredData[0].data) : '-';
+      if (filteredData.length === 0) {
+        return {
+          time,
+          model: modelKey,
+          "Гкал/ч": '-',
+        };
+      }
+
+      // Предполагается, что "Гкал/ч" существует в data
+      const gkalValues = filteredData.map(entry => entry.data.get('Гкал/ч ' + modelKey));
+
+      // Если нет значений, ставим дефис
+      if (gkalValues.length === 0) {
+        return {
+          time,
+          model: modelKey,
+          "Гкал/ч": '-',
+        };
+      }
+
+      // Рассчитываем среднее значение "Гкал/ч" за час
+      const sum = gkalValues.reduce((acc, value) => acc + value, 0);
+      const average = (sum / gkalValues.length).toFixed(2);
 
       return {
         time,
         model: modelKey,
-        average
+        "Гкал/ч": average,
       };
     });
 
@@ -70,10 +91,11 @@ export const getDailyReportData = async (date) => {
     const row = { time: `${String(hour).padStart(2, '0')}:00` };
     reportData.forEach(modelData => {
       const modelDataForHour = modelData.find(item => item.time === row.time);
-      row[modelDataForHour.model] = modelDataForHour.average;
+      row[modelDataForHour.model] = modelDataForHour["Гкал/ч"];
     });
     return row;
   });
 
   return tableData;
 };
+
