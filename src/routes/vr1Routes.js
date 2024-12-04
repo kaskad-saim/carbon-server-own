@@ -1,5 +1,7 @@
 import express from 'express';
 import { PechVr1Model } from '../models/pechVrModel.js';
+import logger from '../logger.js';
+
 
 const router = express.Router();
 
@@ -49,7 +51,7 @@ router.get('/vr1-data', async (req, res) => {
 
     res.json(responseData);
   } catch (err) {
-    console.error('Ошибка при получении данных VR1:', err);
+    logger.error('Ошибка при получении данных VR1:', err);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });

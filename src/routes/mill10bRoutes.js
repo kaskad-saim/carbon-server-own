@@ -1,5 +1,6 @@
 import express from 'express';
 import { Mill10bModel } from '../models/millModel.js';
+import logger from '../logger.js';
 
 const router = express.Router();
 
@@ -42,7 +43,7 @@ router.get('/mill10b-data', async (req, res) => {
 
     res.json(responseData);
   } catch (err) {
-    console.error('Ошибка при получении данных Mill10b:', err);
+    logger.error('Ошибка при получении данных Mill10b:', err);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });

@@ -22,6 +22,7 @@ import laboratoryRoutes from './routes/laboratoryRoutes.js';
 import graphicRoutes from './routes/graphicRoutes.js'
 import { connectDB } from './services/dataBaseService.js';
 import { devicesConfig } from './services/devicesConfig.js';
+import uzliUchetaService from './routes/uzliUchetaRoutes.js'
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -179,6 +180,7 @@ app.use('/api', sushilka1Routes);
 app.use('/api', sushilka2Routes);
 app.use('/api', mpa2Routes);
 app.use('/api', mpa3Routes);
+app.use('/api', uzliUchetaService);
 app.use('/api', mill1Routes);
 app.use('/api', mill2Routes);
 app.use('/api', mill10bRoutes);

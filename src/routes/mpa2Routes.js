@@ -1,5 +1,6 @@
 import express from 'express';
 import { PechMpa2Model } from '../models/pechMpaModel.js';
+import logger from '../logger.js';
 
 const router = express.Router();
 
@@ -45,7 +46,7 @@ router.get('/mpa2-data', async (req, res) => {
 
     res.json(responseData);
   } catch (err) {
-    console.error('Ошибка при получении данных MPA2:', err);
+    logger.error('Ошибка при получении данных MPA2:', err);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });

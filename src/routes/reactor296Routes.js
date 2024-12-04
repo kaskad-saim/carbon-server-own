@@ -1,5 +1,7 @@
 import express from 'express';
 import { Reactor296Model } from '../models/reactor296Model.js';
+import logger from '../logger.js';
+
 
 const router = express.Router();
 
@@ -46,7 +48,7 @@ router.get('/reactorK296-data', async (req, res) => {
     // console.log(responseData);
 
   } catch (err) {
-    console.error('Ошибка при получении данных ReactorK296:', err);
+    logger.error('Ошибка при получении данных ReactorK296:', err);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
