@@ -1,0 +1,374 @@
+@font-face {
+  font-family: "Bitter";
+  font-display: swap;
+  src: url("../fonts/Bitter-SemiBold.woff2") format("woff2"), url("../fonts/Bitter-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Bitter";
+  font-display: swap;
+  src: url("../fonts/Bitter-Regular.woff2") format("woff2"), url("../fonts/Bitter-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Bitter";
+  font-display: swap;
+  src: url("../fonts/Bitter-Medium.woff2") format("woff2"), url("../fonts/Bitter-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Bold.woff2") format("woff2"), url("../fonts/Gilroy-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Medium.woff2") format("woff2"), url("../fonts/Gilroy-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Regular.woff2") format("woff2"), url("../fonts/Gilroy-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  font-display: swap;
+  src: url("../fonts/Gilroy-Semibold.woff2") format("woff2"), url("../fonts/Gilroy-Semibold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-display: swap;
+  src: url("../fonts/Oswald-SemiBold.woff2") format("woff2"), url("../fonts/Oswald-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-display: swap;
+  src: url("../fonts/Oswald-Regular.woff2") format("woff2"), url("../fonts/Oswald-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-display: swap;
+  src: url("../fonts/Oswald-Medium.woff2") format("woff2"), url("../fonts/Oswald-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Bitter', sans-serif;
+  margin-left: 0;
+}
+
+body::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+  /* ширина scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background-color: #dfdcdc;
+  /* цвет дорожки */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: green;
+  /* цвет плашки */
+  border-radius: 20px;
+  /* закругления плашки */
+}
+
+.list-reset {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.title-reset {
+  margin: 0;
+}
+
+
+.btn-reset {
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0px;
+  border-width: initial;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+}
+
+.descr-reset {
+  margin: 0;
+}
+
+.content {
+  position: relative;
+  max-width: 1450px;
+  padding-left: 10px;
+}
+
+.dynamic-report {
+  margin: 5px 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dynamic-report__title {
+  margin-bottom: 15px;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  color: green;
+}
+
+.dynamic-report__btn {
+  margin-right: 10px;
+  height: 27px;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  color: green;
+  border: 1px solid green;
+  background-color: transparent;
+  cursor: pointer;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+.dynamic-report__btn:hover {
+  color: white;
+  background-color: green;
+}
+
+.dynamic-report__btn:active {
+  color: white;
+  background-color: green;
+}
+
+.dynamic-report__btn:focus-visible {
+  color: white;
+  background-color: green;
+  outline: none;
+}
+
+
+.dynamic-report__date-range {
+  position: relative;
+  max-width: 350px;
+}
+
+.dynamic-report__date-div {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+
+.dynamic-report__date-label {
+  margin-bottom: 10px;
+}
+
+.dynamic-report__date-input {
+  margin-right: 10px;
+  height: 27px;
+  width: 150px;
+  text-align: center;
+  font-family: 'Bitter', sans-serif;
+  padding: 2px;
+  border: 1px solid green;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+  transition: background-color .3s ease-in-out;
+}
+
+/* Стиль при наведении */
+.dynamic-report__date-input:hover {
+  border-color: green;
+  background-color: #d4d2d2bb;
+  transition: background-color .3s ease-in-out;
+}
+
+/* Стиль при фокусе (когда элемент активен) */
+.dynamic-report__date-input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+  background-color: #ffffff;
+  color: #000;
+}
+
+/* Стили для отключенного состояния (disabled) */
+.dynamic-report__date-input:disabled {
+  background-color: #e0e0e0;
+  color: #999;
+  border-color: #dcdcdc;
+}
+
+/* Пример с кастомной иконкой внутри инпута (не для всех браузеров) */
+.dynamic-report__date-input::-webkit-calendar-picker-indicator {
+  color: #3498db;
+  cursor: pointer;
+}
+
+.dynvamic-report__data-error {
+  display: none;
+  color: red;
+  text-align: center;
+  font-size: 24px;
+}
+
+
+/* table */
+.dynamic-report__table {
+  position: relative;
+}
+
+.dynamic-report__report-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dynamic-report__report-header {
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 600;
+  color: white;
+  font-family: 'Bitter', sans-serif;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+  background-color: green;
+}
+
+
+.dynamic-report__report-cell {
+  text-align: center;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 400;
+  color: black;
+}
+
+
+.dynamic-report__report-table th,
+.dynamic-report__report-table td {
+  border: 1px solid #ddd;
+  padding: 2px 5px;
+}
+
+.dynamic-report__report-table th {
+  padding: 5px;
+}
+
+.dynamic-report__report-table tr:hover {
+  background-color: #ddd;
+}
+
+.dynamic-report__report-table tr:active {
+  background-color: #ddd;
+}
+
+.for-raport {
+  display: none;
+}
+
+.dynamic-report__body {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+/* прелоудер */
+#loadingWrapper {
+  position: absolute;
+  /* Фиксированное положение для отображения в любом месте */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(255, 255, 255);
+  z-index: 1000;
+  /* Поверх всех остальных элементов */
+}
+
+#loadingText {
+  color: #000000;
+  /* Цвет текста */
+  font-size: 16px;
+  /* Размер шрифта */
+  margin-bottom: 10px;
+  /* Отступ снизу для текста */
+}
+
+#loadingBar {
+  width: 400px;
+  height: 15px;
+  background-color: #ffffff;
+  /* Цвет полоски */
+  border: 2px solid #cccccc;
+  /* Рамка полоски */
+  border-radius: 5px;
+  /* Закругленные углы */
+  position: relative;
+  overflow: hidden;
+}
+
+#loadingBar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: green;
+  /* Цвет индикатора загрузки */
+  animation: loading 1s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}

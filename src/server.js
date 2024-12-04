@@ -23,6 +23,7 @@ import graphicRoutes from './routes/graphicRoutes.js'
 import { connectDB } from './services/dataBaseService.js';
 import { devicesConfig } from './services/devicesConfig.js';
 import uzliUchetaService from './routes/uzliUchetaRoutes.js'
+import reportRoutes from './routes/reportRoutes.js';
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -187,6 +188,9 @@ app.use('/api', mill10bRoutes);
 app.use('/api', reactorRoutes);
 app.use('/api/lab', laboratoryRoutes);
 app.use('/api', graphicRoutes); //api получасовых графиков
+
+// Добавляем новый маршрут для отчетов
+app.use('/api/reports', reportRoutes);
 
 app.get('/api/server-time', (req, res) => {
   res.json({ time: new Date().toISOString() });

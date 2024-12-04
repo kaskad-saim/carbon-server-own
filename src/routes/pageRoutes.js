@@ -109,4 +109,10 @@ router.get('/graph-mpa-general', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/graphics', 'mpaGeneralGraphics.html'));
 });
 
+router.get('/report-resources', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/energy-resources/', 'report-resources.html'));
+});
+
+
+
 export default router;
