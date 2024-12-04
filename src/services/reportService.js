@@ -11,30 +11,8 @@ const modelsMap = {
   DD924: imDD924Model,
 };
 
-const calculateAverage = (data) => {
-  // Проверяем, что data — это экземпляр Map
-  if (data instanceof Map) {
-    // Извлекаем только числовые значения из Map
-    const values = Array.from(data.values()).filter(value => typeof value === 'number');
 
-    // Если в Map нет числовых значений, возвращаем дефис
-    if (values.length === 0) {
-      return '-';
-    }
-
-    // Рассчитываем среднее значение
-    const sum = values.reduce((acc, value) => acc + value, 0);
-    const average = (sum / values.length).toFixed(2);
-
-    return average;
-  }
-
-  // В случае, если передано не Map, просто возвращаем дефис
-  return '-';
-};
-
-
-export const getDailyReportData = async (date) => {
+export const getHourReportData = async (date) => {
   const startOfDay = new Date(date);
   const endOfDay = new Date(date);
   endOfDay.setHours(23, 59, 59, 999);

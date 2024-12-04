@@ -1,10 +1,10 @@
 // routes/reportRoutes.js
 import express from 'express';
-import { getDailyReportData } from '../services/reportService.js';
+import { getHourReportData } from '../services/reportService.js';
 
 const router = express.Router();
 
-router.get('/getReportData', async (req, res) => {
+router.get('/getReportDataHour', async (req, res) => {
   const { date } = req.query;
 
   if (!date) {
@@ -12,7 +12,7 @@ router.get('/getReportData', async (req, res) => {
   }
 
   try {
-    const reportData = await getDailyReportData(date);
+    const reportData = await getHourReportData(date);
     res.json(reportData);
   } catch (err) {
     console.error('Ошибка при получении данных:', err);
