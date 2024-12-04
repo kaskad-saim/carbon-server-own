@@ -92,6 +92,9 @@ async function loadDataForSelectedDate() {
     return;
   }
 
+  // Показываем прелоудер
+  document.getElementById('loadingWrapper').style.display = 'flex';
+
   try {
     const response = await fetch(`/api/reports/getReportData?date=${selectedDate}`);
     let reportData = await response.json();
@@ -149,8 +152,6 @@ async function loadDataForSelectedDate() {
       // Добавление строки с итогами
       const totals = calculateTotals(formattedData);
       const totalRow = document.createElement('tr');
-
-      // Добавляем стиль для ячейки с текстом "Итого"
       const totalLabelCell = document.createElement('td');
       totalLabelCell.classList.add('dynamic-report__report-cell');
       totalLabelCell.style.fontWeight = 'bold';
@@ -159,7 +160,6 @@ async function loadDataForSelectedDate() {
       totalLabelCell.textContent = 'Итого';
       totalRow.appendChild(totalLabelCell);
 
-      // Для остальных ячеек устанавливаем разные цвета
       const colorClasses = [
         'yellow',
         'yellow',
@@ -180,7 +180,6 @@ async function loadDataForSelectedDate() {
         totals.DD924.toFixed(2),
       ];
 
-      // Создаем ячейки с итоговыми значениями и окрашиваем их
       totalsValues.forEach((value, index) => {
         const cell = document.createElement('td');
         cell.classList.add('dynamic-report__report-cell');
@@ -201,6 +200,9 @@ async function loadDataForSelectedDate() {
   } catch (error) {
     console.error('Ошибка при загрузке данных:', error);
     alert('Произошла ошибка при загрузке данных. Попробуйте позже.');
+  } finally {
+    // Скрываем прелоудер после загрузки данных
+    document.getElementById('loadingWrapper').style.display = 'none';
   }
 }
 
