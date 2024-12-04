@@ -101,6 +101,10 @@ router.get('/current-mpa3', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/', 'current-mpa-3.html'));
 });
 
+router.get('/current-resources', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/energy-resources/', 'currentParam-resources.html'));
+});
+
 router.get('/graph-mpa-general', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/graphics', 'mpaGeneralGraphics.html'));
 });
