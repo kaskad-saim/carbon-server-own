@@ -1,8 +1,8 @@
 // Функция для установки текущей даты в календарь
-function setCurrentDate() {
+function setCurrentMonth() {
   const today = new Date();
-  const dateString = today.toISOString().split('T')[0]; // Формат YYYY-MM-DD
-  document.getElementById('singleDate').value = dateString;
+  const monthString = today.toISOString().slice(0, 7); // Формат YYYY-MM
+  document.getElementById('singleMonth').value = monthString;
 }
 
 // Функция для обновления заголовка с датой отчета
@@ -47,60 +47,44 @@ function formatDataByTimeSlot(reportData) {
 }
 
 // Функция для загрузки данных и отображения их в таблице
-async function loadDataForSelectedDate() {
-  const selectedDate = document.getElementById('singleDate').value;
+async function loadDataForSelectedMonth() {
+  const selectedMonth = document.getElementById('singleMonth').value;
 
-  if (!selectedDate) {
-    alert('Пожалуйста, выберите дату.');
+  if (!selectedMonth) {
+    alert('Пожалуйста, выберите месяц.');
     return;
   }
 
-  // Показываем прелоудер
   document.getElementById('loadingWrapper').style.display = 'flex';
 
   try {
-    const response = await fetch(`/api/reports/getReportDataDay?date=${selectedDate}`);
-    let reportData = await response.json();
-
-    // Получаем текущую дату и время
-    const now = new Date();
-    const currentDateString = now.toISOString().split('T')[0];
-    const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-
-    // Если выбранная дата — сегодня, фильтруем данные до текущего времени
-    if (selectedDate === currentDateString) {
-      reportData = reportData.filter((entry) => {
-        const [hour, minute] = entry.time === '24:00' ? [24, 0] : entry.time.split(':').map(Number);
-        const entryTimeInMinutes = hour * 60 + minute;
-        return entryTimeInMinutes <= currentTimeInMinutes;
-      });
-    }
-
-    // Форматируем данные по временным слотам
-    const formattedData = formatDataByTimeSlot(reportData);
+    const response = await fetch(`/api/reports/getReportDataMonth?month=${selectedMonth}`);
+    const reportData = await response.json();
 
     const tableBody = document.querySelector('#reportTable tbody');
-    tableBody.innerHTML = ''; // Очистить таблицу
+    tableBody.innerHTML = '';
 
-    if (formattedData && formattedData.length > 0) {
-      formattedData.forEach((timeData) => {
+    if (reportData && reportData.length > 0) {
+      reportData.forEach((dayData) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td class="dynamic-report__report-cell">${timeData.time}</td>
-          <td class="dynamic-report__report-cell">${timeData.DE093 === '-' ? '-' : timeData.DE093}</td>
-          <td class="dynamic-report__report-cell">${timeData.DD972 === '-' ? '-' : timeData.DD972}</td>
-          <td class="dynamic-report__report-cell">${timeData.DD973 === '-' ? '-' : timeData.DD973}</td>
-          <td class="dynamic-report__report-cell">${timeData.DD576 === '-' ? '-' : timeData.DD576}</td>
-          <td class="dynamic-report__report-cell">${timeData.DD569 === '-' ? '-' : timeData.DD569}</td>
-          <td class="dynamic-report__report-cell">${timeData.DD923 === '-' ? '-' : timeData.DD923}</td>
-          <td class="dynamic-report__report-cell">${timeData.DD924 === '-' ? '-' : timeData.DD924}</td>
+          <td class="dynamic-report__report-cell">${dayData.day}</td>
+          <td class="dynamic-report__report-cell">${dayData.DE093 === '-' ? '-' : dayData.DE093}</td>
+          <td class="dynamic-report__report-cell">${dayData.DD972 === '-' ? '-' : dayData.DD972}</td>
+          <td class="dynamic-report__report-cell">${dayData.DD973 === '-' ? '-' : dayData.DD973}</td>
+          <td class="dynamic-report__report-cell">${dayData.DD576 === '-' ? '-' : dayData.DD576}</td>
+          <td class="dynamic-report__report-cell">${dayData.DD569 === '-' ? '-' : dayData.DD569}</td>
+          <td class="dynamic-report__report-cell">${dayData.DD923 === '-' ? '-' : dayData.DD923}</td>
+          <td class="dynamic-report__report-cell">${dayData.DD924 === '-' ? '-' : dayData.DD924}</td>
         `;
         tableBody.appendChild(row);
       });
 
-      // Добавление строки с итогами
-      const totals = calculateTotals(formattedData);
+      // Добавляем строку с итогами
+      const totals = calculateTotals(reportData);
       const totalRow = document.createElement('tr');
+
+      // Первая ячейка "Итого"
       const totalLabelCell = document.createElement('td');
       totalLabelCell.classList.add('dynamic-report__report-cell');
       totalLabelCell.style.fontWeight = 'bold';
@@ -109,14 +93,15 @@ async function loadDataForSelectedDate() {
       totalLabelCell.textContent = 'Итого';
       totalRow.appendChild(totalLabelCell);
 
+      // Остальные ячейки итогов
       const colorClasses = [
-        'yellow',
-        'yellow',
-        'yellow',
-        'yellow',
-        'yellow',
-        'yellow',
-        'yellow',
+        'yellow', // Для DE093
+        'yellow', // Для DD972
+        'yellow', // Для DD973
+        'yellow', // Для DD576
+        'yellow', // Для DD569
+        'yellow', // Для DD923
+        'yellow', // Для DD924
       ];
 
       const totalsValues = [
@@ -132,7 +117,7 @@ async function loadDataForSelectedDate() {
       totalsValues.forEach((value, index) => {
         const cell = document.createElement('td');
         cell.classList.add('dynamic-report__report-cell');
-        cell.style.backgroundColor = colorClasses[index]; // Применяем разные цвета
+        cell.style.backgroundColor = colorClasses[index]; // Применяем цвета для итогов
         cell.textContent = value;
         totalRow.appendChild(cell);
       });
@@ -140,20 +125,18 @@ async function loadDataForSelectedDate() {
       tableBody.appendChild(totalRow);
     } else {
       const row = document.createElement('tr');
-      row.innerHTML = `<td colspan="8" style="text-align:center;">Нет данных за выбранную дату.</td>`;
+      row.innerHTML = `<td colspan="8" style="text-align:center;">Нет данных за выбранный месяц.</td>`;
       tableBody.appendChild(row);
     }
-
-    // Обновляем заголовок с датой
-    updateReportDateHeader(selectedDate);
   } catch (error) {
-    console.error('Ошибка при загрузке данных:', error);
+    console.error('Ошибка при загрузке данных за месяц:', error);
     alert('Произошла ошибка при загрузке данных. Попробуйте позже.');
   } finally {
-    // Скрываем прелоудер после загрузки данных
     document.getElementById('loadingWrapper').style.display = 'none';
   }
 }
+
+
 
 function calculateTotals(data) {
   const totals = {
@@ -182,9 +165,9 @@ function calculateTotals(data) {
 
 // Загрузка данных за текущую дату при загрузке страницы
 window.addEventListener('load', () => {
-  setCurrentDate(); // Устанавливаем текущую дату в календарь
-  loadDataForSelectedDate(); // Загружаем данные за текущий день
+  setCurrentMonth(); // Устанавливаем текущую дату в календарь
+  loadDataForSelectedMonth(); // Загружаем данные за текущий день
 });
 
-// Обработчик нажатия кнопки "Принять"
-document.getElementById('confirmDateBtn').addEventListener('click', loadDataForSelectedDate);
+// Обработчик кнопки "Принять"
+document.getElementById('confirmMonthBtn').addEventListener('click', loadDataForSelectedMonth);

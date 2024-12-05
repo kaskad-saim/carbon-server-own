@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>resources</title>
+  <link rel="stylesheet" href="../../../css/resources-report.css">
+</head>
+
+<body>
+  <div class="content">
+    <div class="dynamic-report">
+
+
+      <h1 class="dynamic-report__title">Отчёт по энергоресурсам к.10в1</h1>
+      <div class="dynamic-report__date-range">
+        <div class="dynamic-report__date-label">Выберите месяц для просмотра архива отчета:</div>
+        <div class="dynamic-report__date-div">
+          <input class="dynamic-report__date-input" type="month" id="singleMonth">
+          <button class="dynamic-report__btn" id="confirmMonthBtn">Принять</button>
+        </div>
+      </div>
+
+      <!-- Заголовок для выбранной даты -->
+      <h3>Отчет на <span id="reportDate">Месяц отчета</span></h3>
+
+      <!-- Таблица для вывода данных -->
+      <div class="dynamic-report__table">
+        <!-- Прелоудер -->
+        <div id="loadingWrapper">
+          <div id="loadingText">Загрузка данных, пожалуйста подождите...</div>
+          <div id="loadingBar"></div>
+        </div>
+        <table class="dynamic-report__report-table" id="reportTable">
+          <thead>
+            <tr>
+              <th class="dynamic-report__report-header" rowspan="2">Время</th>
+              <th class="dynamic-report__report-header" colspan="3">Расход пара, Гкал</th>
+              <th class="dynamic-report__report-header" colspan="4">Генерация пара от к.265 и котлов утилизаторов
+                к.10в1, Гкал</th>
+            </tr>
+            <tr>
+              <th class="dynamic-report__report-header">МПА2</th>
+              <th class="dynamic-report__report-header">МПА3</th>
+              <th class="dynamic-report__report-header">МПА4</th>
+              <th class="dynamic-report__report-header">К10В1</th>
+              <th class="dynamic-report__report-header">К265</th>
+              <th class="dynamic-report__report-header">Котел Утил. №1</th>
+              <th class="dynamic-report__report-header">Котел Утил. №2</th>
+            </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="../../../js/energy-resources/report-month.js"></script>
+</body>
+
+</html>

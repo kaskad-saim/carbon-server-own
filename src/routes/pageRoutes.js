@@ -109,8 +109,12 @@ router.get('/graph-mpa-general', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/mpa/graphics', 'mpaGeneralGraphics.html'));
 });
 
-router.get('/report-resources', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../public/production/carbon/energy-resources/', 'report-resources.html'));
+router.get('/report-resources-day', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/energy-resources/', 'report-resources-day.html'));
+});
+
+router.get('/report-resources-month', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/energy-resources/', 'report-resources-month.html'));
 });
 
 
