@@ -116,61 +116,59 @@ export const getMonthReportData = async (month) => {
     throw new Error('Некорректный формат месяца. Ожидается YYYY-MM.');
   }
 
-  const startOfMonth = new Date(year, monthNumber - 1, 1);
-  startOfMonth.setHours(0, 0, 0, 0);
+  // Начало месяца (UTC)
+  const startOfMonth = new Date(Date.UTC(year, monthNumber - 1, 1));
 
-  const endOfMonth = new Date(year, monthNumber, 0);
-  endOfMonth.setHours(23, 59, 59, 999);
+  // Конец месяца (UTC, последний день)
+  const endOfMonth = new Date(Date.UTC(year, monthNumber, 0));
 
-  const daysInMonth = Array.from({ length: endOfMonth.getDate() }, (_, i) => {
-    const date = new Date(year, monthNumber - 1, i + 1).toISOString().split('T')[0];
-    return date; // Массив дат в формате YYYY-MM-DD
-  });
+  console.log('endOfMonth (UTC):', endOfMonth.toISOString()); // Проверяем результат
+
+  // Генерация массива дней месяца
+  const daysInMonth = [];
+  for (let i = 1; i <= endOfMonth.getUTCDate(); i++) {
+    const date = new Date(Date.UTC(year, monthNumber - 1, i)).toISOString().split('T')[0];
+    daysInMonth.push(date);
+  }
+
+  console.log('daysInMonth:', daysInMonth);
 
   const reportData = [];
 
   for (const day of daysInMonth) {
-    // Получаем данные за каждый день, используя `getDayReportData`
     const dayData = await getDayReportData(day);
 
-    // Суммируем значения за каждый час по каждой модели
     const dailyTotals = {};
     dayData.forEach((row) => {
       for (const [model, value] of Object.entries(row)) {
-        if (model === 'time') continue; // Пропускаем колонку времени
+        if (model === 'time') continue;
         if (!dailyTotals[model]) dailyTotals[model] = 0;
 
-        // Суммируем только числовые значения
         const numericValue = value === '-' ? 0 : parseFloat(value);
         dailyTotals[model] += numericValue;
       }
     });
 
-    // Округляем значения до 2 знаков после запятой
     for (const model in dailyTotals) {
       dailyTotals[model] = parseFloat(dailyTotals[model].toFixed(2));
     }
 
-    // Форматируем итоговые данные за день
     reportData.push({ day, ...dailyTotals });
   }
 
-  // Итоги за месяц
   const monthTotals = {};
   reportData.forEach((dailyData) => {
     for (const [model, value] of Object.entries(dailyData)) {
-      if (model === 'day') continue; // Пропускаем колонку с датой
+      if (model === 'day') continue;
       if (!monthTotals[model]) monthTotals[model] = 0;
 
       monthTotals[model] += value;
     }
   });
 
-  // Округляем итоги за месяц
   for (const model in monthTotals) {
     monthTotals[model] = parseFloat(monthTotals[model].toFixed(2));
   }
 
   return reportData;
 };
-
