@@ -38,49 +38,12 @@ function getSlotLabel(time, now) {
 
 // Модифицированная функция для перераспределения данных по временным слотам
 function formatDataByTimeSlot(reportData) {
-  const formattedData = [];
-  const now = new Date();
-
-  reportData.forEach((timeData) => {
-    const originalTime = timeData.time; // Формат "HH:MM"
-    const slotLabel = getSlotLabel(originalTime, now);
-
-    // Находим или создаем запись для соответствующего временного слота
-    let existingData = formattedData.find((item) => item.time === slotLabel);
-
-    // Если записи нет — создаем ее
-    if (!existingData) {
-      existingData = {
-        time: slotLabel,
-        DE093: timeData.DE093,
-        DD972: timeData.DD972,
-        DD973: timeData.DD973,
-        DD576: timeData.DD576,
-        DD569: timeData.DD569,
-        DD923: timeData.DD923,
-        DD924: timeData.DD924,
-      };
-      formattedData.push(existingData);
-    } else {
-      // Если запись уже есть, обновляем ее
-      existingData.DE093 = timeData.DE093 === '-' ? existingData.DE093 : timeData.DE093;
-      existingData.DD972 = timeData.DD972 === '-' ? existingData.DD972 : timeData.DD972;
-      existingData.DD973 = timeData.DD973 === '-' ? existingData.DD973 : timeData.DD973;
-      existingData.DD576 = timeData.DD576 === '-' ? existingData.DD576 : timeData.DD576;
-      existingData.DD569 = timeData.DD569 === '-' ? existingData.DD569 : timeData.DD569;
-      existingData.DD923 = timeData.DD923 === '-' ? existingData.DD923 : timeData.DD923;
-      existingData.DD924 = timeData.DD924 === '-' ? existingData.DD924 : timeData.DD924;
-    }
-  });
-
-  // Сортируем данные по времени
-  formattedData.sort((a, b) => {
-    const timeA = a.time.split(':').map(Number);
-    const timeB = b.time.split(':').map(Number);
+  reportData.sort((a, b) => {
+    const timeA = a.time === '24:00' ? [24, 0] : a.time.split(':').map(Number);
+    const timeB = b.time === '24:00' ? [24, 0] : b.time.split(':').map(Number);
     return timeA[0] - timeB[0] || timeA[1] - timeB[1];
   });
-
-  return formattedData;
+  return reportData;
 }
 
 // Функция для загрузки данных и отображения их в таблице
@@ -107,24 +70,10 @@ async function loadDataForSelectedDate() {
     // Если выбранная дата — сегодня, фильтруем данные до текущего времени
     if (selectedDate === currentDateString) {
       reportData = reportData.filter((entry) => {
-        const [hour, minute] = entry.time.split(':').map(Number);
+        const [hour, minute] = entry.time === '24:00' ? [24, 0] : entry.time.split(':').map(Number);
         const entryTimeInMinutes = hour * 60 + minute;
         return entryTimeInMinutes <= currentTimeInMinutes;
       });
-    } else {
-      // Для всех остальных дней, оставляем все данные
-      if (!reportData.some((item) => item.time === '23:59')) {
-        reportData.push({
-          time: '23:59',
-          DE093: '-',
-          DD972: '-',
-          DD973: '-',
-          DD576: '-',
-          DD569: '-',
-          DD923: '-',
-          DD924: '-',
-        });
-      }
     }
 
     // Форматируем данные по временным слотам
