@@ -145,6 +145,8 @@ const startDataRetrieval = async () => {
         const readDataFunction = module[device.readDataFunction];
         const { deviceID, name: deviceLabel } = device;
 
+
+        
         try {
           if (unstable) {
             // Обработка нестабильных портов с использованием очереди
