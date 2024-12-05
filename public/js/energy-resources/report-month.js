@@ -8,9 +8,9 @@ function setCurrentMonth() {
 // Функция для обновления заголовка с датой отчета
 function updateReportDateHeader(date) {
   const formattedDate = new Date(date);
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options = { year: 'numeric', month: 'long' }; // Убираем "day" из формата
   const reportDate = formattedDate.toLocaleDateString('ru-RU', options);
-  document.getElementById('reportDate').innerText = reportDate;
+  document.getElementById('reportMonth').innerText = reportDate;
 }
 
 // Функция для получения метки временного слота
@@ -128,6 +128,8 @@ async function loadDataForSelectedMonth() {
       row.innerHTML = `<td colspan="8" style="text-align:center;">Нет данных за выбранный месяц.</td>`;
       tableBody.appendChild(row);
     }
+    // Обновляем заголовок с датой
+    updateReportDateHeader(selectedMonth);
   } catch (error) {
     console.error('Ошибка при загрузке данных за месяц:', error);
     alert('Произошла ошибка при загрузке данных. Попробуйте позже.');
@@ -135,8 +137,6 @@ async function loadDataForSelectedMonth() {
     document.getElementById('loadingWrapper').style.display = 'none';
   }
 }
-
-
 
 function calculateTotals(data) {
   const totals = {

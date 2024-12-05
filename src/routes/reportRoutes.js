@@ -36,16 +36,4 @@ router.get('/getReportDataMonth', async (req, res) => {
   }
 });
 
-// router.get('/debugData', async (req, res) => {
-//   const date = '2024-12-03';
-//   try {
-//     const data = await getDayReportData(date);
-//     res.json(data);
-//   } catch (err) {
-//     console.error('Ошибка при отладке данных:', err);
-//     res.status(500).json({ error: 'Ошибка при отладке данных' });
-//   }
-// });
-
-
 export default router;

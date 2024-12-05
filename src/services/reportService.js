@@ -1,5 +1,13 @@
 // services/reportService.js
-import { imDE093Model, imDD972Model, imDD973Model, imDD576Model, imDD569Model, imDD923Model, imDD924Model } from '../models/uzliUchetaModel.js';
+import {
+  imDE093Model,
+  imDD972Model,
+  imDD973Model,
+  imDD576Model,
+  imDD569Model,
+  imDD923Model,
+  imDD924Model,
+} from '../models/uzliUchetaModel.js';
 
 const modelsMap = {
   DE093: imDE093Model,
@@ -11,7 +19,6 @@ const modelsMap = {
   DD924: imDD924Model,
 };
 
-
 export const getDayReportData = async (date) => {
   const startOfDay = new Date(date);
   startOfDay.setHours(0, 0, 0, 0);
@@ -21,7 +28,7 @@ export const getDayReportData = async (date) => {
   endOfDay.setHours(0, 0, 0, 0);
 
   // Создаем временные интервалы
-  const timeRanges = [...Array(24).keys()].map(hour => {
+  const timeRanges = [...Array(24).keys()].map((hour) => {
     let startTime = new Date(startOfDay);
     startTime.setHours(hour, 0, 0, 0);
     let endTime = new Date(startOfDay);
@@ -47,7 +54,7 @@ export const getDayReportData = async (date) => {
 
     // Для каждого временного интервала извлекаем значение "Гкал/ч"
     const hourlyData = timeRanges.map(({ startTime, endTime, label }) => {
-      const filteredData = modelData.filter(entry => {
+      const filteredData = modelData.filter((entry) => {
         const entryTime = new Date(entry.lastUpdated);
         return entryTime >= startTime && entryTime < endTime;
       });
@@ -56,30 +63,33 @@ export const getDayReportData = async (date) => {
         return {
           time: label,
           model: modelKey,
-          "Гкал/ч": '-',
+          'Гкал/ч': '-',
         };
       }
 
       // Предполагается, что "Гкал/ч" существует в data
-      const gkalValues = filteredData.map(entry => entry.data.get('Гкал/ч ' + modelKey));
+      const gkalValues = filteredData.map((entry) => {
+        const value = entry.data.get('Гкал/ч ' + modelKey);
+        return value !== undefined && value !== null ? parseFloat(value) : 0; // Заменяем некорректные значения на 0
+      });
 
-      // Если нет значений, ставим дефис
+      // Если массив пуст, возвращаем дефис
       if (gkalValues.length === 0) {
         return {
           time: label,
           model: modelKey,
-          "Гкал/ч": '-',
+          'Гкал/ч': '-',
         };
       }
 
-      // Рассчитываем среднее значение "Гкал/ч" за временной интервал
+      // Проверяем корректность суммы
       const sum = gkalValues.reduce((acc, value) => acc + value, 0);
-      const average = (sum / gkalValues.length).toFixed(2);
+      const average = gkalValues.length > 0 ? (sum / gkalValues.length).toFixed(2) : '-';
 
       return {
         time: label,
         model: modelKey,
-        "Гкал/ч": average,
+        'Гкал/ч': average,
       };
     });
 
@@ -89,9 +99,9 @@ export const getDayReportData = async (date) => {
   // Организуем данные для таблицы
   const tableData = timeRanges.map(({ label }) => {
     const row = { time: label };
-    reportData.forEach(modelData => {
-      const modelDataForTime = modelData.find(item => item.time === label);
-      row[modelDataForTime.model] = modelDataForTime["Гкал/ч"];
+    reportData.forEach((modelData) => {
+      const modelDataForTime = modelData.find((item) => item.time === label);
+      row[modelDataForTime.model] = modelDataForTime['Гкал/ч'];
     });
     return row;
   });
@@ -99,96 +109,68 @@ export const getDayReportData = async (date) => {
   return tableData;
 };
 
-
 export const getMonthReportData = async (month) => {
-  // Разделяем месяц на год и номер месяца (формат: YYYY-MM)
   const [year, monthNumber] = month.split('-').map(Number);
 
   if (!year || !monthNumber) {
     throw new Error('Некорректный формат месяца. Ожидается YYYY-MM.');
   }
 
-  // Начало месяца
   const startOfMonth = new Date(year, monthNumber - 1, 1);
   startOfMonth.setHours(0, 0, 0, 0);
 
-  // Конец месяца (последний день)
   const endOfMonth = new Date(year, monthNumber, 0);
   endOfMonth.setHours(23, 59, 59, 999);
 
-  // Создаем временные интервалы (по дням)
   const daysInMonth = Array.from({ length: endOfMonth.getDate() }, (_, i) => {
-    const startTime = new Date(year, monthNumber - 1, i + 1, 0, 0, 0, 0);
-    const endTime = new Date(year, monthNumber - 1, i + 1, 23, 59, 59, 999);
-    const label = String(i + 1).padStart(2, '0'); // Формат "01", "02", ...
-    return { startTime, endTime, label };
+    const date = new Date(year, monthNumber - 1, i + 1).toISOString().split('T')[0];
+    return date; // Массив дат в формате YYYY-MM-DD
   });
 
   const reportData = [];
 
-  // Для каждой модели получаем данные
-  for (const modelKey in modelsMap) {
-    const model = modelsMap[modelKey];
-    const modelData = await model.find({ lastUpdated: { $gte: startOfMonth, $lt: endOfMonth } });
+  for (const day of daysInMonth) {
+    // Получаем данные за каждый день, используя `getDayReportData`
+    const dayData = await getDayReportData(day);
 
-    // Для каждого дня извлекаем значение "Гкал/ч"
-    const dailyData = daysInMonth.map(({ startTime, endTime, label }) => {
-      const filteredData = modelData.filter(entry => {
-        const entryTime = new Date(entry.lastUpdated);
-        return entryTime >= startTime && entryTime <= endTime;
-      });
+    // Суммируем значения за каждый час по каждой модели
+    const dailyTotals = {};
+    dayData.forEach((row) => {
+      for (const [model, value] of Object.entries(row)) {
+        if (model === 'time') continue; // Пропускаем колонку времени
+        if (!dailyTotals[model]) dailyTotals[model] = 0;
 
-      if (filteredData.length === 0) {
-        return {
-          day: label,
-          model: modelKey,
-          "Гкал/ч": '-',
-        };
+        // Суммируем только числовые значения
+        const numericValue = value === '-' ? 0 : parseFloat(value);
+        dailyTotals[model] += numericValue;
       }
-
-      // Предполагается, что "Гкал/ч" существует в data
-      const gkalValues = filteredData.map(entry => entry.data.get('Гкал/ч ' + modelKey));
-
-      // Если нет значений, ставим дефис
-      if (gkalValues.length === 0) {
-        return {
-          day: label,
-          model: modelKey,
-          "Гкал/ч": '-',
-        };
-      }
-
-      // Рассчитываем среднее значение "Гкал/ч" за день
-      const sum = gkalValues.reduce((acc, value) => acc + value, 0);
-      const average = (sum / gkalValues.length).toFixed(2);
-
-      return {
-        day: label,
-        model: modelKey,
-        "Гкал/ч": average,
-      };
     });
 
-    reportData.push(dailyData);
+    // Округляем значения до 2 знаков после запятой
+    for (const model in dailyTotals) {
+      dailyTotals[model] = parseFloat(dailyTotals[model].toFixed(2));
+    }
+
+    // Форматируем итоговые данные за день
+    reportData.push({ day, ...dailyTotals });
   }
 
-  // Организуем данные для таблицы
-  const tableData = daysInMonth.map(({ label }) => {
-    const row = { day: label };
-    reportData.forEach(modelData => {
-      const modelDataForDay = modelData.find(item => item.day === label);
-      if (modelDataForDay) {
-        row[modelDataForDay.model] = modelDataForDay["Гкал/ч"];
-      } else {
-        row[modelKey] = '-';
-      }
-    });
-    return row;
+  // Итоги за месяц
+  const monthTotals = {};
+  reportData.forEach((dailyData) => {
+    for (const [model, value] of Object.entries(dailyData)) {
+      if (model === 'day') continue; // Пропускаем колонку с датой
+      if (!monthTotals[model]) monthTotals[model] = 0;
+
+      monthTotals[model] += value;
+    }
   });
 
-  return tableData;
+  // Округляем итоги за месяц
+  for (const model in monthTotals) {
+    monthTotals[model] = parseFloat(monthTotals[model].toFixed(2));
+  }
+
+  return reportData;
 };
-
-
-
 
