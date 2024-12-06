@@ -26,7 +26,9 @@ import uzliUchetaService from './routes/uzliUchetaRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
 import notis1Routes from './routes/notis1Routes.js';
 import notis2Routes from './routes/notis2Routes.js';
-import { readDataNotis1, readDataNotis2 } from './services/notisService.js';
+import { initSerialPorts } from './utils/serialPortManager.js';
+import { serialDevicesConfig } from './services/devicesConfig.js';
+import { SerialPortSimulator } from './services/serialPortSimulator.js';
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -202,14 +204,54 @@ const startDataRetrieval = async () => {
   }
 };
 
-const startNotisDataRetrieval = () => {
-  setInterval(async () => {
-    await readDataNotis1();
-    await readDataNotis2();
-  }, 10000); // Опрос каждые 10 секунд
+// Функция для опроса данных через Serial Port
+const startSerialDataRetrieval = async () => {
+  // Получаем уникальные порты из конфигурации serial устройств
+
+  const serialPorts = [...new Set(serialDevicesConfig.map(device => device.port))];
+
+  for (const port of serialPorts) {
+    const devices = serialDevicesConfig.filter(device => device.port === port);
+    const client = serialPortClients[port];
+
+    const readDevices = async () => {
+      for (const device of devices) {
+        const { serviceModule, readDataFunction, name, address } = device;
+        try {
+          if (isProduction) {
+
+            const module = await import(serviceModule);
+            const fn = module[readDataFunction];
+            if (typeof fn !== 'function') {
+              throw new Error(`Функция ${readDataFunction} не найдена в модуле ${serviceModule}`);
+            }
+            await fn(client, name, address);
+          } else {
+            // Симулятор: используем readData метода симулятора
+            const value = await client.readData(name, address);
+            // Сохранение или обработка сгенерированных данных
+            // Например, вызвать функцию сохранения из serviceModule
+            const module = await import(serviceModule);
+            const fn = module[readDataFunction];
+            if (typeof fn !== 'function') {
+              throw new Error(`Функция ${readDataFunction} не найдена в модуле ${serviceModule}`);
+            }
+            await fn(client, name, address, value); // Возможно, потребуется передать value
+          }
+        } catch (err) {
+          logger.error(`Ошибка при опросе данных ${name} на порту ${port}: ${err.message}`);
+        }
+      }
+    };
+
+    // Запускаем первый опрос сразу
+    readDevices();
+    // Повторяем опрос каждые 10 секунд
+    setInterval(readDevices, 10000);
+  }
 };
 
-startNotisDataRetrieval();
+startSerialDataRetrieval();
 
 // Запускаем опрос данных Modbus
 startDataRetrieval();
@@ -228,11 +270,14 @@ app.use('/api', mill10bRoutes);
 app.use('/api', reactorRoutes);
 app.use('/api/lab', laboratoryRoutes);
 app.use('/api', graphicRoutes); //api получасовых графиков
+app.use('/api/reportRoutes', reportRoutes); // Для месячных отчётов и коррекций
+app.use('/api', graphicRoutes); // api получасовых графиков
 app.use('/api', notis1Routes);
 app.use('/api', notis2Routes);
 
 // Добавляем новый маршрут для отчетов
 app.use('/api/reports', reportRoutes);
+
 
 app.get('/api/server-time', (req, res) => {
   res.json({ time: new Date().toISOString() });
