@@ -59,7 +59,7 @@ async function loadDataForSelectedDate() {
   document.getElementById('loadingWrapper').style.display = 'flex';
 
   try {
-    const response = await fetch(`/api/reports/getReportDataDay?date=${selectedDate}`);
+    const response = await fetch(`/api/reportRoutes/getReportDataDay?date=${selectedDate}`);
     let reportData = await response.json();
 
     // Получаем текущую дату и время

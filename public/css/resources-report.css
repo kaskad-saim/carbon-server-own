@@ -292,11 +292,11 @@ body::-webkit-scrollbar-thumb {
   padding: 5px;
 }
 
-.dynamic-report__report-table tr:hover {
+.dynamic-report__report-tr:hover {
   background-color: #ddd;
 }
 
-.dynamic-report__report-table tr:active {
+.dynamic-report__report-tr:active {
   background-color: #ddd;
 }
 
@@ -362,4 +362,286 @@ body::-webkit-scrollbar-thumb {
   100% {
     transform: translateX(100%);
   }
+}
+
+.dynamic-report__report-input {
+  outline: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+}
+
+.dynamic-report__report-tr:hover {
+  background-color: transparent;
+}
+
+.dynamic-report__report-tr:active {
+  background-color: transparent;
+}
+
+/* Подсветка ячейки, содержащей активный инпут */
+.dynamic-report__report-cell:hover,
+.dynamic-report__report-cell:has(.dynamic-report__report-input:hover),
+.dynamic-report__report-cell:has(.dynamic-report__report-input:focus),
+.dynamic-report__report-cell:has(.dynamic-report__report-input:active) {
+  box-shadow: 0px 0px 10px 4px green;
+  z-index: 1;
+}
+
+/* Стили для таблицы */
+.dynamic-report__report-table {
+  border-collapse: separate; /* Предотвращаем слияние границ */
+  border-spacing: 0; /* Убираем лишние зазоры */
+}
+
+td {
+  padding: 8px;
+  position: relative;
+}
+
+
+
+.mnemo__modal-background {
+  position: fixed;
+  top: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  z-index: -3;
+  cursor: default;
+}
+
+.mnemo__modal-background.enabled {
+  cursor: pointer;
+  opacity: 1;
+  z-index: 3;
+  transition: opacity .5s ease-in-out;
+}
+
+.mnemo__modal-active {
+  padding: 20px;
+
+  position: absolute;
+  max-width: 780px;
+  width: 100%;
+  /* height: 50px; */
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.6) 0px 3px 6px, rgba(0, 0, 0, 0.7) 0px 3px 6px;
+  cursor: default;
+}
+
+.mnemo__modal-active.enabled {
+  /* height: 100%; */
+  max-height: 600px;
+  transition: height .4s ease-in-out;
+}
+
+.mnemo__modal-title {
+  padding-bottom: 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid gray;
+}
+
+.mnemo__modal-title-text {
+  position: relative;
+  font-size: 28px;
+  font-family: 'Bitter', sans-serif;
+  line-height: 24px;
+  color: black;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mnemo__modal-window {
+  max-height: 600px;
+  padding-top: 20px;
+  overflow-y: auto;
+  height: 80%;
+}
+
+.mnemo__modal-close {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  z-index: 5;
+  width: 20px;
+  height: 20px;
+  transition: opacity .3s ease-in-out;
+  cursor: pointer;
+}
+
+.mnemo__modal-close:hover {
+  opacity: 0.5;
+}
+
+.mnemo__modal-close:active {
+  opacity: 0.5;
+}
+
+.mnemo__modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.mnemo__modal-body--confirm {
+  min-height: 100px;
+  justify-content: center;
+}
+
+.password__form {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  max-width: 605px;
+}
+
+.password__form--confirm {
+  width: auto;
+}
+
+.password__form-item {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.password__form-item:not(:last-child) {
+  margin-right: 10px;
+}
+
+.password__form-item--confirm {
+  flex-direction: row;
+}
+
+.password__form-label {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  color: green;
+}
+
+.password__form-input-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-left: 30px;
+}
+
+.password__form-input {
+  margin-top: 5px;
+  display: block;
+  width: 100%;
+  height: 25px;
+  padding: 4px 10px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid grey;
+  transition: border .3s ease-in-out, box-shadow .3s ease-in-out;
+}
+
+.password__form-error {
+  display: none;
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  width: 200px;
+  z-index: 1;
+  font-size: 12px;
+  line-height: 12px;
+  font-weight: 600;
+  color: red;
+  font-style: italic;
+}
+
+.password__form-input.error {
+  border: 1px solid red;
+  box-shadow: 0 0 0 0.2rem rgba(255, 69, 58, 0.25);
+}
+
+.password__form-error.active {
+  display: block;
+}
+
+.password__form-input[type="number"]::-webkit-outer-spin-button,
+.password__form-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.password__form-input::placeholder {
+  font-family: 'Bitter', sans-serif;
+  color: grey;
+}
+
+.password__form-input:hover {
+  border: 1px solid green;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(61, 158, 107, 0.25);
+}
+
+.password__form-input:active {
+  border: 1px solid green;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(61, 158, 107, 0.25);
+}
+
+.password__form-input:focus {
+  color: #212529;
+  background-color: #fff;
+  border: 1px solid green;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(61, 158, 107, 0.25);
+}
+
+.password__form-input:disabled {
+  background-color: #f5f5f5;
+  opacity: 1;
+}
+
+.password__form-error--delete {
+  left: 0;
+}
+
+.password__form-btn {
+  margin-left: 10px;
+  height: 25px;
+  padding: 2px 10px;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  background-color: white;
+  color: green;
+  border: 1px solid green;
+  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+}
+
+.password__form-btn:hover {
+  color: white;
+  background-color: green;
+}
+
+.password__form-btn:active {
+  color: white;
+  background-color: green;
+}
+
+.dynamic-report__btn-save {
+  margin-top: 10px;
 }
