@@ -1,60 +1,92 @@
-export class SerialPortSimulator {
+// services/serialPortSimulator.js
+import EventEmitter from 'events';
+import logger from '../logger.js';
+import { serialDevicesConfig } from './devicesConfig.js';
+
+export class SerialPortSimulator extends EventEmitter {
   constructor(port) {
+    super();
     this.port = port;
-    this.isConnected = true;
-    this.currentValues = {}; // Хранит текущие значения для каждого параметра
-    this.devices = {
-      NOTIS1: this.notis1,
-      NOTIS2: this.notis2,
-    };
+    this.isConnected = false;
+    this.currentValues = {};
+
+    // Фильтруем устройства, связанные с этим портом
+    this.devices = serialDevicesConfig.filter(device => device.port === port);
+    this.interval = null;
   }
 
   async connect() {
-    console.log(`Симулятор SerialPort подключен к порту ${this.port}`);
+    this.isConnected = true;
+    logger.info(`Симулятор SerialPort подключен к порту ${this.port}`);
+
+    // Начинаем генерацию данных
+    this.startSimulation();
     return Promise.resolve();
   }
 
-  // Симуляция для NOTIS1
-  notis1 = {
-    indices: {
-      1: { label: 'Доза (г)', min: 0, max: 1000, step: 10 },
-      5: { label: 'Текущее количество доз (шт)', min: 0, max: 500, step: 5 },
-      8: { label: 'Доза (г/мин)', min: 0, max: 200, step: 5 },
-    },
-  };
-
-  // Симуляция для NOTIS2
-  notis2 = {
-    indices: {
-      1: { label: 'Доза (г)', min: 0, max: 800, step: 8 },
-      5: { label: 'Текущее количество доз (шт)', min: 0, max: 400, step: 4 },
-      8: { label: 'Доза (г/мин)', min: 0, max: 150, step: 3 },
-    },
-  };
-
-  async readData(deviceName, index) {
-    const device = this.devices[deviceName];
-    if (!device || !device.indices[index]) {
-      throw new Error(`Индекс ${index} для устройства ${deviceName} не найден`);
+  async disconnect() {
+    this.isConnected = false;
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
     }
-
-    const { min, max, step } = device.indices[index];
-    const key = `${deviceName}-${index}`;
-    if (!this.currentValues[key]) {
-      this.currentValues[key] = this.initializeValue(min, max);
-    }
-
-    const change = (Math.random() - 0.5) * step;
-    let newValue = this.currentValues[key] + change;
-
-    if (newValue > max) newValue = max;
-    if (newValue < min) newValue = min;
-
-    this.currentValues[key] = newValue;
-    return parseFloat(newValue.toFixed(2));
+    logger.info(`Симулятор SerialPort отключен от порта ${this.port}`);
+    return Promise.resolve();
   }
 
-  initializeValue(min, max) {
-    return min + Math.random() * (max - min);
+  startSimulation() {
+    if (this.interval) return;
+
+    this.interval = setInterval(() => {
+      this.devices.forEach(device => {
+        // Проверяем, что устройство имеет name и address
+        if (!device.name || typeof device.address === 'undefined') {
+          logger.error(`Устройство с портом ${this.port} имеет некорректную конфигурацию:`, device);
+          return;
+        }
+
+        // Генерация данных для каждого устройства
+        const data = this.generateData(device);
+        this.emit('data', data);
+      });
+    }, 1000); // Генерация данных каждую секунду
+  }
+
+  generateData(device) {
+    const { name, address } = device;
+    // Генерация случайного значения в зависимости от типа устройства или адреса
+    const value = this.generateRandomValue(name, address);
+
+    // Формат данных может быть адаптирован под вашу реализацию
+    const data = {
+      deviceName: name,
+      address: address,
+      value: value,
+      timestamp: new Date(),
+    };
+
+    logger.debug(`Симулятор ${name} на порту ${this.port} генерирует данные:`, data);
+    return data;
+  }
+
+  generateRandomValue(deviceName, address) {
+    // Настройте генерацию случайных значений в зависимости от устройства и адреса
+    // Пример:
+    if (address === 1) {
+      return Math.round(Math.random() * 100); // Доза (г)
+    } else if (address === 5) {
+      return Math.floor(Math.random() * 100); // Текущее количество доз (шт)
+    } else if (address === 8) {
+      return Math.round(Math.random() * 10); // Доза (г/мин)
+    }
+    // Добавьте другие адреса по необходимости
+    return Math.round(Math.random() * 100);
+  }
+
+  // Метод для чтения данных, аналогичный реальному SerialPort
+  async readData(deviceName, address) {
+    // Возвращаем сгенерированное значение
+    const data = this.generateData({ name: deviceName, address: address });
+    return data.value;
   }
 }

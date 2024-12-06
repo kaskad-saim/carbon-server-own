@@ -134,7 +134,35 @@ devicesConfig.forEach((device) => {
   }
 });
 
-// Функция для опроса данных
+// Инициализация Serial Port клиентов
+const serialPortClients = {}; // Карта для serial port клиентов
+
+if (isProduction) {
+  // В продакшен режиме инициализируем реальные последовательные порты
+  initSerialPorts();
+} else {
+  // В режиме разработки используем симулятор SerialPort
+  serialDevicesConfig.forEach((device) => {
+    const { port } = device;
+
+    if (!serialPortClients[port]) {
+      // Симулятор SerialPort
+      const simulator = new SerialPortSimulator(port);
+      serialPortClients[port] = simulator;
+
+      simulator.connect()
+        .then(() => {
+          logger.info(`Симулятор SerialPort подключен к порту ${port}`);
+        })
+        .catch((err) => {
+          logger.error(`Ошибка подключения симулятора SerialPort ${port}:`, err);
+        });
+
+    }
+  });
+}
+
+// Функция для опроса данных Modbus
 const startDataRetrieval = async () => {
   // Получаем уникальные порты из конфигурации устройств
   const ports = [...new Set(devicesConfig.map((device) => device.port))];
@@ -149,8 +177,6 @@ const startDataRetrieval = async () => {
         const module = await import(device.serviceModule);
         const readDataFunction = module[device.readDataFunction];
         const { deviceID, name: deviceLabel } = device;
-
-
 
         try {
           if (unstable) {
@@ -178,50 +204,39 @@ const startDataRetrieval = async () => {
   }
 };
 
-export async function startSerialDataRetrieval() {
-  // Инициализируем порты
-  const SerialPortManager = isProduction ? initSerialPorts : SerialPortSimulator;
+// Функция для опроса данных через Serial Port
+const startSerialDataRetrieval = async () => {
+  // Получаем уникальные порты из конфигурации serial устройств
 
-  const ports = [...new Set(serialDevicesConfig.map(device => device.port))];
-  const serialClients = {}; // Сохраняем клиентов (реальных или симуляторов)
+  const serialPorts = [...new Set(serialDevicesConfig.map(device => device.port))];
 
-  // Инициализируем порты
-  for (const port of ports) {
-    if (isProduction) {
-      // Для реального режима вызываем initSerialPorts один раз
-      initSerialPorts();
-    } else {
-      // Для симулятора создаем клиента для каждого порта
-      serialClients[port] = new SerialPortManager(port);
-      await serialClients[port].connect();
-      logger.info(`Симулятор SerialPort подключен к порту ${port}`);
-    }
-  }
-
-  // Чтение данных устройств
-  for (const port of ports) {
+  for (const port of serialPorts) {
     const devices = serialDevicesConfig.filter(device => device.port === port);
+    const client = serialPortClients[port];
 
     const readDevices = async () => {
       for (const device of devices) {
-        const { serviceModule, readDataFunction, name, index } = device;
+        const { serviceModule, readDataFunction, name, address } = device;
         try {
-          if (!isProduction) {
-            // Для симуляции: используем `readData` из симулятора
-            const value = await serialClients[port].readData(name, index);
-            // logger.info(`[Симулятор] Данные с устройства ${name} на порту ${port}, индекс ${index}: ${value}`);
-          } else {
-            // Для реального режима: динамический импорт функции чтения
+          if (isProduction) {
+
             const module = await import(serviceModule);
             const fn = module[readDataFunction];
-
             if (typeof fn !== 'function') {
-              logger.error(`В модуле ${serviceModule} не найдена функция ${readDataFunction} для устройства ${name}`);
-              continue;
+              throw new Error(`Функция ${readDataFunction} не найдена в модуле ${serviceModule}`);
             }
-
-            // Вызываем функцию чтения данных
-            await fn();
+            await fn(client, name, address);
+          } else {
+            // Симулятор: используем readData метода симулятора
+            const value = await client.readData(name, address);
+            // Сохранение или обработка сгенерированных данных
+            // Например, вызвать функцию сохранения из serviceModule
+            const module = await import(serviceModule);
+            const fn = module[readDataFunction];
+            if (typeof fn !== 'function') {
+              throw new Error(`Функция ${readDataFunction} не найдена в модуле ${serviceModule}`);
+            }
+            await fn(client, name, address, value); // Возможно, потребуется передать value
           }
         } catch (err) {
           logger.error(`Ошибка при опросе данных ${name} на порту ${port}: ${err.message}`);
@@ -234,13 +249,11 @@ export async function startSerialDataRetrieval() {
     // Повторяем опрос каждые 10 секунд
     setInterval(readDevices, 10000);
   }
-}
-
+};
 
 startSerialDataRetrieval();
 
-
-// Запускаем опрос данных
+// Запускаем опрос данных Modbus
 startDataRetrieval();
 
 // Используем маршруты
@@ -256,7 +269,7 @@ app.use('/api', mill2Routes);
 app.use('/api', mill10bRoutes);
 app.use('/api', reactorRoutes);
 app.use('/api/lab', laboratoryRoutes);
-app.use('/api', graphicRoutes); //api получасовых графиков
+app.use('/api', graphicRoutes); // api получасовых графиков
 app.use('/api', notis1Routes);
 app.use('/api', notis2Routes);
 

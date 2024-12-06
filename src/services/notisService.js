@@ -1,26 +1,28 @@
+// services/notisService.js
 import { Notis1Model, Notis2Model } from '../models/notisModel.js';
 import { getData } from '../utils/serialPortManager.js';
 import logger from '../logger.js';
 import { serialDevicesConfig } from './devicesConfig.js';
 
-export const readDataNotis1 = async () => {
+// Функции для чтения данных из Notis устройств
+export const readDataNotis1 = async (client, deviceName, address, simulatedValue = null) => {
   const indices = [1, 5, 8];
-  await readNotisData('НОТИС1', Notis1Model, indices);
+  await readNotisData(client, 'НОТИС1', Notis1Model, indices, simulatedValue);
 };
 
-export const readDataNotis2 = async () => {
+export const readDataNotis2 = async (client, deviceName, address, simulatedValue = null) => {
   const indices = [1, 5, 8];
-  await readNotisData('НОТИС2', Notis2Model, indices);
+  await readNotisData(client, 'НОТИС2', Notis2Model, indices, simulatedValue);
 };
 
-async function readNotisData(deviceName, Model, indices) {
+async function readNotisData(client, deviceName, Model, indices, simulatedValue) {
   const device = serialDevicesConfig.find(d => d.name === deviceName);
   if (!device) {
     logger.error(`[${deviceName}] Не найдено устройство в конфиге`);
     return;
   }
 
-  const { address, port } = device;
+  const { address: deviceAddress, port } = device;
 
   const indexMapping = {
     1: 'Доза (г)',
@@ -31,7 +33,15 @@ async function readNotisData(deviceName, Model, indices) {
   const results = {};
   for (const index of indices) {
     try {
-      const value = await getData(port, address, index);
+      let value;
+      if (simulatedValue !== null) {
+        // В случае симуляции используем переданное значение
+        value = simulatedValue;
+      } else {
+        // В продакшене читаем реальные данные
+        value = await getData(port, deviceAddress, index);
+      }
+
       const keyBase = indexMapping[index] || `Параметр_${index}`;
       const key = `${keyBase} ${deviceName}`; // Добавляем название устройства
       results[key] = value;
@@ -53,4 +63,3 @@ async function readNotisData(deviceName, Model, indices) {
 
   await new Model(formattedData).save();
 }
-
