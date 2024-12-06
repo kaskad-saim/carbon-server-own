@@ -24,6 +24,9 @@ import { connectDB } from './services/dataBaseService.js';
 import { devicesConfig } from './services/devicesConfig.js';
 import uzliUchetaService from './routes/uzliUchetaRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import notis1Routes from './routes/notis1Routes.js';
+import notis2Routes from './routes/notis2Routes.js';
+import { readDataNotis1, readDataNotis2 } from './services/notisService.js';
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -129,7 +132,35 @@ devicesConfig.forEach((device) => {
   }
 });
 
-// Функция для опроса данных
+// Инициализация Serial Port клиентов
+const serialPortClients = {}; // Карта для serial port клиентов
+
+if (isProduction) {
+  // В продакшен режиме инициализируем реальные последовательные порты
+  initSerialPorts();
+} else {
+  // В режиме разработки используем симулятор SerialPort
+  serialDevicesConfig.forEach((device) => {
+    const { port } = device;
+
+    if (!serialPortClients[port]) {
+      // Симулятор SerialPort
+      const simulator = new SerialPortSimulator(port);
+      serialPortClients[port] = simulator;
+
+      simulator.connect()
+        .then(() => {
+          logger.info(`Симулятор SerialPort подключен к порту ${port}`);
+        })
+        .catch((err) => {
+          logger.error(`Ошибка подключения симулятора SerialPort ${port}:`, err);
+        });
+
+    }
+  });
+}
+
+// Функция для опроса данных Modbus
 const startDataRetrieval = async () => {
   // Получаем уникальные порты из конфигурации устройств
   const ports = [...new Set(devicesConfig.map((device) => device.port))];
@@ -171,7 +202,16 @@ const startDataRetrieval = async () => {
   }
 };
 
-// Запускаем опрос данных
+const startNotisDataRetrieval = () => {
+  setInterval(async () => {
+    await readDataNotis1();
+    await readDataNotis2();
+  }, 10000); // Опрос каждые 10 секунд
+};
+
+startNotisDataRetrieval();
+
+// Запускаем опрос данных Modbus
 startDataRetrieval();
 
 // Используем маршруты
@@ -188,7 +228,11 @@ app.use('/api', mill10bRoutes);
 app.use('/api', reactorRoutes);
 app.use('/api/lab', laboratoryRoutes);
 app.use('/api', graphicRoutes); //api получасовых графиков
-app.use('/api/reportRoutes', reportRoutes); // Для месячных отчётов и коррекций
+app.use('/api', notis1Routes);
+app.use('/api', notis2Routes);
+
+// Добавляем новый маршрут для отчетов
+app.use('/api/reports', reportRoutes);
 
 app.get('/api/server-time', (req, res) => {
   res.json({ time: new Date().toISOString() });
