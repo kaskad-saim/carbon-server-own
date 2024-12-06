@@ -28,6 +28,7 @@ import notis1Routes from './routes/notis1Routes.js';
 import notis2Routes from './routes/notis2Routes.js';
 import { initSerialPorts } from './utils/serialPortManager.js';
 import { serialDevicesConfig } from './services/devicesConfig.js';
+import { SerialPortSimulator } from './services/serialPortSimulator.js';
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -178,31 +179,50 @@ const startDataRetrieval = async () => {
 };
 
 export async function startSerialDataRetrieval() {
-  // Инициализируем порты один раз при старте
-  initSerialPorts();
+  // Инициализируем порты
+  const SerialPortManager = isProduction ? initSerialPorts : SerialPortSimulator;
 
-  // Группируем устройства по портам
   const ports = [...new Set(serialDevicesConfig.map(device => device.port))];
+  const serialClients = {}; // Сохраняем клиентов (реальных или симуляторов)
 
+  // Инициализируем порты
+  for (const port of ports) {
+    if (isProduction) {
+      // Для реального режима вызываем initSerialPorts один раз
+      initSerialPorts();
+    } else {
+      // Для симулятора создаем клиента для каждого порта
+      serialClients[port] = new SerialPortManager(port);
+      await serialClients[port].connect();
+      logger.info(`Симулятор SerialPort подключен к порту ${port}`);
+    }
+  }
+
+  // Чтение данных устройств
   for (const port of ports) {
     const devices = serialDevicesConfig.filter(device => device.port === port);
 
     const readDevices = async () => {
       for (const device of devices) {
-        const { serviceModule, readDataFunction, name } = device;
+        const { serviceModule, readDataFunction, name, index } = device;
         try {
-          // Динамически импортируем модуль
-          const module = await import(serviceModule);
-          const fn = module[readDataFunction];
+          if (!isProduction) {
+            // Для симуляции: используем `readData` из симулятора
+            const value = await serialClients[port].readData(name, index);
+            // logger.info(`[Симулятор] Данные с устройства ${name} на порту ${port}, индекс ${index}: ${value}`);
+          } else {
+            // Для реального режима: динамический импорт функции чтения
+            const module = await import(serviceModule);
+            const fn = module[readDataFunction];
 
-          if (typeof fn !== 'function') {
-            logger.error(`В модуле ${serviceModule} не найдена функция ${readDataFunction} для устройства ${name}`);
-            continue;
+            if (typeof fn !== 'function') {
+              logger.error(`В модуле ${serviceModule} не найдена функция ${readDataFunction} для устройства ${name}`);
+              continue;
+            }
+
+            // Вызываем функцию чтения данных
+            await fn();
           }
-
-          // Вызываем функцию чтения данных
-          await fn();
-
         } catch (err) {
           logger.error(`Ошибка при опросе данных ${name} на порту ${port}: ${err.message}`);
         }
@@ -215,6 +235,7 @@ export async function startSerialDataRetrieval() {
     setInterval(readDevices, 10000);
   }
 }
+
 
 startSerialDataRetrieval();
 
