@@ -205,3 +205,22 @@ export const devicesConfig = [
     serviceModule: './services/uzliUchetaService.js',
   }
 ];
+
+export const serialDevicesConfig = [
+  {
+    name: 'НОТИС1',
+    address: 1,
+    port: 'COM9',
+    baudRate: 115200,
+    serviceModule: './services/notisService.js',
+    readDataFunction: 'readDataNotis1'
+  },
+  {
+    name: 'НОТИС2',
+    address: 2,
+    port: 'COM9',
+    baudRate: 115200,
+    serviceModule: './services/notisService.js',
+    readDataFunction: 'readDataNotis2'
+  }
+];

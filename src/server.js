@@ -26,7 +26,8 @@ import uzliUchetaService from './routes/uzliUchetaRoutes.js'
 import reportRoutes from './routes/reportRoutes.js';
 import notis1Routes from './routes/notis1Routes.js';
 import notis2Routes from './routes/notis2Routes.js';
-import { readDataNotis1, readDataNotis2 } from './services/notisService.js';
+import { initSerialPorts } from './utils/serialPortManager.js';
+import { serialDevicesConfig } from './services/devicesConfig.js';
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -176,14 +177,47 @@ const startDataRetrieval = async () => {
   }
 };
 
-const startNotisDataRetrieval = () => {
-  setInterval(async () => {
-    await readDataNotis1();
-    await readDataNotis2();
-  }, 10000); // Опрос каждые 10 секунд
-};
+export async function startSerialDataRetrieval() {
+  // Инициализируем порты один раз при старте
+  initSerialPorts();
 
-startNotisDataRetrieval();
+  // Группируем устройства по портам
+  const ports = [...new Set(serialDevicesConfig.map(device => device.port))];
+
+  for (const port of ports) {
+    const devices = serialDevicesConfig.filter(device => device.port === port);
+
+    const readDevices = async () => {
+      for (const device of devices) {
+        const { serviceModule, readDataFunction, name } = device;
+        try {
+          // Динамически импортируем модуль
+          const module = await import(serviceModule);
+          const fn = module[readDataFunction];
+
+          if (typeof fn !== 'function') {
+            logger.error(`В модуле ${serviceModule} не найдена функция ${readDataFunction} для устройства ${name}`);
+            continue;
+          }
+
+          // Вызываем функцию чтения данных
+          await fn();
+
+        } catch (err) {
+          logger.error(`Ошибка при опросе данных ${name} на порту ${port}: ${err.message}`);
+        }
+      }
+    };
+
+    // Запускаем первый опрос сразу
+    readDevices();
+    // Повторяем опрос каждые 10 секунд
+    setInterval(readDevices, 10000);
+  }
+}
+
+startSerialDataRetrieval();
+
 
 // Запускаем опрос данных
 startDataRetrieval();

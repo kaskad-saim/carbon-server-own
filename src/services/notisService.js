@@ -1,66 +1,44 @@
 import { Notis1Model, Notis2Model } from '../models/notisModel.js';
-import { getData } from '../utils/serialPortUtils.js'; // Обновленный импорт
+import { getData } from '../utils/serialPortManager.js';
 import logger from '../logger.js';
+import { serialDevicesConfig } from './devicesConfig.js';
 
-// Функция для чтения и записи данных устройства Notis1
 export const readDataNotis1 = async () => {
-  try {
-    const address = 1; // Адрес для Notis1
-    const deviceName = 'ПК1';
-
-    const data = await fetchNotisData(deviceName, address);
-    const formattedData = {
-      data,
-      lastUpdated: new Date(),
-    };
-
-    await new Notis1Model(formattedData).save();
-    // logger.info(`[Notis1] Данные успешно сохранены: ${JSON.stringify(formattedData)}`);
-  } catch (err) {
-    logger.error(`[Notis1] Ошибка при чтении данных: ${err.message}`);
-  }
+  const indices = [1, 5, 8];
+  await readNotisData('НОТИС1', Notis1Model, indices);
 };
 
-// Функция для чтения и записи данных устройства Notis2
 export const readDataNotis2 = async () => {
-  try {
-    const address = 2; // Адрес для Notis2
-    const deviceName = 'ПК2';
-
-    const data = await fetchNotisData(deviceName, address);
-    const formattedData = {
-      data,
-      lastUpdated: new Date(),
-    };
-
-    await new Notis2Model(formattedData).save();
-    // logger.info(`[Notis2] Данные успешно сохранены: ${JSON.stringify(formattedData)}`);
-  } catch (err) {
-    logger.error(`[Notis2] Ошибка при чтении данных: ${err.message}`);
-  }
+  const indices = [1, 5, 8];
+  await readNotisData('НОТИС2', Notis2Model, indices);
 };
 
-// Универсальная функция получения данных
-const fetchNotisData = async (deviceName, address) => {
+async function readNotisData(deviceName, Model, indices) {
+  const device = serialDevicesConfig.find(d => d.name === deviceName);
+  if (!device) {
+    logger.error(`[${deviceName}] Не найдено устройство в конфиге`);
+    return;
+  }
+
+  const { address, port } = device;
+
   const indexMapping = {
     1: 'Доза (г)',
     5: 'Текущее количество доз (шт)',
     8: 'Доза (г/мин)',
   };
 
-  const indices = [1, 5, 8];
   const results = {};
-
   for (const index of indices) {
     try {
-      const value = await getData(index, address); // Вызов утилиты для получения данных
-      const key = `${indexMapping[index]}`;
+      const value = await getData(port, address, index);
+      const keyBase = indexMapping[index] || `Параметр_${index}`;
+      const key = `${keyBase} ${deviceName}`; // Добавляем название устройства
       results[key] = value;
 
-      // Если индекс 8 (Доза_г/мин), добавляем расчет для Доза_кг/ч
       if (index === 8) {
-        const doseKgPerHourKey = `Доза (кг/ч)`;
-        const doseKgPerHourValue = Math.round((value / 1000 * 60) * 10) / 10; // Округляем до 1 знака
+        const doseKgPerHourKey = `Доза (кг/ч) ${deviceName}`; // Добавляем название устройства
+        const doseKgPerHourValue = Math.round((value / 1000 * 60) * 10) / 10;
         results[doseKgPerHourKey] = doseKgPerHourValue;
       }
     } catch (error) {
@@ -68,5 +46,11 @@ const fetchNotisData = async (deviceName, address) => {
     }
   }
 
-  return results;
-};
+  const formattedData = {
+    data: results,
+    lastUpdated: new Date(),
+  };
+
+  await new Model(formattedData).save();
+}
+
