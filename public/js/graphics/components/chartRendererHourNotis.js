@@ -21,7 +21,6 @@ export function createChart({
       if (!isAutoUpdate) showPreloader(elements);
 
       const data = await fetchData(parameterType, start, end);
-      console.log('Полученные данные:', data); // Отладка
 
       const chartData = {};
       let hasData = false;
@@ -217,7 +216,7 @@ export function createChart({
     // Проверяем поле data
     return item.data && item.data[label] !== undefined ? item.data[label] : null;
   }
-  
+
 
   return {
     renderChart,

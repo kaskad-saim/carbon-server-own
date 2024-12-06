@@ -62,8 +62,8 @@ export const dataLabelsNotis = {
 };
 
 export const displayNamesNotis = {
-  'Доза (кг/ч) НОТИС1': 'Доза Нотис1',
-  'Доза (кг/ч) НОТИС2': 'Доза Нотис2',
+  'Доза (кг/ч) НОТИС1': 'Загрузка',
+  'Доза (кг/ч) НОТИС2': 'Загрузка',
 };
 
 export const dataLabelsMpa2 = {

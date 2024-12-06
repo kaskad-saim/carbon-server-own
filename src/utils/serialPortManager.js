@@ -5,6 +5,7 @@ import { calcCrc, createGetDataRequest } from './crcUtils.js';
 import { serialDevicesConfig } from '../services/devicesConfig.js';
 
 const portsMap = {}; // { portName: { comPort, parser } }
+const errorLogCache = {}; // Хранит устройства и типы ошибок для минимизации повторного логирования
 
 export function initSerialPorts() {
   // Собираем уникальные конфигурации порт+скорость
@@ -44,7 +45,7 @@ export function initSerialPorts() {
   }
 }
 
-export function getData(portName, address, index) {
+export function getData(portName, address, index, retryCount = 3) {
   return new Promise((resolve, reject) => {
     const portObj = portsMap[portName];
     if (!portObj || !portObj.comPort) {
@@ -64,7 +65,31 @@ export function getData(portName, address, index) {
         const crcCalculated = calcCrc(responseBuffer);
 
         if (crcReceived !== crcCalculated) {
-          reject(new Error('CRC mismatch'));
+          // Проверка на повторную ошибку
+          if (!errorLogCache[portName]) {
+            errorLogCache[portName] = {};
+          }
+
+          const currentTime = Date.now();
+          const lastErrorTime = errorLogCache[portName][index];
+
+          // Если ошибка произошла недавно, не логировать её снова
+          if (!lastErrorTime || (currentTime - lastErrorTime) > 60000) {
+            errorLogCache[portName][index] = currentTime;
+            logger.error(`[${portName}] Ошибка получения данных с индекса ${index}: CRC mismatch`);
+          }
+
+          // Если попытки еще есть, повторяем запрос
+          if (retryCount > 0) {
+            logger.info(`[${portName}] Попытка ${4 - retryCount} повторить запрос данных...`);
+            setTimeout(() => {
+              getData(portName, address, index, retryCount - 1) // Рекурсивный вызов с уменьшением количества попыток
+                .then(resolve)
+                .catch(reject);
+            }, 2000); // Интервал между попытками 2 секунды
+          } else {
+            reject(new Error('CRC mismatch after 3 retries'));
+          }
         } else {
           const buffer = Buffer.from(responseBuffer.slice(6, 10));
           const value = buffer.readUInt32LE();

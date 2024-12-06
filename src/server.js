@@ -206,8 +206,10 @@ const startDataRetrieval = async () => {
 
 // Функция для опроса данных через Serial Port
 const startSerialDataRetrieval = async () => {
-  // Получаем уникальные порты из конфигурации serial устройств
+  const POLL_INTERVAL = 10000; // Интервал опроса в миллисекундах (10 секунд)
+  const TIMEOUT = 12000; // Таймаут для выполнения функции (12 секунд)
 
+  // Получаем уникальные порты из конфигурации serial устройств
   const serialPorts = [...new Set(serialDevicesConfig.map(device => device.port))];
 
   for (const port of serialPorts) {
@@ -217,37 +219,56 @@ const startSerialDataRetrieval = async () => {
     const readDevices = async () => {
       for (const device of devices) {
         const { serviceModule, readDataFunction, name, address } = device;
-        try {
-          if (isProduction) {
 
+        const reinitializeNode = async () => {
+          logger.info(`Реинициализация узла ${name} на порту ${port}`);
+          try {
+            // Пример логики реинициализации
+            await client.reinitialize();
+            logger.info(`Узел ${name} успешно реинициализирован`);
+          } catch (reinitError) {
+            logger.error(`Ошибка реинициализации узла ${name}: ${reinitError.message}`);
+          }
+        };
+
+        try {
+          const performWithTimeout = (fn, timeout) =>
+            Promise.race([
+              fn(),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error(`Таймаут выполнения ${readDataFunction}`)), timeout)
+              ),
+            ]);
+
+          if (isProduction) {
             const module = await import(serviceModule);
             const fn = module[readDataFunction];
             if (typeof fn !== 'function') {
               throw new Error(`Функция ${readDataFunction} не найдена в модуле ${serviceModule}`);
             }
-            await fn(client, name, address);
+            // Запускаем с таймаутом
+            await performWithTimeout(() => fn(client, name, address), TIMEOUT);
           } else {
             // Симулятор: используем readData метода симулятора
             const value = await client.readData(name, address);
-            // Сохранение или обработка сгенерированных данных
-            // Например, вызвать функцию сохранения из serviceModule
             const module = await import(serviceModule);
             const fn = module[readDataFunction];
             if (typeof fn !== 'function') {
               throw new Error(`Функция ${readDataFunction} не найдена в модуле ${serviceModule}`);
             }
-            await fn(client, name, address, value); // Возможно, потребуется передать value
+            await performWithTimeout(() => fn(client, name, address, value), TIMEOUT);
           }
         } catch (err) {
           logger.error(`Ошибка при опросе данных ${name} на порту ${port}: ${err.message}`);
+          await reinitializeNode(); // Реинициализация узла при ошибке
         }
       }
     };
 
     // Запускаем первый опрос сразу
     readDevices();
-    // Повторяем опрос каждые 10 секунд
-    setInterval(readDevices, 10000);
+    // Повторяем опрос каждые 10 секунд (или любое другое значение в POLL_INTERVAL)
+    setInterval(readDevices, POLL_INTERVAL);
   }
 };
 
