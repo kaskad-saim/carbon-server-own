@@ -13,16 +13,17 @@
     <div class="dynamic-report">
 
 
-      <h1 class="dynamic-report__title">Отчёт по энергоресурсам к.10в1</h1>
-      <div class="dynamic-report__date-range">
-        <div class="dynamic-report__date-label">Выберите месяц для просмотра архива отчета:</div>
-        <div class="dynamic-report__date-div">
-          <input class="dynamic-report__date-input" type="month" id="singleMonth">
-          <button class="dynamic-report__btn" id="confirmMonthBtn">Принять</button>
+      <div class="dynamic-report__title-content">
+        <h1 class="dynamic-report__title title-reset">Отчёт по энергоресурсам к.10в1</h1>
+        <div class="dynamic-report__date-range">
+          <div class="dynamic-report__date-label">Выберите месяц для просмотра архива отчета:</div>
+          <div class="dynamic-report__date-div">
+            <input class="dynamic-report__date-input" type="month" id="singleMonth">
+            <button class="dynamic-report__btn" id="confirmMonthBtn">Принять</button>
+          </div>
         </div>
       </div>
 
-      <!-- Заголовок для выбранной даты -->
       <h3>Отчет за <span id="reportMonth"></span></h3>
 
       <!-- Таблица для вывода данных -->
@@ -56,9 +57,9 @@
         </table>
 
         <!-- Кнопка для сохранения изменений -->
-         <div class="dynamic-report__btn-save">
+        <div class="dynamic-report__btn-save">
           <button class="dynamic-report__btn" id="saveChangesBtn">Сохранить изменения по коррекции</button>
-         </div>
+        </div>
 
 
       </div>
@@ -69,7 +70,7 @@
   <div id="password-confirm" class="mnemo__modal-background modal-js">
     <div class="mnemo__modal-active">
       <div class="mnemo__modal-title">
-        <h2 class="mnemo__modal-title-text title-reset">Вы уверены?</h2>
+        <h2 class="mnemo__modal-title-text title-reset">Коррекция параметров</h2>
         <button class="mnemo__modal-close btn-reset">
           <svg class="mnemo__modal-btn-close-svg" width="30px" height="30px" viewBox="0 0 32 32">
             <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
@@ -97,11 +98,11 @@
       </div>
     </div>
   </div>
-   <!-- Модальное окно для ввода пароля -->
-   <div id="password-not-change" class="mnemo__modal-background modal-js">
+  <!-- Модальное окно для ввода пароля -->
+  <div id="password-not-change" class="mnemo__modal-background modal-js">
     <div class="mnemo__modal-active">
       <div class="mnemo__modal-title">
-        <h2 class="mnemo__modal-title-text title-reset">Вы уверены?</h2>
+        <h2 class="mnemo__modal-title-text title-reset">Коррекция параметров</h2>
         <button class="mnemo__modal-close btn-reset">
           <svg class="mnemo__modal-btn-close-svg" width="30px" height="30px" viewBox="0 0 32 32">
             <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
@@ -116,11 +117,11 @@
         </button>
       </div>
       <div class="mnemo__modal-body mnemo__modal-body--confirm">
-       <p>изменений не было</p>
+        <p class="password__descr descr-reset">Изменений не было. Введите коррекцию!!!</p>
       </div>
     </div>
   </div>
-  <script src="../../../js/energy-resources/report-month.js"></script>
+  <script src="../../../js/energy-resources/reports/report-month.js"></script>
 </body>
 
 </html>
