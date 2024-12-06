@@ -97,3 +97,41 @@ export const updateGorelkaParams = (data) => {
     moshGorelkyVrSpan.innerText = moshGorelkyVr2;
   }
 };
+
+// Функция для обновления нотиса1
+export const updateNotis1 = (data) => {
+  const elements = {
+    // Температуры
+    'doza-grams-notis1': data?.data?.['Доза (г) НОТИС1'] || '-',
+    'doza-count-notis1': data?.data?.['Текущее количество доз (шт) НОТИС1'] || '-',
+    'doza-grams-per-minute-notis1': data?.data?.['Доза (г/мин) НОТИС1'] || '-',
+    'doza-kgs-per-hour-notis1': data?.data?.['Доза (кг/ч) НОТИС1'] || '-',
+  };
+
+  // Обновляем значения в DOM
+  for (const [selector, value] of Object.entries(elements)) {
+    const element = document.querySelector(`.${selector}`);
+    if (element) {
+      element.textContent = value;
+    }
+  }
+};
+
+// Функция для обновления нотиса1
+export const updateNotis2 = (data) => {
+  const elements = {
+    // Температуры
+    'doza-grams-notis2': data?.data?.['Доза (г) НОТИС2'] || '-',
+    'doza-count-notis2': data?.data?.['Текущее количество доз (шт) НОТИС2'] || '-',
+    'doza-grams-per-minute-notis2': data?.data?.['Доза (г/мин) НОТИС2'] || '-',
+    'doza-kgs-per-hour-notis2': data?.data?.['Доза (кг/ч) НОТИС2'] || '-',
+  };
+
+  // Обновляем значения в DOM
+  for (const [selector, value] of Object.entries(elements)) {
+    const element = document.querySelector(`.${selector}`);
+    if (element) {
+      element.textContent = value;
+    }
+  }
+};

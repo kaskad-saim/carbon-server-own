@@ -23,6 +23,10 @@ export async function fetchData(parameterType, start = null, end = null) {
       url = `${baseUrl}/sushilka1/data`;
     } else if (parameterType === 'sushilka2') {
       url = `${baseUrl}/sushilka2/data`;
+    } else if (parameterType === 'notis1') {
+      url = `${baseUrl}/notis1/data`;
+    } else if (parameterType === 'notis2') {
+      url = `${baseUrl}/notis2/data`;
     } else {
       throw new Error('Неверный тип параметра');
     }

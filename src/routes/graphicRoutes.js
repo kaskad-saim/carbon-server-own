@@ -3,6 +3,7 @@ import { PechVr1Model, PechVr2Model } from '../models/pechVrModel.js';
 import { PechMpa2Model, PechMpa3Model } from '../models/pechMpaModel.js';
 import logger from '../logger.js';
 import { Sushilka1Model, Sushilka2Model } from '../models/sushilkaModel.js';
+import { Notis1Model, Notis2Model } from '../models/notisModel.js';
 
 const router = express.Router();
 
@@ -65,7 +66,7 @@ router.get('/sushilka1/data', async (req, res) => {
     const data = await Sushilka1Model.find(query).sort({ lastUpdated: 1 });
     res.json(data);
   } catch (error) {
-    logger.error('Ошибка при получении данных MPA3:', error);
+    logger.error('Ошибка при получении данных Sushilka1:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });
@@ -77,7 +78,31 @@ router.get('/sushilka2/data', async (req, res) => {
     const data = await Sushilka2Model.find(query).sort({ lastUpdated: 1 });
     res.json(data);
   } catch (error) {
-    logger.error('Ошибка при получении данных MPA3:', error);
+    logger.error('Ошибка при получении данных Sushilka2:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+router.get('/notis1/data', async (req, res) => {
+  try {
+    const { start, end } = req.query;
+    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
+    const data = await Notis1Model.find(query).sort({ lastUpdated: 1 });
+    res.json(data);
+  } catch (error) {
+    logger.error('Ошибка при получении данных Notis1:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+router.get('/notis2/data', async (req, res) => {
+  try {
+    const { start, end } = req.query;
+    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
+    const data = await Notis2Model.find(query).sort({ lastUpdated: 1 });
+    res.json(data);
+  } catch (error) {
+    logger.error('Ошибка при получении данных Notis2:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });

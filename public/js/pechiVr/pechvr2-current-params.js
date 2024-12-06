@@ -5,6 +5,7 @@ import {
   updateLevels,
   updateGorelkaParams,
   updateImpulseSignals,
+  updateNotis2,
 } from './components/updateParams.js';
 
 // Определите функцию updateAnimations
@@ -201,6 +202,15 @@ export const fetchVr2Data = async () => {
     updateGorelkaParams(data); // параметры горелки
     updateImpulseSignals(data);
     updateAnimations();
+
+    
+    // Получаем данные для Notis2
+    const notis2Response = await fetch('/api/notis2-data');
+    const notis2Data = await notis2Response.json();
+
+    // Передаем полученные данные в updateNotis1
+    updateNotis2(notis2Data);
+
   } catch (error) {
     console.error('Ошибка при получении данных VR2:', error);
   }

@@ -4,7 +4,8 @@ import {
   updateVacuums,
   updateLevels,
   updateGorelkaParams,
-  updateImpulseSignals
+  updateImpulseSignals,
+  updateNotis1
 } from './components/updateParams.js';
 
 // Определите функцию updateAnimations
@@ -207,10 +208,19 @@ export const fetchVr1Data = async () => {
     updateGorelkaParams(data); // параметры горелки
     updateImpulseSignals(data);
     updateAnimations();
+
+    // Получаем данные для Notis1
+    const notis1Response = await fetch('/api/notis1-data');
+    const notis1Data = await notis1Response.json();
+
+    // Передаем полученные данные в updateNotis1
+    updateNotis1(notis1Data);
+
   } catch (error) {
     console.error('Ошибка при получении данных VR1:', error);
   }
 };
+
 
 // Вызовите функцию обновления даты и времени при загрузке страницы
 updateDateTime();

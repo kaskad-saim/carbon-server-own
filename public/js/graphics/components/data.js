@@ -52,6 +52,20 @@ export const displayNamesVr = {
   'Задание температуры на горелку': 'Задание температуры горелки',
 };
 
+export const dataLabelsNotis = {
+  notisVR1: [
+    'Доза (кг/ч) НОТИС1',
+  ],
+  notisVR2: [
+    'Доза (кг/ч) НОТИС2',
+  ],
+};
+
+export const displayNamesNotis = {
+  'Доза (кг/ч) НОТИС1': 'Доза Нотис1',
+  'Доза (кг/ч) НОТИС2': 'Доза Нотис2',
+};
+
 export const dataLabelsMpa2 = {
   temperatures: [
     'Температура верх регенератора левый МПА2',

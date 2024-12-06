@@ -45,6 +45,11 @@ router.get('/graph-vr-general-level', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/pechiVr/graphics', 'vrGeneralLevel.html'));
 });
 
+router.get('/graph-vr-general-notis', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/production/carbon/pechiVr/graphics/', 'vrGeneralNotis.html'));
+});
+
+
 router.get('/mnemo-sushilka1', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/production/carbon/sushilki/', 'mnemo-sushilka1.html'));
 });
