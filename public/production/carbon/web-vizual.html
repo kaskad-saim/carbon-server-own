@@ -20,6 +20,7 @@
       <button class="tab-container__button" data-tab="mpa-3">МПА3</button>
       <button class="tab-container__button" data-tab="mills">Мельницы</button>
       <button class="tab-container__button" data-tab="reactor-296">Корпус 296</button>
+      <button class="tab-container__button" data-tab="energy-resources">Энергоресурсы</button>
     </div>
 
     <div id="carbonization-1" class="tab-content">
@@ -37,6 +38,7 @@
             час</button>
           <button class="sub-tab-button" data-url="/graph-vr-general-level">График уровней за
             час</button>
+          <button class="sub-tab-button" data-url="/graph-vr-general-notis">Графики дозаторов нотис</button>
         </div>
       </div>
       <div class="iframe-container">
@@ -57,6 +59,7 @@
           <button class="sub-tab-button" data-url="/graph-vr-general-tempers">Графики температур за час</button>
           <button class="sub-tab-button" data-url="/graph-vr-general-pressure">Графики давл./разр. за час</button>
           <button class="sub-tab-button" data-url="/graph-vr-general-level">График уровней за час</button>
+          <button class="sub-tab-button" data-url="/graph-vr-general-notis">Графики дозаторов нотис</button>
         </div>
       </div>
       <div class="iframe-container">
@@ -150,6 +153,21 @@
       </div>
       <div class="iframe-container">
         <iframe id="reactor-296-frame" src="" width="100%" height="100%"></iframe>
+      </div>
+    </div>
+    <div id="energy-resources" class="tab-content">
+      <div class="tab-container-box">
+        <h2 class="tab-content__title title-reset">Энергоресурсы CARBON</h2>
+        <div class="tab-content__sub-tab-container">
+          <button class="sub-tab-button" data-url="/current-resources">Текущие параметры</button>
+          <button class="sub-tab-button" data-url="http://169.254.0.155/kaskad/production/carbon/energy-resources/par_rashod.html">График расхода пара</button>
+          <button class="sub-tab-button" data-url="http://169.254.0.155/kaskad/production/carbon/energy-resources/par_davlenie.html">График давления пара</button>
+          <button class="sub-tab-button" data-url="/report-resources-day">Суточный отчет</button>
+          <button class="sub-tab-button" data-url="/report-resources-month">Месячный отчет</button>
+        </div>
+      </div>
+      <div class="iframe-container">
+        <iframe id="energy-resources-frame" src="" width="100%" height="100%"></iframe>
       </div>
     </div>
   </div>

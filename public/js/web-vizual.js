@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
         defaultUrl = 'http://169.254.0.156:3002/current-melnizi';
       } else if (tabId === 'reactor-296') {
         defaultUrl = 'http://169.254.0.156:3002/mnemo-k296';
+      } else if (tabId === 'energy-resources') {
+        defaultUrl = 'http://169.254.0.156:3002/current-resources'
       }
       iframe.src = defaultUrl;
 
@@ -69,7 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (tabId.startsWith('reactor-296')) {
         iframe.src = url;
       } else if (tabId.startsWith('mpa')) {
-        iframe.src = url;
+        iframe.src = url; 
+      } else if (tabId.startsWith('energy-resources')) {
+          iframe.src = url;
       } else {
         // Для остальных добавляем префикс
         iframe.src = `http://169.254.0.156:3002${url}`;

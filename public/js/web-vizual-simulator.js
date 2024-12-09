@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
         defaultUrl = '../production/carbon/melnizi/current-melnizi.html';
       } else if (tabId === 'reactor-296') {
         defaultUrl = '../production/carbon/k296/mnemo-k296.html';
+      } else if (tabId === 'energy-resources') {
+        defaultUrl = '../production/carbon/energy-resources/currentParam-resources.html'
       }
       iframe.src = defaultUrl;
 
@@ -76,6 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
         iframe.src = url; // Для mills путь оставляем как есть
       } else if (tabId.startsWith('reactor-296')) {
         iframe.src = url; // Для reactor296 путь оставляем как есть
+      } else if (tabId.startsWith('energy-resources')) {
+        iframe.src = url;
       }
 
       activeTab.querySelectorAll('.sub-tab-button').forEach((btn) => btn.classList.remove('sub-tab-button--active'));
