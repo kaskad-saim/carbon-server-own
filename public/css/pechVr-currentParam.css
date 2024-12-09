@@ -97,6 +97,11 @@ body::-webkit-scrollbar-thumb {
   /* закругления плашки */
 }
 
+.title-reset {
+  margin: 0;
+}
+
+
 .tables {
   display: flex;
   justify-content: space-between;
@@ -222,8 +227,8 @@ body::-webkit-scrollbar-thumb {
 
 .current-param__subtitle {
   text-align: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   font-family: 'Bitter', sans-serif;
   font-size: 20px;
   line-height: 29px;
@@ -234,8 +239,29 @@ body::-webkit-scrollbar-thumb {
 .current-param__subtitle-span {
   margin-left: 15px;
   font-family: 'Bitter', sans-serif;
-  font-size: 26px;
-  line-height: 35px;
+  font-size: 20px;
+  line-height: 29px;
+  font-weight: 600;
+  color: blue;
+}
+
+.current-param__subtitle-notis {
+  text-align: center;
+  margin-top: 0px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  font-family: 'Bitter', sans-serif;
+  font-size: 20px;
+  line-height: 29px;
+  font-weight: 600;
+  color: black;
+}
+
+.current-param__subtitle-notis-span {
+  margin-left: 15px;
+  font-family: 'Bitter', sans-serif;
+  font-size: 20px;
+  line-height: 29px;
   font-weight: 600;
   color: blue;
 }

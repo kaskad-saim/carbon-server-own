@@ -17,14 +17,20 @@ export const updateTemperatures = (data) => {
   if (temperature1Sk !== undefined) document.querySelector('.temper-1-skolz').innerText = temperature1Sk;
   if (temperature2Sk !== undefined) document.querySelector('.temper-2-skolz').innerText = temperature2Sk;
   if (temperature3Sk !== undefined) document.querySelector('.temper-3-skolz').innerText = temperature3Sk;
-  if (temperVhodPechDozhig !== undefined) document.querySelector('.temper-vhod-pech-dozhig').innerText = temperVhodPechDozhig;
-  if (temperVnizKamerZagruz !== undefined) document.querySelector('.temper-vniz-kamer-zagruz').innerText = temperVnizKamerZagruz;
-  if (temperVerhKamerZagruz !== undefined) document.querySelector('.temper-verh-kamer-zagruz').innerText = temperVerhKamerZagruz;
-  if (temperVihodPechDozhig !== undefined) document.querySelector('.temper-vihod-pech-dozhig').innerText = temperVihodPechDozhig;
-  if (temperGazovKotelUtiliz !== undefined) document.querySelector('.temper-gazov-kotel-utiliz').innerText = temperGazovKotelUtiliz;
+  if (temperVhodPechDozhig !== undefined)
+    document.querySelector('.temper-vhod-pech-dozhig').innerText = temperVhodPechDozhig;
+  if (temperVnizKamerZagruz !== undefined)
+    document.querySelector('.temper-vniz-kamer-zagruz').innerText = temperVnizKamerZagruz;
+  if (temperVerhKamerZagruz !== undefined)
+    document.querySelector('.temper-verh-kamer-zagruz').innerText = temperVerhKamerZagruz;
+  if (temperVihodPechDozhig !== undefined)
+    document.querySelector('.temper-vihod-pech-dozhig').innerText = temperVihodPechDozhig;
+  if (temperGazovKotelUtiliz !== undefined)
+    document.querySelector('.temper-gazov-kotel-utiliz').innerText = temperGazovKotelUtiliz;
   if (temperGranulHolod !== undefined) document.querySelector('.temper-granul-holod').innerText = temperGranulHolod;
   if (temperPosleSkruber !== undefined) document.querySelector('.temper-posle-skruber').innerText = temperPosleSkruber;
-  if (temperVodyVannaSkruber !== undefined) document.querySelector('.temper-vody-vanna-skruber').innerText = temperVodyVannaSkruber;
+  if (temperVodyVannaSkruber !== undefined)
+    document.querySelector('.temper-vody-vanna-skruber').innerText = temperVodyVannaSkruber;
   if (temperKamerVygruz !== undefined) document.querySelector('.temper-kamer-vygruz').innerText = temperKamerVygruz;
   if (temperTopka !== undefined) document.querySelector('.temper-topka').innerText = temperTopka;
   if (temperDoSkruber !== undefined) document.querySelector('.temper-do-skruber').innerText = temperDoSkruber;
@@ -35,7 +41,8 @@ export const updatePressures = (data) => {
   const davlGazPosleSkruber = data.pressures && data.pressures['Давление газов после скруббера'];
   const davlKotla = data.pressures && data.pressures['Пара в барабане котла'];
 
-  if (davlGazPosleSkruber !== undefined) document.querySelector('.davl-gaz-posle-skruber').innerText = davlGazPosleSkruber;
+  if (davlGazPosleSkruber !== undefined)
+    document.querySelector('.davl-gaz-posle-skruber').innerText = davlGazPosleSkruber;
   if (davlKotla !== undefined) document.querySelector('.davl-kotla').innerText = davlKotla;
 };
 
@@ -56,8 +63,10 @@ export const updateLevels = (data) => {
   const urovenVanneSkrubber = data.levels && data.levels['В ванне скруббера']?.value;
   const urovenVodyHVO = data.levels && data.levels['В емкости ХВО']?.value;
 
-  if (urovenVBarabaneKotla !== undefined) document.querySelector('.uroven-v-barabane-kotla-mnemo-val').innerText = urovenVBarabaneKotla;
-  if (urovenVanneSkrubber !== undefined) document.querySelector('.uroven-vanne-skrubber-value').innerText = urovenVanneSkrubber;
+  if (urovenVBarabaneKotla !== undefined)
+    document.querySelector('.uroven-v-barabane-kotla-mnemo-val').innerText = urovenVBarabaneKotla;
+  if (urovenVanneSkrubber !== undefined)
+    document.querySelector('.uroven-vanne-skrubber-value').innerText = urovenVanneSkrubber;
   if (urovenVodyHVO !== undefined) document.querySelector('.uroven-vody-hvo-value').innerText = urovenVodyHVO;
 };
 
@@ -66,7 +75,6 @@ export const updateImpulseSignals = (data) => {
   const im5Pech1 = data.im && data.im['ИМ5 котел-утилизатор'];
 
   if (im5Pech1 !== undefined) document.querySelector('.im5-pech1-value').innerText = im5Pech1;
-
 };
 
 // Функция для обновления параметров горелки
@@ -101,11 +109,10 @@ export const updateGorelkaParams = (data) => {
 // Функция для обновления нотиса1
 export const updateNotis1 = (data) => {
   const elements = {
-    // Температуры
-    'doza-grams-notis1': data?.data?.['Доза (г) НОТИС1'] || '-',
-    'doza-count-notis1': data?.data?.['Текущее количество доз (шт) НОТИС1'] || '-',
-    'doza-grams-per-minute-notis1': data?.data?.['Доза (г/мин) НОТИС1'] || '-',
-    'doza-kgs-per-hour-notis1': data?.data?.['Доза (кг/ч) НОТИС1'] || '-',
+    // 'doza-grams-notis1': data?.data?.['Доза (г) НОТИС1'] || '-',
+    // 'doza-count-notis1': data?.data?.['Текущее количество доз (шт) НОТИС1'] || '-',
+    'doza-grams-per-minute-notis1': data?.data?.['Доза (г/мин) НОТИС1'] ?? '-',
+    'doza-kgs-per-hour-notis1': data?.data?.['Доза (кг/ч) НОТИС1'] ?? '-',
   };
 
   // Обновляем значения в DOM
@@ -120,11 +127,10 @@ export const updateNotis1 = (data) => {
 // Функция для обновления нотиса1
 export const updateNotis2 = (data) => {
   const elements = {
-    // Температуры
-    'doza-grams-notis2': data?.data?.['Доза (г) НОТИС2'] || '-',
-    'doza-count-notis2': data?.data?.['Текущее количество доз (шт) НОТИС2'] || '-',
-    'doza-grams-per-minute-notis2': data?.data?.['Доза (г/мин) НОТИС2'] || '-',
-    'doza-kgs-per-hour-notis2': data?.data?.['Доза (кг/ч) НОТИС2'] || '-',
+    // 'doza-grams-notis2': data?.data?.['Доза (г) НОТИС2'] || '-',
+    // 'doza-count-notis2': data?.data?.['Текущее количество доз (шт) НОТИС2'] || '-',
+    'doza-grams-per-minute-notis2': data?.data?.['Доза (г/мин) НОТИС2'] ?? '-',
+    'doza-kgs-per-hour-notis2': data?.data?.['Доза (кг/ч) НОТИС2'] ?? '-',
   };
 
   // Обновляем значения в DOM
@@ -132,6 +138,20 @@ export const updateNotis2 = (data) => {
     const element = document.querySelector(`.${selector}`);
     if (element) {
       element.textContent = value;
+    }
+  }
+};
+
+// Определите функцию для обновления статуса Notis
+export const updateNotisStatus = (status) => {
+  const notisStatusElement = document.querySelector('.current-param__subtitle-notis-span');
+  if (notisStatusElement) {
+    if (status === 'idle') {
+      notisStatusElement.textContent = 'Загрузки нет';
+    } else if (status === 'working') {
+      notisStatusElement.textContent = 'Идет загрузка';
+    } else {
+      notisStatusElement.textContent = 'Нет данных'; // Очистить или установить значение по умолчанию
     }
   }
 };

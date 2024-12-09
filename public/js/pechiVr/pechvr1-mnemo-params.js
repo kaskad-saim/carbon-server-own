@@ -1,4 +1,4 @@
-import { updateTemperatures, updatePressures, updateVacuums, updateLevels, updateImpulseSignals, updateGorelkaParams } from './components/updateParams.js';
+import { updateTemperatures, updatePressures, updateVacuums, updateLevels, updateImpulseSignals, updateGorelkaParams, updateNotis1, updateNotisStatus } from './components/updateParams.js';
 import { initLevelObjects } from './components/levels.js';
 import { updateIms } from './components/im.js';
 import { updateVentilator, updateFire} from './components/ventilator.js';
@@ -22,6 +22,18 @@ export const fetchVr1Data = async () => {
     updateFire(data); // обновление анимации горелки
     initLevelObjects(); // функция закрашивания уровня в шкалах
     checkConditions(); // функция сигнализаций, таблицы, режима
+
+    // Получаем данные для Notis1
+    const notis1Response = await fetch('/api/notis1-data');
+    const notis1Data = await notis1Response.json();
+    // Передаем полученные данные в updateNotis1
+    updateNotis1(notis1Data);
+
+    if (notis1Data && notis1Data.status) {
+      updateNotisStatus(notis1Data.status);
+    } else {
+      console.warn('Статус Notis1 не найден в полученных данных.');
+    }
 
   } catch (error) {
     console.error('Ошибка при получении данных VR1:', error);

@@ -206,8 +206,8 @@ const startDataRetrieval = async () => {
 
 // Функция для опроса данных через Serial Port
 const startSerialDataRetrieval = async () => {
-  const POLL_INTERVAL = 10000; // Интервал опроса в миллисекундах (10 секунд)
-  const TIMEOUT = 12000; // Таймаут для выполнения функции (12 секунд)
+  const POLL_INTERVAL = 30000; // Интервал опроса в миллисекундах (30 секунд)
+  const TIMEOUT = 10000; // Таймаут для выполнения функции (10 секунд)
 
   // Получаем уникальные порты из конфигурации serial устройств
   const serialPorts = [...new Set(serialDevicesConfig.map(device => device.port))];
@@ -262,12 +262,15 @@ const startSerialDataRetrieval = async () => {
           logger.error(`Ошибка при опросе данных ${name} на порту ${port}: ${err.message}`);
           await reinitializeNode(); // Реинициализация узла при ошибке
         }
+
+        // Добавляем задержку между опросами устройств
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1000 мс = 1 секунда
       }
     };
 
     // Запускаем первый опрос сразу
     readDevices();
-    // Повторяем опрос каждые 10 секунд (или любое другое значение в POLL_INTERVAL)
+    // Повторяем опрос каждые 30 секунд (или любое другое значение в POLL_INTERVAL)
     setInterval(readDevices, POLL_INTERVAL);
   }
 };

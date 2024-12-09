@@ -5,7 +5,8 @@ import {
   updateLevels,
   updateGorelkaParams,
   updateImpulseSignals,
-  updateNotis1
+  updateNotis1, 
+  updateNotisStatus
 } from './components/updateParams.js';
 
 // Определите функцию updateAnimations
@@ -212,9 +213,15 @@ export const fetchVr1Data = async () => {
     // Получаем данные для Notis1
     const notis1Response = await fetch('/api/notis1-data');
     const notis1Data = await notis1Response.json();
+    // console.log(response);
 
     // Передаем полученные данные в updateNotis1
     updateNotis1(notis1Data);
+    if (notis1Data && notis1Data.status) {
+      updateNotisStatus(notis1Data.status);
+    } else {
+      console.warn('Статус Notis1 не найден в полученных данных.');
+    }
 
   } catch (error) {
     console.error('Ошибка при получении данных VR1:', error);
@@ -230,4 +237,4 @@ setInterval(updateDateTime, 1000);
 // Сразу запускаем функции один раз при загрузке страницы
 fetchVr1Data();
 // Затем запускаем их каждые 10 секунд
-setInterval(fetchVr1Data, 15000);
+setInterval(fetchVr1Data, 10000);

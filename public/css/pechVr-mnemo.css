@@ -198,6 +198,10 @@ body::-webkit-scrollbar-thumb {
   color: blue;
 }
 
+.current-param__subtitle-notis-span {
+  color: blue;
+}
+
 .mnemo__img {
   width: 1316px;
 }
@@ -533,7 +537,12 @@ body::-webkit-scrollbar-thumb {
 }
 
 .zagruzka-granul-text {
-  left: 5%;
+  left: 3%;
+  bottom: 22%;
+}
+
+.notis-status-text {
+  left: 3%;
   bottom: 20%;
 }
 
@@ -806,6 +815,11 @@ body::-webkit-scrollbar-thumb {
 .mosh-gorelky {
   top: 61%;
   right: 38%;
+}
+
+.doza-notis {
+  bottom: 9%;
+  left: 7%;
 }
 
 .temper-gazov-do-skrubber {
@@ -2357,9 +2371,6 @@ body::-webkit-scrollbar-thumb {
     top: 19%;
   }
 
-  .zagruzka-granul-text {
-    left: 4%;
-  }
 
   .vniz-kamery-zagruzki-text,
   .vverh-kamery-zagruzki-text,

@@ -14,12 +14,12 @@ router.get('/notis1-data', async (req, res) => {
     const lastUpdated = new Date(data[0].lastUpdated);
     const currentTime = new Date();
 
-    // Проверка актуальности данных
-    const isDataOutdated = currentTime - lastUpdated > 60000; // 1 минута
+    const isDataOutdated = currentTime - lastUpdated > 180000; // 3 минуты
 
     const responseData = isDataOutdated
       ? {
           data: mapValuesToDash(data[0].data),
+          status: 'outdated',
           lastUpdated: formatDate(data[0].lastUpdated),
         }
       : {
@@ -33,6 +33,7 @@ router.get('/notis1-data', async (req, res) => {
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
+
 
 // Утилиты
 const mapValuesToDash = (obj) =>

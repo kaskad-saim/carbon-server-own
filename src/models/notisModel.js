@@ -3,7 +3,12 @@ import mongoose from 'mongoose';
 const notisSchema = new mongoose.Schema({
   data: {
     type: Map,
-    of: Number, // Значения числовые
+    of: Number,
+  },
+  status: {
+    type: String,
+    enum: ['idle', 'working'],
+    default: 'working',
   },
   lastUpdated: {
     type: Date,
