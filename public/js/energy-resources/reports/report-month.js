@@ -40,25 +40,25 @@ async function loadDataForSelectedMonth() {
         row.innerHTML = `
           <td class="dynamic-report__report-cell">${dayData.day}</td>
           <td class="dynamic-report__report-cell">
-            <input class="dynamic-report__report-input" type="number" step="0.01" value="${dayData.DE093 !== '-' ? dayData.DE093 : ''}" data-model="DE093" data-day="${dayData.day}" data-original-value="${dayData.DE093 !== '-' ? dayData.DE093 : ''}">
+            <input class="dynamic-report__report-input" type="number"  value="${dayData.DE093 !== '-' ? dayData.DE093 : ''}" data-model="DE093" data-day="${dayData.day}" data-original-value="${dayData.DE093 !== '-' ? dayData.DE093 : ''}">
           </td>
           <td class="dynamic-report__report-cell">
-            <input class="dynamic-report__report-input" type="number" step="0.01" value="${dayData.DD972 !== '-' ? dayData.DD972 : ''}" data-model="DD972" data-day="${dayData.day}" data-original-value="${dayData.DD972 !== '-' ? dayData.DD972 : ''}">
+            <input class="dynamic-report__report-input" type="number"  value="${dayData.DD972 !== '-' ? dayData.DD972 : ''}" data-model="DD972" data-day="${dayData.day}" data-original-value="${dayData.DD972 !== '-' ? dayData.DD972 : ''}">
           </td>
           <td class="dynamic-report__report-cell">
-            <input class="dynamic-report__report-input" type="number" step="0.01" value="${dayData.DD973 !== '-' ? dayData.DD973 : ''}" data-model="DD973" data-day="${dayData.day}" data-original-value="${dayData.DD973 !== '-' ? dayData.DD973 : ''}">
+            <input class="dynamic-report__report-input" type="number"  value="${dayData.DD973 !== '-' ? dayData.DD973 : ''}" data-model="DD973" data-day="${dayData.day}" data-original-value="${dayData.DD973 !== '-' ? dayData.DD973 : ''}">
           </td>
           <td class="dynamic-report__report-cell">
-            <input class="dynamic-report__report-input" type="number" step="0.01" value="${dayData.DD576 !== '-' ? dayData.DD576 : ''}" data-model="DD576" data-day="${dayData.day}" data-original-value="${dayData.DD576 !== '-' ? dayData.DD576 : ''}">
+            <input class="dynamic-report__report-input" type="number"  value="${dayData.DD576 !== '-' ? dayData.DD576 : ''}" data-model="DD576" data-day="${dayData.day}" data-original-value="${dayData.DD576 !== '-' ? dayData.DD576 : ''}">
           </td>
           <td class="dynamic-report__report-cell">
-            <input class="dynamic-report__report-input" type="number" step="0.01" value="${dayData.DD569 !== '-' ? dayData.DD569 : ''}" data-model="DD569" data-day="${dayData.day}" data-original-value="${dayData.DD569 !== '-' ? dayData.DD569 : ''}">
+            <input class="dynamic-report__report-input" type="number"  value="${dayData.DD569 !== '-' ? dayData.DD569 : ''}" data-model="DD569" data-day="${dayData.day}" data-original-value="${dayData.DD569 !== '-' ? dayData.DD569 : ''}">
           </td>
           <td class="dynamic-report__report-cell">
-            <input class="dynamic-report__report-input" type="number" step="0.01" value="${dayData.DD923 !== '-' ? dayData.DD923 : ''}" data-model="DD923" data-day="${dayData.day}" data-original-value="${dayData.DD923 !== '-' ? dayData.DD923 : ''}">
+            <input class="dynamic-report__report-input" type="number"  value="${dayData.DD923 !== '-' ? dayData.DD923 : ''}" data-model="DD923" data-day="${dayData.day}" data-original-value="${dayData.DD923 !== '-' ? dayData.DD923 : ''}">
           </td>
           <td class="dynamic-report__report-cell">
-            <input class="dynamic-report__report-input" type="number" step="0.01" value="${dayData.DD924 !== '-' ? dayData.DD924 : ''}" data-model="DD924" data-day="${dayData.day}" data-original-value="${dayData.DD924 !== '-' ? dayData.DD924 : ''}">
+            <input class="dynamic-report__report-input" type="number"  value="${dayData.DD924 !== '-' ? dayData.DD924 : ''}" data-model="DD924" data-day="${dayData.day}" data-original-value="${dayData.DD924 !== '-' ? dayData.DD924 : ''}">
           </td>
         `;
         tableBody.appendChild(row);

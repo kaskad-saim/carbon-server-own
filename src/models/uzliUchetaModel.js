@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 
 // БД для энергоресурсов МПА2
@@ -10,6 +9,7 @@ const DE093Schema = new mongoose.Schema({
   lastUpdated: {
     type: Date,
     default: Date.now,
+    index: true // Добавляем индекс
   },
 });
 
@@ -24,6 +24,7 @@ const DD972Schema = new mongoose.Schema({
   lastUpdated: {
     type: Date,
     default: Date.now,
+    index: true // Добавляем индекс
   },
 });
 
@@ -38,6 +39,7 @@ const DD973Schema = new mongoose.Schema({
   lastUpdated: {
     type: Date,
     default: Date.now,
+    index: true // Добавляем индекс
   },
 });
 
@@ -52,6 +54,7 @@ const DD576Schema = new mongoose.Schema({
   lastUpdated: {
     type: Date,
     default: Date.now,
+    index: true // Добавляем индекс
   },
 });
 
@@ -66,6 +69,7 @@ const DD569Schema = new mongoose.Schema({
   lastUpdated: {
     type: Date,
     default: Date.now,
+    index: true // Добавляем индекс
   },
 });
 
@@ -80,6 +84,7 @@ const DD923Schema = new mongoose.Schema({
   lastUpdated: {
     type: Date,
     default: Date.now,
+    index: true // Добавляем индекс
   },
 });
 
@@ -94,6 +99,7 @@ const DD924Schema = new mongoose.Schema({
   lastUpdated: {
     type: Date,
     default: Date.now,
+    index: true // Добавляем индекс
   },
 });
 
