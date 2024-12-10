@@ -29,6 +29,7 @@ import notis2Routes from './routes/notis2Routes.js';
 import { initSerialPorts } from './utils/serialPortManager.js';
 import { serialDevicesConfig } from './services/devicesConfig.js';
 import { SerialPortSimulator } from './services/serialPortSimulator.js';
+import startCronJobs from './services/scheduler.js';
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -85,9 +86,7 @@ const processQueue = async (port) => {
     try {
       await Promise.race([
         fn(),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Queue operation timed out')), timeout)
-        ),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Queue operation timed out')), timeout)),
       ]);
     } catch (err) {
       logger.error(`Ошибка при выполнении операции из очереди на порту ${port}:`, err);
@@ -105,24 +104,10 @@ const processQueue = async (port) => {
 
 // Инициализация клиентов
 devicesConfig.forEach((device) => {
-  const {
-    port,
-    baudRate,
-    timeout,
-    retryInterval,
-    maxRetries,
-    unstable,
-  } = device;
+  const { port, baudRate, timeout, retryInterval, maxRetries, unstable } = device;
 
   if (!modbusClients[port]) {
-    modbusClients[port] = new Client(
-      port,
-      baudRate,
-      timeout,
-      retryInterval,
-      maxRetries,
-      unstable
-    );
+    modbusClients[port] = new Client(port, baudRate, timeout, retryInterval, maxRetries, unstable);
 
     modbusClients[port]
       .connect()
@@ -150,14 +135,14 @@ if (isProduction) {
       const simulator = new SerialPortSimulator(port);
       serialPortClients[port] = simulator;
 
-      simulator.connect()
+      simulator
+        .connect()
         .then(() => {
           logger.info(`Симулятор SerialPort подключен к порту ${port}`);
         })
         .catch((err) => {
           logger.error(`Ошибка подключения симулятора SerialPort ${port}:`, err);
         });
-
     }
   });
 }
@@ -210,10 +195,10 @@ const startSerialDataRetrieval = async () => {
   const TIMEOUT = 10000; // Таймаут для выполнения функции (10 секунд)
 
   // Получаем уникальные порты из конфигурации serial устройств
-  const serialPorts = [...new Set(serialDevicesConfig.map(device => device.port))];
+  const serialPorts = [...new Set(serialDevicesConfig.map((device) => device.port))];
 
   for (const port of serialPorts) {
-    const devices = serialDevicesConfig.filter(device => device.port === port);
+    const devices = serialDevicesConfig.filter((device) => device.port === port);
     const client = serialPortClients[port];
 
     const readDevices = async () => {
@@ -280,6 +265,9 @@ startSerialDataRetrieval();
 // Запускаем опрос данных Modbus
 startDataRetrieval();
 
+startCronJobs();
+
+
 // Используем маршруты
 app.use('/api', vr1Routes);
 app.use('/api', vr2Routes);
@@ -301,7 +289,6 @@ app.use('/api', notis2Routes);
 
 // Добавляем новый маршрут для отчетов
 app.use('/api/reports', reportRoutes);
-
 
 app.get('/api/server-time', (req, res) => {
   res.json({ time: new Date().toISOString() });

@@ -10,6 +10,7 @@ import {
 } from '../models/uzliUchetaModel.js';
 import { ReportCorrection } from '../models/reportCorrection.js';
 import logger from '../logger.js';
+import { DailyReportModel } from '../models/dailyReportModel.js';
 
 const modelsMap = {
   DE093: imDE093Model,
@@ -112,96 +113,79 @@ export const getDayReportData = async (date) => {
 };
 
 export const getMonthReportData = async (month) => {
-  try {
-    const [year, monthNumber] = month.split('-').map(Number);
+  const [year, monthNumber] = month.split('-').map(Number);
 
-    if (!year || !monthNumber) {
-      throw new Error('Некорректный формат месяца. Ожидается YYYY-MM.');
-    }
-
-    // Начало месяца (UTC)
-    const startOfMonth = new Date(Date.UTC(year, monthNumber - 1, 1));
-    // Конец месяца (UTC, последний день)
-    const endOfMonth = new Date(Date.UTC(year, monthNumber, 0));
-
-    // Генерация массива дней месяца
-    const daysInMonth = [];
-    for (let i = 1; i <= endOfMonth.getUTCDate(); i++) {
-      const date = new Date(Date.UTC(year, monthNumber - 1, i)).toISOString().split('T')[0];
-      daysInMonth.push(date);
-    }
-
-    // Получение всех коррекций за месяц
-    const corrections = await ReportCorrection.find({
-      day: { $in: daysInMonth },
-    });
-
-    // Создание карты коррекций для быстрого доступа
-    const correctionsMap = {};
-    corrections.forEach((corr) => {
-      const key = `${corr.day}-${corr.model}`;
-      correctionsMap[key] = corr.correctedValue;
-    });
-
-    const reportData = [];
-
-    for (const day of daysInMonth) {
-      const dayData = await getDayReportData(day);
-
-      // Инициализируем суммы по моделям
-      const dailyTotals = {
-        DE093: 0,
-        DD972: 0,
-        DD973: 0,
-        DD576: 0,
-        DD569: 0,
-        DD923: 0,
-        DD924: 0
-      };
-
-      // Суммируем все значения за день, игнорируя '-'
-      for (const hourEntry of dayData) {
-        for (const modelName in dailyTotals) {
-          const val = hourEntry[modelName];
-          if (val !== '-' && !isNaN(val)) {
-            dailyTotals[modelName] += parseFloat(val);
-          }
-        }
-      }
-
-      // Применяем коррекции
-      for (const modelName in dailyTotals) {
-        const key = `${day}-${modelName}`;
-        if (correctionsMap[key] !== undefined) {
-          dailyTotals[modelName] = correctionsMap[key];
-        }
-        // Округление
-        dailyTotals[modelName] = parseFloat(dailyTotals[modelName].toFixed(2));
-      }
-
-      reportData.push({ day, ...dailyTotals });
-    }
-
-    const monthTotals = {};
-    const modelNames = ['DE093', 'DD972', 'DD973', 'DD576', 'DD569', 'DD923', 'DD924'];
-    modelNames.forEach((model) => {
-      monthTotals[model] = 0;
-    });
-
-    reportData.forEach((dailyData) => {
-      for (const [model, value] of Object.entries(dailyData)) {
-        if (model === 'day') continue;
-        monthTotals[model] += value;
-      }
-    });
-
-    for (const model in monthTotals) {
-      monthTotals[model] = parseFloat(monthTotals[model].toFixed(2));
-    }
-
-    return reportData;
-  } catch (error) {
-    logger.error(`Ошибка в getMonthReportData: ${error.message}`, error);
-    throw error; // Проброс ошибки для дальнейшей обработки
+  if (!year || !monthNumber) {
+    throw new Error('Некорректный формат месяца. Ожидается YYYY-MM.');
   }
+
+  const startOfMonth = `${year}-${String(monthNumber).padStart(2, '0')}-01`;
+  const endOfMonth = new Date(year, monthNumber, 0).toISOString().split('T')[0]; // Последний день месяца
+
+  const dailyReports = await DailyReportModel.find({
+    date: { $gte: startOfMonth, $lte: endOfMonth },
+  });
+
+  if (dailyReports.length === 0) {
+    return []; // Нет данных за месяц
+  }
+
+  const monthlyTotals = {
+    DE093: 0,
+    DD972: 0,
+    DD973: 0,
+    DD576: 0,
+    DD569: 0,
+    DD923: 0,
+    DD924: 0,
+  };
+
+  const reportData = dailyReports.map((report) => {
+    Object.keys(monthlyTotals).forEach((key) => {
+      monthlyTotals[key] += report.data[key];
+    });
+    return { day: report.date, ...report.data };
+  });
+
+  return reportData;
+};
+
+export const generateDailyReport = async (date) => {
+  const reportData = await getDayReportData(date);
+  const totalData = calculateDailyTotals(reportData);
+
+  // Округляем значения до сотых
+  const roundedData = {};
+  Object.keys(totalData).forEach((key) => {
+    roundedData[key] = parseFloat(totalData[key].toFixed(2));
+  });
+
+  await DailyReportModel.updateOne(
+    { date },
+    { date, data: roundedData }, // Сохраняем округленные данные
+    { upsert: true }
+  );
+  return roundedData; // Возвращаем округленные данные
+};
+
+const calculateDailyTotals = (reportData) => {
+  const totals = {
+    DE093: 0,
+    DD972: 0,
+    DD973: 0,
+    DD576: 0,
+    DD569: 0,
+    DD923: 0,
+    DD924: 0,
+  };
+
+  reportData.forEach((entry) => {
+    Object.keys(totals).forEach((key) => {
+      if (entry[key] !== '-' && !isNaN(parseFloat(entry[key]))) {
+        totals[key] += parseFloat(entry[key]);
+      }
+    });
+  });
+
+  return totals;
 };
