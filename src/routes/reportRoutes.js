@@ -16,7 +16,6 @@ const correctionLimiter = rateLimit({
   message: 'Слишком много попыток. Пожалуйста, попробуйте позже.',
 });
 
-// **Маршруты отчётов**
 // Получение данных за день
 router.get('/getReportDataDay', async (req, res) => {
   const { date } = req.query;
@@ -46,12 +45,11 @@ router.get('/getReportDataMonth', async (req, res) => {
     const reportData = await getMonthReportData(month);
     res.json(reportData);
   } catch (err) {
-    logger.error('Ошибка при получении данных за месяц:', err.message, err.stack);
+    logger.error(`Ошибка при получении данных за месяц: ${err.message}`, err.stack); // Более подробный лог
     res.status(500).json({ error: 'Ошибка сервера при получении данных за месяц.', details: err.message });
   }
 });
 
-// **Маршруты коррекций**
 // Сохранение коррекций
 router.post('/correctReportData', correctionLimiter, async (req, res) => {
   const { modifications, password } = req.body;
@@ -65,27 +63,20 @@ router.post('/correctReportData', correctionLimiter, async (req, res) => {
   }
 
   try {
-    const bulkOps = modifications.map(mod => {
+    const bulkOps = modifications.map((mod) => {
       const { day, model, value } = mod;
-
-      const allowedModels = ['DE093', 'DD972', 'DD973', 'DD576', 'DD569', 'DD923', 'DD924'];
-      if (!allowedModels.includes(model)) {
-        throw new Error(`Недопустимая модель: ${model}`);
-      }
 
       return {
         updateOne: {
           filter: { day, model },
-          update: {
-            correctedValue: value,
-            correctedAt: new Date(),
-          },
+          update: { correctedValue: value, correctedAt: new Date() },
           upsert: true,
         },
       };
     });
 
     await ReportCorrection.bulkWrite(bulkOps);
+
     res.json({ message: 'Изменения сохранены успешно.' });
   } catch (err) {
     logger.error('Ошибка при сохранении изменений:', err.message, err.stack);

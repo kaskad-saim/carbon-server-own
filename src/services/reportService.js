@@ -1,4 +1,3 @@
-// services/reportService.js
 import {
   imDE093Model,
   imDD972Model,
@@ -22,170 +21,131 @@ const modelsMap = {
   DD924: imDD924Model,
 };
 
+// Универсальная функция для получения данных по устройствам
+const fetchDeviceData = async (model, startOfDay, endOfDay) => {
+  const data = await model.find({ lastUpdated: { $gte: startOfDay, $lt: endOfDay } });
+  return data.reduce((acc, entry) => {
+    const time = new Date(entry.lastUpdated).toISOString();
+    const value = entry.data.get('Гкал/ч ' + model.modelName);
+    if (value !== undefined && value !== null) {
+      acc.push({ time, value: parseFloat(value) });
+    }
+    return acc;
+  }, []);
+};
+
+// Универсальная функция для расчета среднего значения
+const calculateAverageForInterval = (data, startTime, endTime) => {
+  const values = data.filter(({ time }) => {
+    const entryTime = new Date(time);
+    return entryTime >= startTime && entryTime < endTime;
+  }).map(({ value }) => value);
+
+  if (values.length === 0) return '-';
+  const sum = values.reduce((acc, val) => acc + val, 0);
+  return (sum / values.length).toFixed(2);
+};
+
+// Генерация данных за день
 export const getDayReportData = async (date) => {
   const startOfDay = new Date(date);
   startOfDay.setHours(0, 0, 0, 0);
 
-  const endOfDay = new Date(date);
+  const endOfDay = new Date(startOfDay);
   endOfDay.setDate(endOfDay.getDate() + 1);
-  endOfDay.setHours(0, 0, 0, 0);
 
-  // Создаем временные интервалы
-  const timeRanges = [...Array(24).keys()].map((hour) => {
-    let startTime = new Date(startOfDay);
+  const timeRanges = Array.from({ length: 24 }, (_, hour) => {
+    const startTime = new Date(startOfDay);
     startTime.setHours(hour, 0, 0, 0);
-    let endTime = new Date(startOfDay);
-    let label;
-
-    if (hour === 23) {
-      // Последний интервал: 23:00 - 24:00
-      endTime = new Date(endOfDay); // Устанавливаем конец на начало следующего дня
-      label = '24:00';
-    } else {
-      endTime.setHours(hour + 1, 0, 0, 0);
-      label = `${String(hour + 1).padStart(2, '0')}:00`;
-    }
-    return { startTime, endTime, label };
+    const endTime = new Date(startOfDay);
+    endTime.setHours(hour + 1, 0, 0, 0);
+    return { startTime, endTime, label: hour === 23 ? '24:00' : `${hour + 1}:00` };
   });
 
-  const reportData = [];
-
-  // Для каждого объекта (модели) получаем данные
-  for (const modelKey in modelsMap) {
-    const model = modelsMap[modelKey];
-    const modelData = await model.find({ lastUpdated: { $gte: startOfDay, $lt: endOfDay } });
-
-    // Для каждого временного интервала извлекаем значение "Гкал/ч"
-    const hourlyData = timeRanges.map(({ startTime, endTime, label }) => {
-      const filteredData = modelData.filter((entry) => {
-        const entryTime = new Date(entry.lastUpdated);
-        return entryTime >= startTime && entryTime < endTime;
-      });
-
-      if (filteredData.length === 0) {
-        return {
-          time: label,
-          model: modelKey,
-          'Гкал/ч': '-',
-        };
-      }
-
-      // Предполагается, что "Гкал/ч" существует в data
-      const gkalValues = filteredData.map((entry) => {
-        const value = entry.data.get('Гкал/ч ' + modelKey);
-        return value !== undefined && value !== null ? parseFloat(value) : 0; // Заменяем некорректные значения на 0
-      });
-
-      // Если массив пуст, возвращаем дефис
-      if (gkalValues.length === 0) {
-        return {
-          time: label,
-          model: modelKey,
-          'Гкал/ч': '-',
-        };
-      }
-
-      // Проверяем корректность суммы
-      const sum = gkalValues.reduce((acc, value) => acc + value, 0);
-      const average = gkalValues.length > 0 ? (sum / gkalValues.length).toFixed(2) : '-';
-
-      return {
+  const reportData = await Promise.all(
+    Object.entries(modelsMap).map(async ([modelKey, model]) => {
+      const deviceData = await fetchDeviceData(model, startOfDay, endOfDay);
+      return timeRanges.map(({ startTime, endTime, label }) => ({
         time: label,
         model: modelKey,
-        'Гкал/ч': average,
-      };
-    });
+        'Гкал/ч': calculateAverageForInterval(deviceData, startTime, endTime),
+      }));
+    })
+  );
 
-    reportData.push(hourlyData);
-  }
-
-  // Организуем данные для таблицы
-  const tableData = timeRanges.map(({ label }) => {
+  return timeRanges.map(({ label }) => {
     const row = { time: label };
-    reportData.forEach((modelData) => {
-      const modelDataForTime = modelData.find((item) => item.time === label);
-      row[modelDataForTime.model] = modelDataForTime['Гкал/ч'];
+    reportData.flat().forEach(({ time, model, 'Гкал/ч': value }) => {
+      if (time === label) row[model] = value;
     });
     return row;
   });
-
-  return tableData;
 };
 
+// Генерация данных за месяц
 export const getMonthReportData = async (month) => {
   const [year, monthNumber] = month.split('-').map(Number);
+  if (!year || !monthNumber) throw new Error('Некорректный формат месяца. Ожидается YYYY-MM.');
 
-  if (!year || !monthNumber) {
-    throw new Error('Некорректный формат месяца. Ожидается YYYY-MM.');
-  }
+  const startOfMonth = new Date(year, monthNumber - 1, 1);
+  const endOfMonth = new Date(year, monthNumber, 0);
 
-  const startOfMonth = `${year}-${String(monthNumber).padStart(2, '0')}-01`;
-  const endOfMonth = new Date(year, monthNumber, 0).toISOString().split('T')[0]; // Последний день месяца
+  const allDays = Array.from(
+    { length: endOfMonth.getDate() },
+    (_, day) => new Date(year, monthNumber - 1, day + 1).toISOString().slice(0, 10)
+  );
 
   const dailyReports = await DailyReportModel.find({
-    date: { $gte: startOfMonth, $lte: endOfMonth },
+    date: { $gte: startOfMonth.toISOString().slice(0, 10), $lte: endOfMonth.toISOString().slice(0, 10) },
   });
 
-  if (dailyReports.length === 0) {
-    return []; // Нет данных за месяц
-  }
+  const reportMap = dailyReports.reduce((map, report) => {
+    map[report.date] = report.data;
+    return map;
+  }, {});
 
-  const monthlyTotals = {
-    DE093: 0,
-    DD972: 0,
-    DD973: 0,
-    DD576: 0,
-    DD569: 0,
-    DD923: 0,
-    DD924: 0,
-  };
+  const reportData = allDays.map((day) => ({
+    day,
+    ...reportMap[day] || Object.fromEntries(Object.keys(modelsMap).map((key) => [key, '-'])),
+  }));
 
-  const reportData = dailyReports.map((report) => {
-    Object.keys(monthlyTotals).forEach((key) => {
-      monthlyTotals[key] += report.data[key];
-    });
-    return { day: report.date, ...report.data };
+  return applyCorrections(reportData, `${year}-${String(monthNumber).padStart(2, '0')}`);
+};
+
+// Применение коррекций
+const applyCorrections = async (reportData, month) => {
+  const corrections = await ReportCorrection.find({ day: { $regex: `^${month}` } });
+
+  corrections.forEach(({ day, model, correctedValue }) => {
+    const dayData = reportData.find((entry) => entry.day === day);
+    if (dayData) dayData[model] = correctedValue;
   });
 
   return reportData;
 };
 
+// Генерация суточного отчета
 export const generateDailyReport = async (date) => {
   const reportData = await getDayReportData(date);
   const totalData = calculateDailyTotals(reportData);
 
-  // Округляем значения до сотых
-  const roundedData = {};
-  Object.keys(totalData).forEach((key) => {
-    roundedData[key] = parseFloat(totalData[key].toFixed(2));
-  });
-
   await DailyReportModel.updateOne(
     { date },
-    { date, data: roundedData }, // Сохраняем округленные данные
+    { date, data: totalData },
     { upsert: true }
   );
-  return roundedData; // Возвращаем округленные данные
+
+  return totalData;
 };
 
+// Суммирование данных за день
 const calculateDailyTotals = (reportData) => {
-  const totals = {
-    DE093: 0,
-    DD972: 0,
-    DD973: 0,
-    DD576: 0,
-    DD569: 0,
-    DD923: 0,
-    DD924: 0,
-  };
-
-  reportData.forEach((entry) => {
-    Object.keys(totals).forEach((key) => {
-      if (entry[key] !== '-' && !isNaN(parseFloat(entry[key]))) {
-        totals[key] += parseFloat(entry[key]);
+  return reportData.reduce((totals, row) => {
+    Object.keys(modelsMap).forEach((key) => {
+      if (row[key] !== '-' && !isNaN(parseFloat(row[key]))) {
+        totals[key] = (totals[key] || 0) + parseFloat(row[key]);
       }
     });
-  });
-
-  return totals;
+    return totals;
+  }, {});
 };
