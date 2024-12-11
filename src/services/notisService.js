@@ -3,6 +3,14 @@ import { Notis1Model, Notis2Model } from '../models/notisModel.js';
 import logger from '../logger.js';
 import { serialDevicesConfig } from './devicesConfig.js';
 import { getDataSequentially } from '../utils/serialPortManager.js';
+import { isValueWithinRange } from '../utils/validation.js'; // Импортируем функцию проверки
+
+// Определите допустимые диапазоны для параметров
+const parameterRanges = {
+  'Доза (г/мин)': { min: 0, max: 15000 }, // Пример диапазона
+  'Доза (кг/ч)': { min: 0, max: 1000 },  // Пример диапазона
+  // Добавьте другие параметры и их диапазоны по необходимости
+};
 
 export const readDataNotis1 = async (client, deviceName, address, simulatedValue = null) => {
   const indices = [8];
@@ -34,15 +42,32 @@ async function processDeviceDataSequentially(client, deviceName, Model, indices,
   try {
     const results = {};
     for (const index of indices) {
-      const value = simulatedValue !== null
+      const rawValue = simulatedValue !== null
         ? simulatedValue // Симулированные данные
         : await getDataSequentially(port, deviceAddress, index); // Последовательный запрос данных
 
-      results[indexMapping[index] || `Параметр_${index}`] = value;
+      const parameterName = indexMapping[index] || `Параметр_${index}`;
+
+      // Преобразуем значение в число, если это необходимо
+      const value = typeof rawValue === 'string' ? parseFloat(rawValue) : rawValue;
+
+      // Проверяем, находится ли значение в допустимом диапазоне
+      const range = parameterRanges[parameterName];
+      if (range && !isValueWithinRange(value, range.min, range.max)) {
+        logger.warn(`[${deviceName}] Выброс: ${parameterName} = ${value} выходит за допустимые пределы (${range.min}-${range.max}). Значение будет проигнорировано.`);
+        continue; // Пропускаем запись этого параметра
+      }
+
+      results[parameterName] = value;
 
       if (delayBetweenIndices > 0) {
         await delay(delayBetweenIndices);
       }
+    }
+
+    if (Object.keys(results).length === 0) {
+      logger.warn(`[${deviceName}] Нет допустимых данных для записи.`);
+      return;
     }
 
     let formattedData = formatResults(deviceName, results);

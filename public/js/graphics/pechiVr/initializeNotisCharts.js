@@ -38,7 +38,7 @@ function initializeChartNotis1(parameterType, elements, chartTitle) {
     units: dataLabelsNotis.notisVR1.map(() => 'кг/ч'),
     yAxisConfig: {
       min: 0,
-      max: 1500,
+      max: 1000,
       stepSize: 100,
       title: 'Загрузка (кг/ч)',
     },
@@ -129,7 +129,7 @@ function initializeChartNotis2(parameterType, elements, chartTitle) {
     units: dataLabelsNotis.notisVR2.map(() => 'кг/ч'),
     yAxisConfig: {
       min: 0,
-      max: 1500,
+      max: 1000,
       stepSize: 100,
       title: 'Загрузка (кг/ч)',
     },

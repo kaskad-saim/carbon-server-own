@@ -76,7 +76,7 @@ function logErrorOnce(portName, index, message, cache, interval = 60000) {
 }
 
 // Основная функция получения данных
-export function getData(portName, address, index, retryCount = 5) {
+export function getData(portName, address, index, retryCount = 10) {
   return new Promise((resolve, reject) => {
     const portObj = portsMap[portName];
     if (!portObj || !portObj.comPort) {
@@ -98,7 +98,7 @@ export function getData(portName, address, index, retryCount = 5) {
           // logErrorOnce(portName, index, `Ошибка CRC с индекса ${index}: CRC mismatch`, errorLogCache);
 
           if (retryCount > 0) {
-            logger.info(`[${portName}] Попытка ${6 - retryCount} повторить запрос данных...`);
+            logger.info(`[${portName}] Попытка ${11 - retryCount} повторить запрос данных...`);
             setTimeout(() => {
               getData(portName, address, index, retryCount - 1)
                 .then(resolve)
@@ -134,7 +134,7 @@ export function getData(portName, address, index, retryCount = 5) {
 }
 
 // Функция с ретраями для получения данных
-export async function retryGetData(portName, address, index, maxRetries = 5, delay = 3000) {
+export async function retryGetData(portName, address, index, maxRetries = 10, delay = 5000) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await getData(portName, address, index, 0); // Попытка получения данных
@@ -161,7 +161,7 @@ function enqueueRequest(promiseFunction) {
 }
 
 // Основная функция получения данных с учетом адреса
-export function getDataSequentially(portName, address, index, retryCount = 5) {
+export function getDataSequentially(portName, address, index, retryCount = 10) {
   return enqueueRequest(() =>
     getData(portName, address, index, retryCount)
       .then((data) => {
