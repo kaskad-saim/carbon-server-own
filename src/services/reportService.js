@@ -87,30 +87,43 @@ export const getMonthReportData = async (month) => {
   const [year, monthNumber] = month.split('-').map(Number);
   if (!year || !monthNumber) throw new Error('Некорректный формат месяца. Ожидается YYYY-MM.');
 
-  const startOfMonth = new Date(year, monthNumber - 1, 1);
-  const endOfMonth = new Date(year, monthNumber, 0);
+  // Начало месяца (1-е число) в UTC
+  const startOfMonth = new Date(Date.UTC(year, monthNumber - 1, 1, 0, 0, 0, 0));
 
+  // Конец месяца (последнее число месяца) в UTC
+  const endOfMonth = new Date(Date.UTC(year, monthNumber, 0, 23, 59, 59, 999));
+
+  // Генерация массива всех дней месяца в UTC
   const allDays = Array.from(
-    { length: endOfMonth.getDate() },
-    (_, day) => new Date(year, monthNumber - 1, day + 1).toISOString().slice(0, 10)
+    { length: endOfMonth.getUTCDate() },
+    (_, index) => new Date(Date.UTC(year, monthNumber - 1, index + 1)).toISOString().slice(0, 10)
   );
 
+  // Получение данных из базы для существующих отчетов
   const dailyReports = await DailyReportModel.find({
     date: { $gte: startOfMonth.toISOString().slice(0, 10), $lte: endOfMonth.toISOString().slice(0, 10) },
   });
 
+  // Создаем карту отчетов
   const reportMap = dailyReports.reduce((map, report) => {
     map[report.date] = report.data;
     return map;
   }, {});
 
+  // Генерация данных за каждый день
   const reportData = allDays.map((day) => ({
     day,
-    ...reportMap[day] || Object.fromEntries(Object.keys(modelsMap).map((key) => [key, '-'])),
+    ...Object.fromEntries(Object.keys(modelsMap).map((key) => [key, '-'])), // Заполнение дефолтных значений
+    ...reportMap[day], // Добавление данных из базы (если они есть)
   }));
 
-  return applyCorrections(reportData, `${year}-${String(monthNumber).padStart(2, '0')}`);
+  // Применяем коррекции (если есть)
+  const correctedData = await applyCorrections(reportData, `${year}-${String(monthNumber).padStart(2, '0')}`);
+
+  return correctedData;
 };
+
+
 
 // Применение коррекций
 const applyCorrections = async (reportData, month) => {
