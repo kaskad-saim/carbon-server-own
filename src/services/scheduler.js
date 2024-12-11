@@ -4,7 +4,7 @@ import logger from '../logger.js';
 
 const startCronJobs = () => {
   // Обновляем данные каждый час
-  cron.schedule('0 * * * *', async () => { // Запуск в начале каждого часа
+  cron.schedule('*/2 * * * *', async () => { // Запуск в начале каждого часа
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const dayString = yesterday.toISOString().slice(0, 10);

@@ -43,7 +43,7 @@ const calculateAverageForInterval = (data, startTime, endTime) => {
 
   if (values.length === 0) return '-';
   const sum = values.reduce((acc, val) => acc + val, 0);
-  return (sum / values.length).toFixed(2);
+  return parseFloat((sum / values.length).toFixed(2)); // Округление до сотых
 };
 
 // Генерация данных за день
@@ -76,7 +76,7 @@ export const getDayReportData = async (date) => {
   return timeRanges.map(({ label }) => {
     const row = { time: label };
     reportData.flat().forEach(({ time, model, 'Гкал/ч': value }) => {
-      if (time === label) row[model] = value;
+      if (time === label) row[model] = value !== '-' ? parseFloat(value.toFixed(2)) : value;
     });
     return row;
   });
@@ -118,7 +118,7 @@ const applyCorrections = async (reportData, month) => {
 
   corrections.forEach(({ day, model, correctedValue }) => {
     const dayData = reportData.find((entry) => entry.day === day);
-    if (dayData) dayData[model] = correctedValue;
+    if (dayData) dayData[model] = parseFloat(correctedValue.toFixed(2)); // Округление до сотых
   });
 
   return reportData;
@@ -145,6 +145,10 @@ const calculateDailyTotals = (reportData) => {
       if (row[key] !== '-' && !isNaN(parseFloat(row[key]))) {
         totals[key] = (totals[key] || 0) + parseFloat(row[key]);
       }
+    });
+    // Округляем каждую сумму до двух знаков после запятой
+    Object.keys(totals).forEach((key) => {
+      totals[key] = parseFloat(totals[key].toFixed(2));
     });
     return totals;
   }, {});
