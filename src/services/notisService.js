@@ -3,7 +3,7 @@ import { Notis1Model, Notis2Model } from '../models/notisModel.js';
 import logger from '../logger.js';
 import { serialDevicesConfig } from './devicesConfig.js';
 import { getDataSequentially } from '../utils/serialPortManager.js';
-import { isValueWithinRange } from '../utils/validation.js'; // Импортируем функцию проверки
+import { isValueWithinRange, isValueStable } from '../utils/validation.js'; // Импортируем функцию проверки
 
 // Определите допустимые диапазоны для параметров
 const parameterRanges = {
@@ -68,6 +68,13 @@ async function processDeviceDataSequentially(
         continue; // Пропускаем запись этого параметра
       }
 
+      if (!isValueStable(parameterName, value)) {
+        logger.warn(
+          `[${deviceName}] Значительное изменение значения для ${parameterName}. Значение будет проигнорировано.`
+        );
+        continue; // Пропускаем запись этого параметра
+      }
+
       results[parameterName] = value;
 
       if (delayBetweenIndices > 0) {
@@ -91,7 +98,6 @@ async function processDeviceDataSequentially(
       const currentDoseGram = formattedData[doseGramKey];
       const currentDoseKg = formattedData[doseKgKey] || null;
 
-      // Получаем последние две записи со статусом 'working'
       // Получаем последние четыре записи со статусом 'working'
       const lastFourRecords = await Model.find({ status: 'working' }).sort({ lastUpdated: -1 }).limit(4);
 
