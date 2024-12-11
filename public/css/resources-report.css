@@ -248,6 +248,18 @@ body::-webkit-scrollbar-thumb {
   cursor: pointer;
 }
 
+/* Скрыть спиннеры во всех основных браузерах */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Убираем спиннеры в WebKit-браузерах */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .dynvamic-report__data-error {
   display: none;
   color: red;
@@ -264,6 +276,7 @@ body::-webkit-scrollbar-thumb {
 .dynamic-report__report-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; /* Фиксированный макет таблицы */
 }
 
 .dynamic-report__report-header {
@@ -291,12 +304,15 @@ body::-webkit-scrollbar-thumb {
 .dynamic-report__report-table th,
 .dynamic-report__report-table td {
   border: 1px solid #ddd;
-  padding: 2px 5px;
+  padding: 2px;
 }
 
-.dynamic-report__report-table th {
-  padding: 5px;
+.dynamic-report__report-table th:first-child,
+.dynamic-report__report-table td:first-child {
+  white-space: nowrap;
 }
+
+
 
 .dynamic-report__report-tr:hover {
   background-color: #ddd;
@@ -371,6 +387,9 @@ body::-webkit-scrollbar-thumb {
 }
 
 .dynamic-report__report-input {
+  width: 100%;
+  height: 100%;
+  text-align: center;
   transition: box-shadow .3s ease-in-out;
   outline: none;
   border: none;
@@ -402,7 +421,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 td {
-  padding: 8px;
+  /* padding: 8px; */
   position: relative;
 }
 

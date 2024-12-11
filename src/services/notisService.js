@@ -8,7 +8,7 @@ import { isValueWithinRange } from '../utils/validation.js'; // Импортир
 // Определите допустимые диапазоны для параметров
 const parameterRanges = {
   'Доза (г/мин)': { min: 0, max: 15000 }, // Пример диапазона
-  'Доза (кг/ч)': { min: 0, max: 1000 },  // Пример диапазона
+  'Доза (кг/ч)': { min: 0, max: 1000 }, // Пример диапазона
   // Добавьте другие параметры и их диапазоны по необходимости
 };
 
@@ -26,7 +26,14 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function processDeviceDataSequentially(client, deviceName, Model, indices, simulatedValue, delayBetweenIndices = 1000) {
+async function processDeviceDataSequentially(
+  client,
+  deviceName,
+  Model,
+  indices,
+  simulatedValue,
+  delayBetweenIndices = 1000
+) {
   const device = serialDevicesConfig.find((d) => d.name === deviceName);
   if (!device) {
     logger.error(`[${deviceName}] Не найдено устройство в конфиге`);
@@ -42,9 +49,10 @@ async function processDeviceDataSequentially(client, deviceName, Model, indices,
   try {
     const results = {};
     for (const index of indices) {
-      const rawValue = simulatedValue !== null
-        ? simulatedValue // Симулированные данные
-        : await getDataSequentially(port, deviceAddress, index); // Последовательный запрос данных
+      const rawValue =
+        simulatedValue !== null
+          ? simulatedValue // Симулированные данные
+          : await getDataSequentially(port, deviceAddress, index); // Последовательный запрос данных
 
       const parameterName = indexMapping[index] || `Параметр_${index}`;
 
@@ -54,7 +62,9 @@ async function processDeviceDataSequentially(client, deviceName, Model, indices,
       // Проверяем, находится ли значение в допустимом диапазоне
       const range = parameterRanges[parameterName];
       if (range && !isValueWithinRange(value, range.min, range.max)) {
-        logger.warn(`[${deviceName}] Выброс: ${parameterName} = ${value} выходит за допустимые пределы (${range.min}-${range.max}). Значение будет проигнорировано.`);
+        logger.warn(
+          `[${deviceName}] Выброс: ${parameterName} = ${value} выходит за допустимые пределы (${range.min}-${range.max}). Значение будет проигнорировано.`
+        );
         continue; // Пропускаем запись этого параметра
       }
 
@@ -82,18 +92,17 @@ async function processDeviceDataSequentially(client, deviceName, Model, indices,
       const currentDoseKg = formattedData[doseKgKey] || null;
 
       // Получаем последние две записи со статусом 'working'
-      const lastTwoRecords = await Model.find({ status: 'working' }).sort({ lastUpdated: -1 }).limit(2);
+      // Получаем последние четыре записи со статусом 'working'
+      const lastFourRecords = await Model.find({ status: 'working' }).sort({ lastUpdated: -1 }).limit(4);
 
-      if (lastTwoRecords.length === 2) {
-        const lastDoseGrams = lastTwoRecords.map(r => r.data.get(doseGramKey));
-        const lastDoseKgs = lastTwoRecords.map(r => r.data.get(doseKgKey));
+      if (lastFourRecords.length === 4) {
+        const lastDoseGrams = lastFourRecords.map((r) => r.data.get(doseGramKey));
 
         logger.debug(`Last Dose Grams: ${lastDoseGrams}`);
-        logger.debug(`Last Dose Kgs: ${lastDoseKgs}`);
-        logger.debug(`Current Dose Gram: ${currentDoseGram}, Current Dose Kg: ${currentDoseKg}`);
+        logger.debug(`Current Dose Gram: ${currentDoseGram}`);
 
-        const isStable = lastDoseGrams.every(dose => dose === currentDoseGram) &&
-                          lastDoseKgs.every(dose => dose === currentDoseKg);
+        // Проверяем, одинаковы ли последние четыре значения doseGram с текущим
+        const isStable = lastDoseGrams.every((dose) => dose === currentDoseGram);
 
         logger.debug(`Is Stable: ${isStable}`);
 
