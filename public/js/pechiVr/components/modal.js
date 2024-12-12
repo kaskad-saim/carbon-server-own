@@ -39,3 +39,4 @@ document.querySelectorAll('.mnemo__modal-close').forEach((closeButton) => {
     }
   });
 });
+

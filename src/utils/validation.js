@@ -6,7 +6,7 @@ export const isValueWithinRange = (value, min, max) => {
 const previousValues = {};
 const changeCounters = {};
 
-export const isValueStable = (label, newValue, threshold = 100, maxConsecutiveChanges = 3) => {
+export const isValueStable = (label, newValue, threshold = 1500, maxConsecutiveChanges = 3) => {
   const previousValue = previousValues[label];
 
   if (previousValue === undefined) {
