@@ -3,23 +3,23 @@ import { Notis1Model, Notis2Model } from '../models/notisModel.js';
 import logger from '../logger.js';
 import { serialDevicesConfig } from './devicesConfig.js';
 import { getDataSequentially } from '../utils/serialPortManager.js';
-import { isValueWithinRange, isValueStable } from '../utils/validation.js'; // Импортируем функцию проверки
+import { isValueWithinRange, isValueStable } from '../utils/validation.js';
 
 // Определите допустимые диапазоны для параметров
 const parameterRanges = {
-  'Доза (г/мин)': { min: 0, max: 25000 }, // Пример диапазона
-  'Доза (кг/ч)': { min: 0, max: 1500 }, // Пример диапазона
-  // Добавьте другие параметры и их диапазоны по необходимости
+  'Доза (г/мин)': { min: 0, max: 25000 },
+  'Доза (кг/ч)': { min: 0, max: 1500 },
+  // Добавьте другие параметры при необходимости
 };
 
 export const readDataNotis1 = async (client, deviceName, address, simulatedValue = null) => {
   const indices = [8];
-  await processDeviceDataSequentially(client, 'НОТИС1', Notis1Model, indices, simulatedValue);
+  await processDeviceDataSequentially(client, deviceName, 'НОТИС1', Notis1Model, indices, simulatedValue);
 };
 
 export const readDataNotis2 = async (client, deviceName, address, simulatedValue = null) => {
   const indices = [8];
-  await processDeviceDataSequentially(client, 'НОТИС2', Notis2Model, indices, simulatedValue);
+  await processDeviceDataSequentially(client, deviceName, 'НОТИС2', Notis2Model, indices, simulatedValue);
 };
 
 function delay(ms) {
@@ -29,14 +29,15 @@ function delay(ms) {
 async function processDeviceDataSequentially(
   client,
   deviceName,
+  deviceLabel,
   Model,
   indices,
   simulatedValue,
   delayBetweenIndices = 1000
 ) {
-  const device = serialDevicesConfig.find((d) => d.name === deviceName);
+  const device = serialDevicesConfig.find((d) => d.name === deviceLabel);
   if (!device) {
-    logger.error(`[${deviceName}] Не найдено устройство в конфиге`);
+    logger.error(`[${deviceLabel}] Не найдено устройство в конфиге`);
     return;
   }
 
@@ -55,22 +56,24 @@ async function processDeviceDataSequentially(
           : await getDataSequentially(port, deviceAddress, index); // Последовательный запрос данных
 
       const parameterName = indexMapping[index] || `Параметр_${index}`;
+      const parameterLabel = `${parameterName} ${deviceLabel}`; // Уникальный label для проверки стабильности
 
-      // Преобразуем значение в число, если это необходимо
+      // Преобразуем значение в число
       const value = typeof rawValue === 'string' ? parseFloat(rawValue) : rawValue;
 
-      // Проверяем, находится ли значение в допустимом диапазоне
+      // Проверяем допустимый диапазон
       const range = parameterRanges[parameterName];
       if (range && !isValueWithinRange(value, range.min, range.max)) {
         logger.warn(
-          `[${deviceName}] Выброс: ${parameterName} = ${value} выходит за допустимые пределы (${range.min}-${range.max}). Значение будет проигнорировано.`
+          `[${deviceLabel}] Выброс: ${parameterName} = ${value} выходит за допустимые пределы (${range.min}-${range.max}). Значение будет проигнорировано.`
         );
         continue; // Пропускаем запись этого параметра
       }
 
-      if (!isValueStable(parameterName, value)) {
+      // Проверяем стабильность значения
+      if (!isValueStable(parameterLabel, value)) {
         logger.warn(
-          `[${deviceName}] Значительное изменение значения для ${parameterName}. Значение будет проигнорировано.`
+          `[${deviceLabel}] Значительное изменение значения для ${parameterName}. Значение будет проигнорировано.`
         );
         continue; // Пропускаем запись этого параметра
       }
@@ -83,15 +86,15 @@ async function processDeviceDataSequentially(
     }
 
     if (Object.keys(results).length === 0) {
-      logger.warn(`[${deviceName}] Нет допустимых данных для записи.`);
+      logger.warn(`[${deviceLabel}] Нет допустимых данных для записи.`);
       return;
     }
 
-    let formattedData = formatResults(deviceName, results);
+    let formattedData = formatResults(deviceLabel, results);
 
-    // *** Новая логика проверки стабильности значения дозы (г/мин) и (кг/ч) ***
-    const doseGramKey = `Доза (г/мин) ${deviceName}`;
-    const doseKgKey = `Доза (кг/ч) ${deviceName}`;
+    // Проверка стабильности 4 последних значений для определения статуса устройства
+    const doseGramKey = `Доза (г/мин) ${deviceLabel}`;
+    const doseKgKey = `Доза (кг/ч) ${deviceLabel}`;
     let deviceStatus = 'working';
 
     if (formattedData[doseGramKey] !== undefined) {
@@ -124,26 +127,26 @@ async function processDeviceDataSequentially(
       }
 
       await new Model({
-        data: formattedData, // Только числа, с дозами 0, если idle
-        status: deviceStatus, // 'idle' или 'working'
+        data: formattedData,
+        status: deviceStatus,
         lastUpdated: new Date(),
       }).save();
     }
   } catch (error) {
-    logger.error(`[${deviceName}] Ошибка обработки данных: ${error.message}`);
+    logger.error(`[${deviceLabel}] Ошибка обработки данных: ${error.message}`);
   }
 }
 
-function formatResults(deviceName, results) {
+function formatResults(deviceLabel, results) {
   const formattedResults = {};
 
   for (const [key, value] of Object.entries(results)) {
-    const formattedKey = `${key} ${deviceName}`; // Добавляем имя устройства
+    const formattedKey = `${key} ${deviceLabel}`;
     formattedResults[formattedKey] = value;
 
-    // Специальный расчет для индекса 8 (граммы/мин -> кг/ч)
+    // Для "Доза (г/мин)" считаем "Доза (кг/ч)"
     if (key.startsWith('Доза (г/мин)')) {
-      const doseKgPerHourKey = `Доза (кг/ч) ${deviceName}`;
+      const doseKgPerHourKey = `Доза (кг/ч) ${deviceLabel}`;
       formattedResults[doseKgPerHourKey] = Math.round((value / 1000) * 60 * 10) / 10;
     }
   }

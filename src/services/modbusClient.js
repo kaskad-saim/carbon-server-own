@@ -123,39 +123,42 @@ export class ModbusClient {
   }
 
   // Универсальный метод для выполнения операций чтения
-  async executeRead(operation, deviceID, address, deviceLabel) {
-    let attempts = 0;
+    async executeRead(operation, deviceID, address, deviceLabel) {
+      let attempts = 0;
 
-    while (attempts < this.maxRetries) {
-      try {
-        if (!this.isConnected) {
-          logger.warn(`[${deviceLabel}] Modbus не подключен на порту ${this.port}. Попытка подключения...`);
-          await this.connect();
-          if (!this.isConnected) {
-            throw new Error(`Не удалось подключиться к Modbus на порту ${this.port}`);
+      while (attempts < this.maxRetries) {
+          try {
+              if (!this.isConnected) {
+                  logger.warn(`[${deviceLabel}] Modbus не подключен на порту ${this.port}. Попытка подключения...`);
+                  await this.connect();
+                  if (!this.isConnected) {
+                      throw new Error(`Не удалось подключиться к Modbus на порту ${this.port}`);
+                  }
+              }
+
+              // Тайм-аут на выполнение операции
+              return await Promise.race([
+                  this.mutex.runExclusive(async () => {
+                      this.client.setID(deviceID);
+                      return await operation();
+                  }),
+                  new Promise((_, reject) => setTimeout(() => reject(new Error('Тайм-аут операции')), this.timeout))
+              ]);
+          } catch (err) {
+              attempts++;
+              logger.error(
+                  `[${deviceLabel}] Ошибка при выполнении операции на адресе ${address} на порту ${this.port}, попытка ${attempts}/${this.maxRetries}:`,
+                  err
+              );
+
+              if (attempts >= this.maxRetries) {
+                  logger.warn(`[${deviceLabel}] Превышено максимальное количество попыток.`);
+                  throw err; // Позволяем ошибке всплыть
+              } else {
+                  await new Promise((resolve) => setTimeout(resolve, this.retryInterval));
+              }
           }
-        }
-
-        // Выполнение операции под защитой мьютекса
-        return await this.mutex.runExclusive(async () => {
-          this.client.setID(deviceID);
-          return await operation();
-        });
-      } catch (err) {
-        attempts++;
-        logger.error(
-          `[${deviceLabel}] Ошибка при выполнении операции на адресе ${address} на порту ${this.port}, попытка ${attempts}/${this.maxRetries}:`,
-          err
-        );
-
-        if (attempts >= this.maxRetries) {
-          logger.warn(`[${deviceLabel}] Превышено максимальное количество попыток.`);
-          throw err; // Позволяем ошибке всплыть
-        } else {
-          await new Promise((resolve) => setTimeout(resolve, this.retryInterval));
-        }
       }
-    }
   }
 
   async readFloat(deviceID, address, deviceLabel = '') {

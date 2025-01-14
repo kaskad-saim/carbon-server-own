@@ -147,45 +147,66 @@ if (isProduction) {
   });
 }
 
-// Функция для опроса данных Modbus
-const startDataRetrieval = async () => {
-  // Получаем уникальные порты из конфигурации устройств
-  const ports = [...new Set(devicesConfig.map((device) => device.port))];
-
-  for (const port of ports) {
-    const devices = devicesConfig.filter((device) => device.port === port);
-    const client = modbusClients[port];
-    const unstable = devices.some((device) => device.unstable);
-
-    const readDevices = async () => {
-      for (const device of devices) {
+// Функция для опроса всех устройств на основе конфигурации
+const pollDevices = async (devices, client, port) => {
+  const results = await Promise.allSettled(
+    devices.map((device) =>
+      addToQueueWithTimeout(port, async () => {
         const module = await import(device.serviceModule);
         const readDataFunction = module[device.readDataFunction];
         const { deviceID, name: deviceLabel } = device;
 
         try {
-          if (unstable) {
-            // Обработка нестабильных портов с использованием очереди
-            addToQueueWithTimeout(port, async () => {
-              if (!client.isConnected) await client.safeReconnect();
-              await readDataFunction(client, deviceID, deviceLabel);
-              await new Promise((resolve) => setTimeout(resolve, 1000)); // Задержка между запросами
-            });
-          } else {
-            // Обработка стабильных портов
-            if (!client.isConnected) await client.safeReconnect();
-            await readDataFunction(client, deviceID, deviceLabel);
-            await new Promise((resolve) => setTimeout(resolve, 500)); // Задержка между запросами
-          }
+          if (!client.isConnected) await client.safeReconnect();
+          await readDataFunction(client, deviceID, deviceLabel);
+          logger.info(`[${deviceLabel}] Устройство успешно опрошено.`);
+          return { deviceLabel, success: true };
         } catch (err) {
-          logger.error(`Ошибка при опросе данных ${deviceLabel} на порту ${port}:`, err);
+          logger.error(`[${deviceLabel}] Ошибка при опросе устройства:`, err);
+          return { deviceLabel, success: false, error: err.message };
         }
+      })
+    )
+  );
+
+  // Лог результатов
+  results.forEach((result, index) => {
+    const device = devices[index];
+    if (result.status === 'fulfilled' && result.value.success) {
+      logger.info(`[${device.name}] Устройство успешно опрошено.`);
+    } else {
+      logger.warn(`[${device.name}] Устройство не отвечает.`);
+    }
+  });
+};
+
+// Функция для опроса данных Modbus
+const startDataRetrieval = async () => {
+  const ports = [...new Set(devicesConfig.map((device) => device.port))];
+
+  for (const port of ports) {
+    const devices = devicesConfig.filter((device) => device.port === port);
+    const client = modbusClients[port];
+
+    const retrieveData = async () => {
+      try {
+        if (!client.isConnected) {
+          logger.warn(`Modbus клиент на порту ${port} не подключен. Переподключение...`);
+          await client.safeReconnect();
+        }
+
+        // Опрос всех устройств на порту через очередь
+        await pollDevices(devices, client, port);
+      } catch (err) {
+        // logger.error(`Ошибка при опросе данных на порту ${port}:`, err);
       }
     };
 
-    // Периодический запуск опроса данных
-    readDevices();
-    setInterval(readDevices, 10000);
+    // Запуск первоначального опроса
+    retrieveData();
+
+    // Устанавливаем интервал для периодического опроса
+    setInterval(retrieveData, 10000);
   }
 };
 
