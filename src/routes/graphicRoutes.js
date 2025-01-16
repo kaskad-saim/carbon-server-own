@@ -4,105 +4,60 @@ import { PechMpa2Model, PechMpa3Model } from '../models/pechMpaModel.js';
 import logger from '../logger.js';
 import { Sushilka1Model, Sushilka2Model } from '../models/sushilkaModel.js';
 import { Notis1Model, Notis2Model } from '../models/notisModel.js';
+import {
+  imDD923Model,
+  imDD924Model,
+  imDD569Model,
+  imDD576Model,
+  imDD973Model,
+  imDE093Model,
+  imDD972Model,
+} from '../models/uzliUchetaModel.js';
 
 const router = express.Router();
 
-// Маршрут для получения данных VR1
-router.get('/vr1/data', async (req, res) => {
-  try {
-    const { start, end } = req.query;
-    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await PechVr1Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    logger.error('Ошибка при получении данных VR1:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
-});
+// Объект для связи идентификаторов устройств с их моделями
+const deviceModels = {
+  vr1: PechVr1Model,
+  vr2: PechVr2Model,
+  mpa2: PechMpa2Model,
+  mpa3: PechMpa3Model,
+  sushilka1: Sushilka1Model,
+  sushilka2: Sushilka2Model,
+  notis1: Notis1Model,
+  notis2: Notis2Model,
+  dd923: imDD923Model,
+  dd924: imDD924Model,
+  dd569: imDD569Model,
+  dd576: imDD576Model,
+  dd973: imDD973Model,
+  de093: imDE093Model,
+  dd972: imDD972Model,
+};
 
-// Маршрут для получения данных VR2
-router.get('/vr2/data', async (req, res) => {
+// Универсальный маршрут для всех устройств
+router.get('/:deviceId/data', async (req, res) => {
   try {
+    const { deviceId } = req.params; // Идентификатор устройства (например, vr1, mpa2, dd923)
     const { start, end } = req.query;
-    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await PechVr2Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    logger.error('Ошибка при получении данных VR2:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
-});
 
-// Маршрут для получения данных MPA2
-router.get('/mpa2/data', async (req, res) => {
-  try {
-    const { start, end } = req.query;
-    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await PechMpa2Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    logger.error('Ошибка при получении данных MPA2:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
-});
+    // Получаем модель устройства по идентификатору
+    const deviceModel = deviceModels[deviceId.toLowerCase()];
 
-// Маршрут для получения данных MPA3
-router.get('/mpa3/data', async (req, res) => {
-  try {
-    const { start, end } = req.query;
-    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await PechMpa3Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    logger.error('Ошибка при получении данных MPA3:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
-});
+    if (!deviceModel) {
+      return res.status(404).json({ error: 'Устройство не найдено' });
+    }
 
-router.get('/sushilka1/data', async (req, res) => {
-  try {
-    const { start, end } = req.query;
+    // Формируем запрос для фильтрации по времени
     const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await Sushilka1Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    logger.error('Ошибка при получении данных Sushilka1:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
-});
 
-router.get('/sushilka2/data', async (req, res) => {
-  try {
-    const { start, end } = req.query;
-    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await Sushilka2Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    logger.error('Ошибка при получении данных Sushilka2:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
-});
+    // Получаем данные из модели
+    const data = await deviceModel.find(query).sort({ lastUpdated: 1 });
 
-router.get('/notis1/data', async (req, res) => {
-  try {
-    const { start, end } = req.query;
-    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await Notis1Model.find(query).sort({ lastUpdated: 1 });
+    // Возвращаем данные
     res.json(data);
   } catch (error) {
-    logger.error('Ошибка при получении данных Notis1:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
-});
-
-router.get('/notis2/data', async (req, res) => {
-  try {
-    const { start, end } = req.query;
-    const query = start && end ? { lastUpdated: { $gte: new Date(start), $lte: new Date(end) } } : {};
-    const data = await Notis2Model.find(query).sort({ lastUpdated: 1 });
-    res.json(data);
-  } catch (error) {
-    logger.error('Ошибка при получении данных Notis2:', error);
+    logger.error(`Ошибка при получении данных для устройства ${req.params.deviceId}:`, error);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });

@@ -304,7 +304,6 @@ app.use('/api', reactorRoutes);
 app.use('/api/lab', laboratoryRoutes);
 app.use('/api', graphicRoutes); //api получасовых графиков
 app.use('/api/reportRoutes', reportRoutes); // Для месячных отчётов и коррекций
-app.use('/api', graphicRoutes); // api получасовых графиков
 app.use('/api', notis1Routes);
 app.use('/api', notis2Routes);
 
