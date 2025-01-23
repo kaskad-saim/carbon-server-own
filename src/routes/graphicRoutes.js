@@ -13,6 +13,8 @@ import {
   imDE093Model,
   imDD972Model,
 } from '../models/uzliUchetaModel.js';
+import { Mill10bModel, Mill1Model, Mill2Model } from '../models/millModel.js';
+import { Reactor296Model } from '../models/reactor296Model.js';
 
 const router = express.Router();
 
@@ -33,6 +35,10 @@ const deviceModels = {
   dd973: imDD973Model,
   de093: imDE093Model,
   dd972: imDD972Model,
+  mill1: Mill1Model,
+  mill2: Mill2Model,
+  mill10b: Mill10bModel,
+  reactor296: Reactor296Model,
 };
 
 // Универсальный маршрут для всех устройств
