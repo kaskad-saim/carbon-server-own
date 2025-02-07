@@ -316,12 +316,12 @@ app.get('/config.js', (req, res) => {
 });
 
 // Настройка статической папки
-// app.use(express.static(path.join(__dirname, '../../carbon-angular/dist/carbon-angular')));
+app.use(express.static(path.join(__dirname, '../../carbon-angular/dist/carbon-angular/browser')));
 
-// // Маршрут для обслуживания Angular-приложения
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../../carbon-angular/dist/carbon-angular/browser/index.html'));
-// });
+// Маршрут для обслуживания Angular-приложения
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../carbon-angular/dist/carbon-angular/browser/index.html'));
+});
 
 // Запуск сервера
 app.listen(port, () => {
