@@ -1,4 +1,3 @@
-// server.js
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -50,9 +49,6 @@ const app = express();
 // Подключаем middleware
 app.use(cors());
 app.use(express.json());
-
-// Настройка статической папки
-app.use(express.static(path.join(__dirname, '../public')));
 
 // Маршруты для страниц
 app.use('/', pageRoutes);
@@ -288,7 +284,6 @@ startDataRetrieval();
 
 startCronJobs();
 
-
 // Используем маршруты
 app.use('/api', vr1Routes);
 app.use('/api', vr2Routes);
@@ -319,6 +314,14 @@ app.get('/config.js', (req, res) => {
   res.type('application/javascript');
   res.send(`window.NODE_ENV = "${process.env.NODE_ENV}";`);
 });
+
+// Настройка статической папки
+// app.use(express.static(path.join(__dirname, '../../carbon-angular/dist/carbon-angular')));
+
+// // Маршрут для обслуживания Angular-приложения
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../../carbon-angular/dist/carbon-angular/browser/index.html'));
+// });
 
 // Запуск сервера
 app.listen(port, () => {
