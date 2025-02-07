@@ -8,9 +8,10 @@ const dataSchema = new mongoose.Schema({
   lastUpdated: Date,
 });
 
-// Создаем модели для Sushilka1 и Sushilka2
+// Добавляем индекс на поле lastUpdated
+dataSchema.index({ lastUpdated: 1 });
+
 const Sushilka1Model = mongoose.model('sushilka1Models', dataSchema);
 const Sushilka2Model = mongoose.model('sushilka2Models', dataSchema);
 
-// Экспортируем обе модели
 export { Sushilka1Model, Sushilka2Model };

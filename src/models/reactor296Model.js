@@ -1,5 +1,3 @@
-// models/reactorModel.js
-
 import mongoose from 'mongoose';
 
 const reactorSchema = new mongoose.Schema({
@@ -16,5 +14,8 @@ const reactorSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+// Добавляем индекс на поле lastUpdated
+reactorSchema.index({ lastUpdated: 1 });
 
 export const Reactor296Model = mongoose.model('ReactorK296', reactorSchema);

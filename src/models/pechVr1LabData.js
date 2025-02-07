@@ -18,8 +18,11 @@ const pechVr1LabSchema = new mongoose.Schema({
   recordDate: { type: String, default: '-' },
 }, { timestamps: true });
 
-
-
+// Добавляем индексы на поля valueDate, valuePHDate, valueSUMDate, recordDate
+pechVr1LabSchema.index({ valueDate: 1 });
+pechVr1LabSchema.index({ valuePHDate: 1 });
+pechVr1LabSchema.index({ valueSUMDate: 1 });
+pechVr1LabSchema.index({ recordDate: 1 });
 
 const PechVr1LabModel = labConnection.model('pechVr1', pechVr1LabSchema);
 

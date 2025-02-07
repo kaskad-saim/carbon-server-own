@@ -16,5 +16,9 @@ const notisSchema = new mongoose.Schema({
   },
 });
 
+// Добавляем индексы на поля lastUpdated и status
+notisSchema.index({ lastUpdated: 1 });
+notisSchema.index({ status: 1 });
+
 export const Notis1Model = mongoose.model('Notis1', notisSchema);
 export const Notis2Model = mongoose.model('Notis2', notisSchema);

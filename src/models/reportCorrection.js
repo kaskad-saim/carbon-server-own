@@ -1,4 +1,3 @@
-// models/ReportCorrection.js
 import mongoose from 'mongoose';
 
 const ReportCorrectionSchema = new mongoose.Schema({
@@ -21,6 +20,7 @@ const ReportCorrectionSchema = new mongoose.Schema({
   },
 });
 
+// Добавляем индекс на поля day и model
 ReportCorrectionSchema.index({ day: 1, model: 1 }, { unique: true });
 
 export const ReportCorrection = mongoose.model('ReportCorrection', ReportCorrectionSchema);

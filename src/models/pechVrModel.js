@@ -10,6 +10,9 @@ const dataSchema = new mongoose.Schema({
   lastUpdated: Date,
 });
 
+// Добавляем индекс на поле lastUpdated
+dataSchema.index({ lastUpdated: 1 });
+
 const PechVr1Model = mongoose.model('pechVr1Models', dataSchema);
 const PechVr2Model = mongoose.model('pechVr2Models', dataSchema);
 

@@ -17,4 +17,7 @@ const DailyReportSchema = new mongoose.Schema({
   },
 });
 
+// Добавляем индекс на поле date
+DailyReportSchema.index({ date: 1 });
+
 export const DailyReportModel = mongoose.model('DailyReport', DailyReportSchema);
