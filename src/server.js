@@ -325,5 +325,5 @@ app.get('*', (req, res) => {
 
 // Запуск сервера
 app.listen(port, () => {
-  logger.info(`Сервер запущен на http://localhost:${port}`);
+  logger.info(`Сервер запущен на http://169.254.0.156:${port}`);
 });
