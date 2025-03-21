@@ -67,7 +67,7 @@ export const readDataSushilka1 = async (modbusClient, deviceID, deviceLabel) => 
     const vacuums = {
       'Разрежение в топке': ((await modbusClient.readFloat(deviceID, 0x000A, deviceLabel)) * 0.25 - 12.5).toFixed(1),
       'Разрежение в камере выгрузки': -((await modbusClient.readFloat(deviceID, 0x000C, deviceLabel)) * 0.25).toFixed(1),
-      'Разрежение воздуха на разбавление': ((await modbusClient.readFloat(deviceID, 0x000E, deviceLabel)) * 5).toFixed(1),
+      // 'Разрежение воздуха на разбавление': ((await modbusClient.readFloat(deviceID, 0x000E, deviceLabel)) * 5).toFixed(1),
     };
 
     // Чтение данных горелки
