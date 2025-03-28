@@ -29,6 +29,9 @@ import { initSerialPorts } from './utils/serialPortManager.js';
 import { serialDevicesConfig } from './services/devicesConfig.js';
 import { SerialPortSimulator } from './services/serialPortSimulator.js';
 import startCronJobs from './services/scheduler.js';
+import vr1TimeCounterRoutes from './routes/vr1TimeCounterRoutes.js';
+import vr2TimeCounterRoutes from './routes/vr2TimeCounterRoutes.js';
+
 
 // Определяем текущую директорию
 const __filename = fileURLToPath(import.meta.url);
@@ -287,6 +290,8 @@ startCronJobs();
 // Используем маршруты
 app.use('/api', vr1Routes);
 app.use('/api', vr2Routes);
+app.use('/api', vr1TimeCounterRoutes);
+app.use('/api', vr2TimeCounterRoutes);
 app.use('/api', sushilka1Routes);
 app.use('/api', sushilka2Routes);
 app.use('/api', mpa2Routes);
@@ -301,6 +306,8 @@ app.use('/api', graphicRoutes); //api получасовых графиков
 app.use('/api/reportRoutes', reportRoutes); // Для месячных отчётов и коррекций
 app.use('/api', notis1Routes);
 app.use('/api', notis2Routes);
+
+
 
 // Добавляем новый маршрут для отчетов
 app.use('/api/reports', reportRoutes);
