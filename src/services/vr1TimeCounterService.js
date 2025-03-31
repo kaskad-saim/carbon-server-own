@@ -29,7 +29,7 @@ export const readVr1TimeCounter = async (modbusClient, deviceID, deviceLabel) =>
 function formatTime(secondsSinceMidnight) {
   const hours = Math.floor(secondsSinceMidnight / 3600);
   const minutes = Math.floor((secondsSinceMidnight % 3600) / 60);
-  return `${pad(hours)}:${pad(minutes)}:`;
+  return `${pad(hours)}:${pad(minutes)}`;
 }
 
 function pad(num) {
