@@ -6,7 +6,7 @@ export const readVr1TimeCounter = async (modbusClient, deviceID, deviceLabel) =>
 
     // Чтение значения из Modbus
     const value = await modbusClient.readInt32(deviceID, TIME_REGISTER, deviceLabel);
-    
+
     // Форматирование времени
     const formattedTime = formatTime(value);
 
@@ -29,8 +29,7 @@ export const readVr1TimeCounter = async (modbusClient, deviceID, deviceLabel) =>
 function formatTime(secondsSinceMidnight) {
   const hours = Math.floor(secondsSinceMidnight / 3600);
   const minutes = Math.floor((secondsSinceMidnight % 3600) / 60);
-  const seconds = secondsSinceMidnight % 60;
-  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  return `${pad(hours)}:${pad(minutes)}:`;
 }
 
 function pad(num) {
