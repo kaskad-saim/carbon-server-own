@@ -16,7 +16,7 @@ export const readVr1TimeCounter = async (modbusClient, deviceID, deviceLabel) =>
       lastUpdated: new Date()
     }).save();
 
-    console.log(`[${deviceLabel}] Данные сохранены в БД:`, savedData);
+    // console.log(`[${deviceLabel}] Данные сохранены в БД:`, savedData);
 
     logger.info(`[${deviceLabel}] Время успешно обновлено: ${formattedTime}`);
   } catch (err) {
