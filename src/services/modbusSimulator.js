@@ -13,6 +13,7 @@ export class ModbusSimulator {
       mills: this.mills,
       mill10b: this.mill10b,
       reactor296: this.reactor296,
+      press296: this.press296,
 
       // Новые устройства
       DE093: this.DE093,
@@ -349,6 +350,22 @@ export class ModbusSimulator {
           return { min: 0, max: 100, step: 10 }; // Значения по умолчанию
       }
     }
+
+  };
+
+
+  press296 = {
+    termodatAddressesList: [
+      0x0002, 0x0004
+    ],
+    controllerAddressesList: [
+      0x4804, 0x4138,
+    ],
+    getRange(address) {
+      if (this.termodatAddressesList.includes(address)) return { min: 0, max: 100, step: 10 };
+      if (this.controllerAddressesList.includes(address)) return { min: 0, max: 2500, step: 50 };
+      return { min: 0, max: 100, step: 10 }; // Значения по умолчанию
+    }
   };
 
   // Метод для чтения значений с учётом объекта и диапазона
@@ -438,6 +455,18 @@ export class ModbusSimulator {
     const high = await this.readInt16(deviceID, address, deviceLabel);
     const low = await this.readInt16(deviceID, address + 1, deviceLabel);
     return high * 65536 + low;
+  }
+
+
+  async readCoil(deviceID, address, label = '') {
+    const key = `${deviceID}-coil-${address}`;
+    if (!(key in this.currentValues)) {
+      this.currentValues[key] = false;
+    }
+    if (Math.random() < 0.1) {
+      this.currentValues[key] = !this.currentValues[key];
+    }
+    return this.currentValues[key];
   }
 
   // Метод для инициализации значений

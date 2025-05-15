@@ -239,4 +239,14 @@ export class ModbusClient {
       deviceLabel
     );
   }
+
+  async readCoil(deviceID, address, label = '') {
+    const res = await this.executeRead(
+      () => this.client.readCoils(address, 1),
+      deviceID,
+      address,
+      label || `Coil@${address}`
+    );
+    return res.data[0];
+  }
 }

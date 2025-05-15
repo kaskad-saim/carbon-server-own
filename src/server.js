@@ -31,6 +31,7 @@ import { SerialPortSimulator } from './services/serialPortSimulator.js';
 import startCronJobs from './services/scheduler.js';
 import vr1TimeCounterRoutes from './routes/vr1TimeCounterRoutes.js';
 import vr2TimeCounterRoutes from './routes/vr2TimeCounterRoutes.js';
+import press3Routes from './routes/press3Routes.js';
 
 
 // Определяем текущую директорию
@@ -306,7 +307,7 @@ app.use('/api', graphicRoutes); //api получасовых графиков
 app.use('/api/reportRoutes', reportRoutes); // Для месячных отчётов и коррекций
 app.use('/api', notis1Routes);
 app.use('/api', notis2Routes);
-
+app.use('/api', press3Routes);
 
 
 // Добавляем новый маршрут для отчетов

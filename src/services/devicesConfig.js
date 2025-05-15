@@ -216,7 +216,7 @@ export const devicesConfig = [
     readDataFunction: 'readDataDD923',
     serviceModule: './services/uzliUchetaService.js',
   },
-    {
+  {
     name: 'DD924',
     deviceID: 0x18,
     port: 'COM10',
@@ -227,7 +227,19 @@ export const devicesConfig = [
     unstable: false,
     readDataFunction: 'readDataDD924',
     serviceModule: './services/uzliUchetaService.js',
-  }
+  },
+  {
+    name: 'press3',
+    deviceID: 0x03,
+    port: 'COM31',
+    baudRate: 19200,
+    timeout: 12000,
+    retryInterval: 15000,
+    maxRetries: 3,
+    unstable: false,
+    readDataFunction: 'readDataPress3',
+    serviceModule: './services/press3ModbusService.js',
+  },
 ];
 
 export const serialDevicesConfig = [
