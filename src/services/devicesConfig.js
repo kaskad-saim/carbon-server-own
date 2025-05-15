@@ -231,7 +231,7 @@ export const devicesConfig = [
   {
     name: 'press3',
     deviceID: 0x03,
-    port: 'COM31',
+    port: 'COM14',
     baudRate: 19200,
     timeout: 12000,
     retryInterval: 15000,
