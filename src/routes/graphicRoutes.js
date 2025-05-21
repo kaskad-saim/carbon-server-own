@@ -15,6 +15,7 @@ import {
 } from '../models/uzliUchetaModel.js';
 import { Mill10bModel, Mill1Model, Mill2Model } from '../models/millModel.js';
 import { Reactor296Model } from '../models/reactor296Model.js';
+import { Press3Model } from '../models/pressK296Model.js';
 
 const router = express.Router();
 
@@ -39,6 +40,7 @@ const deviceModels = {
   mill2: Mill2Model,
   mill10b: Mill10bModel,
   reactor296: Reactor296Model,
+  press3: Press3Model,
 };
 
 // Универсальный маршрут для всех устройств
