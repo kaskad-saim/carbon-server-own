@@ -7,8 +7,8 @@ export const readDataPress3 = async (modbusClient, deviceID, deviceLabel) => {
       'Кол-во наработанных часов': await modbusClient.readInt16(deviceID, 0x3800 + 338, deviceLabel),
     };
 
-    const rawTemp  = await modbusClient.readInt16(0x07, 0x0002, deviceLabel);
-    const rawPress = await modbusClient.readInt16(0x07, 0x0004, deviceLabel);
+    const rawTemp  = await modbusClient.readInt16(0x07, 0x0004, deviceLabel);
+    const rawPress = await modbusClient.readInt16(0x07, 0x0002, deviceLabel);
 
     const termodatData = {
       'Температура масла': Math.round(rawTemp  * 0.1 * 10) / 10,
