@@ -1,6 +1,5 @@
 import { Vr2TimeCounterModel } from "../models/vr2TimeCounterModel.js";
-
-
+import logger from '../logger.js';
 
 export const readVr2TimeCounter = async (modbusClient, deviceID, deviceLabel) => {
   try {

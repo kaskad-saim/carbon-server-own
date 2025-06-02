@@ -275,16 +275,16 @@ const startSerialDataRetrieval = async () => {
     };
 
     // Запускаем первый опрос сразу
-    readDevices();
+    await readDevices();
     // Повторяем опрос каждые 30 секунд (или любое другое значение в POLL_INTERVAL)
     setInterval(readDevices, POLL_INTERVAL);
   }
 };
 
-startSerialDataRetrieval();
+void startSerialDataRetrieval();
 
 // Запускаем опрос данных Modbus
-startDataRetrieval();
+void startDataRetrieval();
 
 startCronJobs();
 

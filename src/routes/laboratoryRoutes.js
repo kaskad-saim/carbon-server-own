@@ -1,158 +1,40 @@
 // laboratoryRoutes.js
 import express from 'express';
+
 import PechVr1LabModel from '../models/pechVr1LabData.js';
 import PechVr2LabModel from '../models/pechVr2LabData.js';
+import { PechMpa2LabModel, PechMpa3LabModel } from '../models/pechMpaLabData.js';
+
+import {
+  saveData,
+  getLastData,
+  getLastDayData,
+  deleteRecord
+} from '../utils/laboratory.js';
 
 const router = express.Router();
 
-// Функция для обработки сохранения данных
-const saveData = async (model, req, res) => {
-  try {
-    const { value, valuePH, valueSUM, time } = req.body;
+// 1) Роуты для PechVr1
+router.post('/pechVr1/submit', saveData(PechVr1LabModel));
+router.get('/pechVr1/last', getLastData(PechVr1LabModel));
+router.get('/pechVr1/last-day', getLastDayData(PechVr1LabModel));
 
-    if (!time) {
-      return res.status(400).json({ message: 'Необходимо указать время' });
-    }
+// 2) Роуты для PechVr2
+router.post('/pechVr2/submit', saveData(PechVr2LabModel));
+router.get('/pechVr2/last', getLastData(PechVr2LabModel));
+router.get('/pechVr2/last-day', getLastDayData(PechVr2LabModel));
 
-    if (!value && !valuePH && !valueSUM) {
-      return res.status(400).json({ message: 'Необходимо указать хотя бы одно значение' });
-    }
+// 3) Роуты для PechMpa2
+router.post('/pechMpa2/submit', saveData(PechMpa2LabModel));
+router.get('/pechMpa2/last', getLastData(PechMpa2LabModel));
+router.get('/pechMpa2/last-day', getLastDayData(PechMpa2LabModel));
 
-    const date = new Date().toLocaleDateString('ru-RU');
+// 4) Роуты для PechMpa3
+router.post('/pechMpa3/submit', saveData(PechMpa3LabModel));
+router.get('/pechMpa3/last', getLastData(PechMpa3LabModel));
+router.get('/pechMpa3/last-day', getLastDayData(PechMpa3LabModel));
 
-    const newData = new model({
-      value: value ?? '-',
-      valueTime: value ? time : '-',
-      valueDate: value ? date : '-',
-
-      valuePH: valuePH ?? '-',
-      valuePHTime: valuePH ? time : '-',
-      valuePHDate: valuePH ? date : '-',
-
-      valueSUM: valueSUM ?? '-',
-      valueSUMTime: valueSUM ? time : '-',
-      valueSUMDate: valueSUM ? date : '-',
-
-      recordTime: time,
-      recordDate: date,
-    });
-
-    await newData.save();
-
-    // Возвращаем последние известные значения для отображения в таблице последних значений
-    const lastValueData = await model.findOne({ value: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
-    const lastValuePHData = await model.findOne({ valuePH: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
-    const lastValueSUMData = await model.findOne({ valueSUM: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
-
-    res.json({
-      message: 'Данные успешно сохранены',
-      value: lastValueData?.value || '-',
-      valueTime: lastValueData?.valueTime || '-',
-      valueDate: lastValueData?.valueDate || '-',
-      valuePH: lastValuePHData?.valuePH || '-',
-      valuePHTime: lastValuePHData?.valuePHTime || '-',
-      valuePHDate: lastValuePHData?.valuePHDate || '-',
-      valueSUM: lastValueSUMData?.valueSUM || '-',
-      valueSUMTime: lastValueSUMData?.valueSUMTime || '-',
-      valueSUMDate: lastValueSUMData?.valueSUMDate || '-',
-    });
-  } catch (error) {
-    console.error('Ошибка при сохранении данных:', error);
-    res.status(500).json({ message: 'Произошла ошибка при сохранении данных' });
-  }
-};
-
-// Функция для получения последних данных
-const getLastData = async (model, req, res) => {
-  try {
-    // Получаем последние записи для каждого параметра
-    const lastValueData = await model.findOne({ value: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
-    const lastValuePHData = await model.findOne({ valuePH: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
-    const lastValueSUMData = await model.findOne({ valueSUM: { $ne: '-' } }).sort({ createdAt: -1 }).lean();
-
-    res.json({
-      value: lastValueData?.value || '-',
-      valueTime: lastValueData?.valueTime || '-',
-      valueDate: lastValueData?.valueDate || '-',
-      valuePH: lastValuePHData?.valuePH || '-',
-      valuePHTime: lastValuePHData?.valuePHTime || '-',
-      valuePHDate: lastValuePHData?.valuePHDate || '-',
-      valueSUM: lastValueSUMData?.valueSUM || '-',
-      valueSUMTime: lastValueSUMData?.valueSUMTime || '-',
-      valueSUMDate: lastValueSUMData?.valueSUMDate || '-',
-    });
-  } catch (error) {
-    console.error('Ошибка при получении последних данных:', error);
-    res.status(500).json({ message: 'Произошла ошибка при получении данных' });
-  }
-};
-
-// Функция для получения данных за последние 24 часа
-const getLastDayData = async (model, req, res) => {
-  try {
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const lastDayData = await model
-      .find({ createdAt: { $gte: twentyFourHoursAgo } })
-      .sort({ createdAt: -1 })
-      .lean();
-
-    res.json(
-      lastDayData.map((item) => ({
-        _id: item._id, // Добавляем _id в ответ
-        value: item.value || '-',
-        valuePH: item.valuePH || '-',
-        valueSUM: item.valueSUM || '-',
-        recordTime: item.recordTime || '-',
-        recordDate: item.recordDate || '-',
-      }))
-    );
-  } catch (error) {
-    console.error('Ошибка при получении данных за последние сутки:', error);
-    res.status(500).json({ message: 'Произошла ошибка при получении данных' });
-  }
-};
-
-
-// Обработка POST-запросов на /submit
-router.post('/pechVr1/submit', (req, res) => saveData(PechVr1LabModel, req, res));
-router.post('/pechVr2/submit', (req, res) => saveData(PechVr2LabModel, req, res));
-
-// Обработка GET-запросов на /last
-router.get('/pechVr1/last', (req, res) => getLastData(PechVr1LabModel, req, res));
-router.get('/pechVr2/last', (req, res) => getLastData(PechVr2LabModel, req, res));
-
-// Обработка GET-запросов на /last-day
-router.get('/pechVr1/last-day', (req, res) => getLastDayData(PechVr1LabModel, req, res));
-router.get('/pechVr2/last-day', (req, res) => getLastDayData(PechVr2LabModel, req, res));
-
-
-// Добавление маршрута для удаления записи
-router.delete('/delete/:pech/:id', async (req, res) => {
-  try {
-    const { pech, id } = req.params;
-    if (!id) {
-      return res.status(400).json({ message: 'ID записи не указан' });
-    }
-
-    let model;
-    if (pech === 'pechVr1') {
-      model = PechVr1LabModel;
-    } else if (pech === 'pechVr2') {
-      model = PechVr2LabModel;
-    } else {
-      return res.status(400).json({ message: 'Неверный тип печи' });
-    }
-
-    const record = await model.findByIdAndDelete(id);
-    if (!record) {
-      return res.status(404).json({ message: 'Запись не найдена' });
-    }
-    res.status(200).json({ message: 'Запись успешно удалена' });
-  } catch (error) {
-    console.error('Ошибка при удалении записи:', error);
-    res.status(500).json({ message: 'Ошибка при удалении записи' });
-  }
-});
-
+// Универсальный роут для удаления записи из любой «печи»
+router.delete('/delete/:pech/:id', deleteRecord);
 
 export default router;
