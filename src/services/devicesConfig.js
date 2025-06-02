@@ -51,7 +51,7 @@ export const devicesConfig = [
   {
     name: 'MPA2',
     deviceID: 6,
-    port: 'COM9',
+    port: 'COM16',
     baudRate: 9600,
     timeout: 3000,
     retryInterval: 15000,
@@ -63,7 +63,7 @@ export const devicesConfig = [
   {
     name: 'MPA3',
     deviceID: 5,
-    port: 'COM9',
+    port: 'COM16',
     baudRate: 9600,
     timeout: 3000,
     retryInterval: 15000,
@@ -147,7 +147,7 @@ export const devicesConfig = [
   {
     name: 'DD972',
     deviceID: 0x48,
-    port: 'COM10',
+    port: 'COM17',
     baudRate: 9600,
     timeout: 12000,
     retryInterval: 15000,
@@ -159,7 +159,7 @@ export const devicesConfig = [
     {
     name: 'DD973',
     deviceID: 0x49,
-    port: 'COM10',
+    port: 'COM17',
     baudRate: 9600,
     timeout: 12000,
     retryInterval: 15000,
@@ -171,7 +171,7 @@ export const devicesConfig = [
     {
     name: 'DE093',
     deviceID: 0x5D,
-    port: 'COM10',
+    port: 'COM17',
     baudRate: 9600,
     timeout: 12000,
     retryInterval: 15000,
@@ -183,7 +183,7 @@ export const devicesConfig = [
     {
     name: 'DD576',
     deviceID: 0x4C,
-    port: 'COM10',
+    port: 'COM17',
     baudRate: 9600,
     timeout: 12000,
     retryInterval: 15000,
@@ -195,7 +195,7 @@ export const devicesConfig = [
     {
     name: 'DD569',
     deviceID: 0x45,
-    port: 'COM10',
+    port: 'COM17',
     baudRate: 9600,
     timeout: 12000,
     retryInterval: 15000,
@@ -207,7 +207,7 @@ export const devicesConfig = [
     {
     name: 'DD923',
     deviceID: 0x17,
-    port: 'COM10',
+    port: 'COM17',
     baudRate: 9600,
     timeout: 12000,
     retryInterval: 15000,
@@ -219,7 +219,7 @@ export const devicesConfig = [
   {
     name: 'DD924',
     deviceID: 0x18,
-    port: 'COM10',
+    port: 'COM17',
     baudRate: 9600,
     timeout: 12000,
     retryInterval: 15000,
